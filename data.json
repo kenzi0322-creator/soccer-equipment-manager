@@ -1,0 +1,156 @@
+[
+  {
+    "id": "i1",
+    "item_code": "SS-C-01",
+    "name": "レフェリースターターセットC-1",
+    "category": "セット",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i2",
+    "item_code": "SS-C-02",
+    "name": "レフェリースターターセットC-2",
+    "category": "セット",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m2"
+  },
+  {
+    "id": "i3",
+    "item_code": "SS-C-03",
+    "name": "レフェリースターターセットC-3",
+    "category": "セット",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": null
+  },
+  {
+    "id": "i4",
+    "item_code": "CAP-O-01",
+    "name": "キャプテンマーク オレンジ-1",
+    "color": "オレンジ",
+    "category": "小物",
+    "owner_team_id": "t1",
+    "shared_flag": false,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i5",
+    "item_code": "CAP-O-02",
+    "name": "キャプテンマーク オレンジ-2",
+    "color": "オレンジ",
+    "category": "小物",
+    "owner_team_id": "t2",
+    "shared_flag": false,
+    "current_holder_id": "m2"
+  },
+  {
+    "id": "i6",
+    "item_code": "CAP-Y-01",
+    "name": "キャプテンマーク イエロー-1",
+    "color": "イエロー",
+    "category": "小物",
+    "owner_team_id": "t3",
+    "shared_flag": false,
+    "current_holder_id": "m3"
+  },
+  {
+    "id": "i7",
+    "item_code": "CAP-Y-02",
+    "name": "キャプテンマーク イエロー-2",
+    "color": "イエロー",
+    "category": "小物",
+    "owner_team_id": "t1",
+    "shared_flag": false,
+    "current_holder_id": "m4"
+  },
+  {
+    "id": "i8",
+    "item_code": "FLAG-01",
+    "name": "アシスタントレフリーフラッグ-1",
+    "category": "フラッグ",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i9",
+    "item_code": "FLAG-02",
+    "name": "アシスタントレフリーフラッグ-2",
+    "category": "フラッグ",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m2"
+  },
+  {
+    "id": "i10",
+    "item_code": "FLAG-03",
+    "name": "アシスタントレフリーフラッグ-3",
+    "category": "フラッグ",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m3"
+  },
+  {
+    "id": "i11",
+    "item_code": "REF-M-01",
+    "name": "レフェリー4点セット M-1",
+    "size": "M",
+    "category": "ウェア",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m4"
+  },
+  {
+    "id": "i12",
+    "item_code": "REF-M-02",
+    "name": "レフェリー4点セット M-2",
+    "size": "M",
+    "category": "ウェア",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": null
+  },
+  {
+    "id": "i13",
+    "item_code": "REF-L-01",
+    "name": "レフェリー4点セット L-1",
+    "size": "L",
+    "category": "ウェア",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m3"
+  },
+  {
+    "id": "i14",
+    "item_code": "REF-L-02",
+    "name": "レフェリー4点セット L-2",
+    "size": "L",
+    "category": "ウェア",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i15",
+    "item_code": "REF-XO-01",
+    "name": "レフェリー4点セット XO-1",
+    "size": "XO",
+    "category": "ウェア",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m2"
+  },
+  {
+    "id": "i16",
+    "item_code": "REF-XO-02",
+    "name": "レフェリー4点セット XO-2",
+    "size": "XO",
+    "category": "ウェア",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m3"
+  }
+]

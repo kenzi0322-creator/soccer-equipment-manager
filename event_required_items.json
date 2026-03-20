@@ -1,0 +1,26 @@
+[
+  {
+    "id": "eri1",
+    "event_id": "e1",
+    "item_id": "i1",
+    "required_flag": true,
+    "assigned_member_id": "m1",
+    "assignment_status": "ready"
+  },
+  {
+    "id": "eri2",
+    "event_id": "e1",
+    "item_id": "i14",
+    "required_flag": true,
+    "assigned_member_id": "m1",
+    "assignment_status": "ready"
+  },
+  {
+    "id": "eri3",
+    "event_id": "e1",
+    "item_id": "i11",
+    "required_flag": true,
+    "assigned_member_id": "m1",
+    "assignment_status": "assigned"
+  }
+]
