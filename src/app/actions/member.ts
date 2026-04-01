@@ -9,7 +9,7 @@ export async function updateMemberAction(formData: FormData) {
   const members = await getMembers();
   const index = members.findIndex(m => m.id === id);
   
-  if (index === -1) return { error: 'メンバーが見つかりません' };
+  if (index === -1) throw new Error('メンバーが見つかりません');
 
   const existing = members[index];
   
@@ -19,6 +19,8 @@ export async function updateMemberAction(formData: FormData) {
     uniform_number: formData.get('uniform_number') as string,
     nearest_station: formData.get('nearest_station') as string,
     has_car: formData.get('has_car') === 'on',
+    has_black_pants: formData.get('has_black_pants') === 'on',
+    has_black_socks: formData.get('has_black_socks') === 'on',
     note: formData.get('note') as string,
   };
 

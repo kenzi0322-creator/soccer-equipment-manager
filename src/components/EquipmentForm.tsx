@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import { Camera, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { MOCK_TEAMS } from '@/lib/data/mock';
-import { Item } from '@/types';
+import { Item, Team } from '@/types';
 
 interface EquipmentFormProps {
   initialData?: Item;
   action: (formData: FormData) => void;
   submitLabel: string;
+  teams: Team[];
 }
 
-export default function EquipmentForm({ initialData, action, submitLabel }: EquipmentFormProps) {
+export default function EquipmentForm({ initialData, action, submitLabel, teams }: EquipmentFormProps) {
   const [isPending, setIsPending] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,10 +66,10 @@ export default function EquipmentForm({ initialData, action, submitLabel }: Equi
             <select 
               name="owner_team_id" 
               required
-              defaultValue={initialData?.owner_team_id || MOCK_TEAMS[0].id}
+              defaultValue={initialData?.owner_team_id || (teams[0]?.id || '')}
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
             >
-              {MOCK_TEAMS.map(team => (
+              {teams.map(team => (
                 <option key={team.id} value={team.id}>{team.name}</option>
               ))}
             </select>

@@ -1,26 +1,219 @@
 [
   {
-    "id": "eri1",
-    "event_id": "e1",
-    "item_id": "i1",
+    "id": "eri_1774149908603q5f6g",
+    "event_id": "4/99499416/959528375/19700101@band.us",
+    "item_id": "i_gk_template",
     "required_flag": true,
-    "assigned_member_id": "m1",
-    "assignment_status": "ready"
+    "assignment_status": "unassigned"
   },
   {
-    "id": "eri2",
-    "event_id": "e1",
-    "item_id": "i14",
+    "id": "eri_1774149908603umm0y",
+    "event_id": "4/99499416/959528375/19700101@band.us",
+    "item_id": "i_match_ball_template",
     "required_flag": true,
-    "assigned_member_id": "m1",
-    "assignment_status": "ready"
+    "assignment_status": "unassigned"
   },
   {
-    "id": "eri3",
-    "event_id": "e1",
-    "item_id": "i11",
+    "id": "eri_17741499086034k6yu",
+    "event_id": "4/99499416/959528375/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
     "required_flag": true,
-    "assigned_member_id": "m1",
-    "assignment_status": "assigned"
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774149915161iq5fb",
+    "event_id": "4/99499416/959528375/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_177414999449136sej",
+    "event_id": "4/99499416/955134521/19700101@band.us",
+    "item_id": "i_gk_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774149994491udqwf",
+    "event_id": "4/99499416/955134521/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774149994491369m7",
+    "event_id": "4/99499416/955134521/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774154995687mql7b",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_T23",
+    "required_flag": true,
+    "assignment_status": "ready",
+    "assigned_member_id": "m46"
+  },
+  {
+    "id": "eri_1774155006914gabsq",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774155078256frqmo",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_T1",
+    "required_flag": true,
+    "assignment_status": "ready",
+    "assigned_member_id": "m65"
+  },
+  {
+    "id": "eri_1774155078256p5w8o",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774155078256sharp",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774155409918eruc0",
+    "event_id": "4/99499416/952483178/19700101@band.us",
+    "item_id": "i_gk_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_17741554099185u7lk",
+    "event_id": "4/99499416/952483178/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_17741554099187z1l9",
+    "event_id": "4/99499416/952483178/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_17741555205555gtlt",
+    "event_id": "4/99499416/954774993/19700101@band.us",
+    "item_id": "i_gk_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774155520555cjtjw",
+    "event_id": "4/99499416/954774993/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774155520555eyd4k",
+    "event_id": "4/99499416/954774993/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774155887005ll9d9",
+    "event_id": "4/99499416/940116872/19700101@band.us",
+    "item_id": "i_gk_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774155887005u0g1y",
+    "event_id": "4/99499416/940116872/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_17741558870052uu8e",
+    "event_id": "4/99499416/940116872/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774759578581ipaxc",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_ref_half_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774759578581tsx8r",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_ref_long_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774759578581arkoy",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_ref_pants_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774759578581fiuhv",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_ref_socks_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774759578581rmj84",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_ref_flags_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774759578581q100g",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_ref_gear_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1774760134031",
+    "event_id": "4/99499416/955134375/19700101@band.us",
+    "item_id": "i_T1",
+    "required_flag": true,
+    "assignment_status": "ready",
+    "is_personal_item": false,
+    "assigned_member_id": "m65"
+  },
+  {
+    "id": "eri_1774766350018",
+    "event_id": "4/99499416/952483178/19700101@band.us",
+    "item_id": "i_S10",
+    "required_flag": true,
+    "assignment_status": "unassigned",
+    "is_personal_item": false
+  },
+  {
+    "id": "eri_1774767620614",
+    "event_id": "4/99499416/955134521/19700101@band.us",
+    "item_id": "i_T10",
+    "required_flag": true,
+    "assignment_status": "ready",
+    "is_personal_item": false,
+    "assigned_member_id": "m65"
   }
 ]

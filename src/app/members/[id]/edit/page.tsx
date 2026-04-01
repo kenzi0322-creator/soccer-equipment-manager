@@ -77,6 +77,31 @@ export default async function EditMemberPage({ params }: { params: Promise<{ id:
            </label>
         </div>
 
+        <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
+           <label className="flex items-center gap-3 cursor-pointer">
+             <input 
+               type="checkbox" 
+               name="has_black_pants" 
+               defaultChecked={member.has_black_pants}
+               className="w-5 h-5 text-slate-800 rounded border-slate-300 focus:ring-slate-800" 
+             />
+             <div className="flex font-bold text-slate-700 items-center justify-center gap-1.5">
+               黒パンツ保持 (審判用)
+             </div>
+           </label>
+           <label className="flex items-center gap-3 cursor-pointer">
+             <input 
+               type="checkbox" 
+               name="has_black_socks" 
+               defaultChecked={member.has_black_socks}
+               className="w-5 h-5 text-slate-800 rounded border-slate-300 focus:ring-slate-800" 
+             />
+             <div className="flex font-bold text-slate-700 items-center justify-center gap-1.5">
+               黒ソックス保持 (審判用)
+             </div>
+           </label>
+        </div>
+
         <div>
           <label className="flex items-center gap-1.5 text-sm font-bold text-slate-700 mb-2">
             <BookOpen size={16} /> 備考・メモ

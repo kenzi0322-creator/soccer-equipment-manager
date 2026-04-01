@@ -1,0 +1,6 @@
+[
+  { "id": "t1", "name": "文京一般", "category": "shared" },
+  { "id": "t2", "name": "都O40", "category": "shared" },
+  { "id": "t3", "name": "文京シニア", "category": "shared" },
+  { "id": "t_tun", "name": "TUN共通", "category": "shared" }
+]

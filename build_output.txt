@@ -1,0 +1,24 @@
+
+> equipment-manager@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 1113.6ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/events/[id]/edit/page.tsx:23:8
+Type error: Type '{ initialData: Event; action: (formData: FormData) => Promise<{ error: string; }>; }' is missing the following properties from type '{ initialData?: Event | undefined; action: (formData: FormData) => Promise<void | { error?: string | undefined; }>; teams: Team[]; venues: Venue[]; members: Member[]; }': teams, venues, members
+
+[0m [90m 21 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 22 |[39m
+[31m[1m>[22m[39m[90m 23 |[39m       [33m<[39m[33mEventForm[39m initialData[33m=[39m{event} action[33m=[39m{updateEventAction} [33m/[39m[33m>[39m
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 24 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 25 |[39m   )[33m;[39m
+ [90m 26 |[39m }[0m
+Next.js build worker exited with code: 1 and signal: null

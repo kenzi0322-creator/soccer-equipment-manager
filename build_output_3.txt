@@ -1,0 +1,24 @@
+
+> equipment-manager@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 1245.2ms
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/items/new/page.tsx:27:8
+Type error: Property 'teams' is missing in type '{ action: (formData: FormData) => Promise<void>; submitLabel: string; }' but required in type 'EquipmentFormProps'.
+
+[0m [90m 25 |[39m       [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 26 |[39m
+[31m[1m>[22m[39m[90m 27 |[39m       [33m<[39m[33mEquipmentForm[39m action[33m=[39m{createItem} submitLabel[33m=[39m[32m"登録する"[39m [33m/[39m[33m>[39m
+ [90m    |[39m        [31m[1m^[22m[39m
+ [90m 28 |[39m     [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m
+ [90m 29 |[39m   )[33m;[39m
+ [90m 30 |[39m }[0m
+Next.js build worker exited with code: 1 and signal: null

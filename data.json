@@ -1,156 +1,1019 @@
 [
   {
-    "id": "i1",
-    "item_code": "SS-C-01",
-    "name": "レフェリースターターセットC-1",
-    "category": "セット",
+    "id": "i_B1",
+    "item_code": "B1",
+    "name": "GKユニ赤1番",
+    "category": "goalkeeper",
     "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42",
+    "note": "L, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_B2",
+    "item_code": "B2",
+    "name": "GKユニ赤12番",
+    "category": "goalkeeper",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m22",
+    "note": "O, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_B3",
+    "item_code": "B3",
+    "name": "GKユニ緑1番",
+    "category": "goalkeeper",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m22",
+    "note": "O, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_B4",
+    "item_code": "B4",
+    "name": "GKユニ緑12番",
+    "category": "goalkeeper",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m22",
+    "note": "L, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_B5",
+    "item_code": "B5",
+    "name": "レフリー袋（M）",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42",
+    "note": "M, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_B6",
+    "item_code": "B6",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B7",
+    "item_code": "B7",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B8",
+    "item_code": "B8",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B9",
+    "item_code": "B9",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B10",
+    "item_code": "B10",
+    "name": "レフリー袋（L）",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42",
+    "note": "L, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_B11",
+    "item_code": "B11",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B12",
+    "item_code": "B12",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B13",
+    "item_code": "B13",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B14",
+    "item_code": "B14",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B15",
+    "item_code": "B15",
+    "name": "レフリー袋（XO）",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42",
+    "note": "XO, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_B16",
+    "item_code": "B16",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B17",
+    "item_code": "B17",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B18",
+    "item_code": "B18",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B19",
+    "item_code": "B19",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B20",
+    "item_code": "B20",
+    "name": "レフリーセット",
+    "category": "main_referee",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m22",
+    "note": "カードケース他一式"
+  },
+  {
+    "id": "i_B21",
+    "item_code": "B21",
+    "name": "レフリーフラッグ",
+    "category": "assistant_referee",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m22"
+  },
+  {
+    "id": "i_B22",
+    "item_code": "B22",
+    "name": "C キャプテンマーク 赤",
+    "category": "captain",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B23_C",
+    "item_code": "B23",
+    "name": "C キャプテンマーク オレンジ",
+    "category": "captain",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m42"
+  },
+  {
+    "id": "i_B23",
+    "item_code": "M3",
+    "name": "M3 試合球 一般",
+    "category": "shared",
+    "owner_team_id": "t1",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_T1",
+    "item_code": "T1",
+    "name": "GKユニ赤1番",
+    "category": "goalkeeper",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m65",
+    "note": "L, 長袖・パンツ・ストッキング",
+    "last_handoff_at": "2026-03-28"
+  },
+  {
+    "id": "i_T2",
+    "item_code": "T2",
+    "name": "GKユニ赤12番",
+    "category": "goalkeeper",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1",
+    "note": "O, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_T3",
+    "item_code": "T3",
+    "name": "GKユニ緑1番",
+    "category": "goalkeeper",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1",
+    "note": "O, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_T4",
+    "item_code": "T4",
+    "name": "GKユニ緑12番",
+    "category": "goalkeeper",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1",
+    "note": "L, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_T5",
+    "item_code": "T5",
+    "name": "レフリー袋（M）",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1",
+    "note": "M, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_T6",
+    "item_code": "T6",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t2",
     "shared_flag": true,
     "current_holder_id": "m1"
   },
   {
-    "id": "i2",
-    "item_code": "SS-C-02",
-    "name": "レフェリースターターセットC-2",
-    "category": "セット",
+    "id": "i_T7",
+    "item_code": "T7",
+    "name": "レフリー長袖",
+    "category": "shared",
     "owner_team_id": "t2",
     "shared_flag": true,
-    "current_holder_id": "m2"
+    "current_holder_id": "m1"
   },
   {
-    "id": "i3",
-    "item_code": "SS-C-03",
-    "name": "レフェリースターターセットC-3",
-    "category": "セット",
+    "id": "i_T8",
+    "item_code": "T8",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T9",
+    "item_code": "T9",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T10",
+    "item_code": "T10",
+    "name": "レフリー袋（L）",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m65",
+    "note": "L, 半袖・長袖・パンツ・ストッキング",
+    "last_handoff_at": "2026-03-29"
+  },
+  {
+    "id": "i_T11",
+    "item_code": "T11",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T12",
+    "item_code": "T12",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T13",
+    "item_code": "T13",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T14",
+    "item_code": "T14",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T15",
+    "item_code": "T15",
+    "name": "レフリー袋（XO）",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1",
+    "note": "XO, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_T16",
+    "item_code": "T16",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T17",
+    "item_code": "T17",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T18",
+    "item_code": "T18",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T19",
+    "item_code": "T19",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T20",
+    "item_code": "T20",
+    "name": "レフリーセット",
+    "category": "main_referee",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1",
+    "note": "カードケース他一式"
+  },
+  {
+    "id": "i_T21",
+    "item_code": "T21",
+    "name": "レフリーフラッグ",
+    "category": "assistant_referee",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T22",
+    "item_code": "T22",
+    "name": "C キャプテンマーク 赤",
+    "category": "captain",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T23_C",
+    "item_code": "T23",
+    "name": "C キャプテンマーク オレンジ",
+    "category": "captain",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m1"
+  },
+  {
+    "id": "i_T23",
+    "item_code": "M4",
+    "name": "M4 試合球 都O40",
+    "category": "shared",
+    "owner_team_id": "t2",
+    "shared_flag": true,
+    "current_holder_id": "m46",
+    "last_handoff_at": "2026-03-29"
+  },
+  {
+    "id": "i_S1",
+    "item_code": "S1",
+    "name": "GKユニ赤1番",
+    "category": "goalkeeper",
     "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9",
+    "note": "L, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_S2",
+    "item_code": "S2",
+    "name": "GKユニ赤12番",
+    "category": "goalkeeper",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9",
+    "note": "O, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_S3",
+    "item_code": "S3",
+    "name": "GKユニ緑1番",
+    "category": "goalkeeper",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m10",
+    "note": "O, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_S4",
+    "item_code": "S4",
+    "name": "GKユニ緑12番",
+    "category": "goalkeeper",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m25",
+    "note": "L, 長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_S5",
+    "item_code": "S5",
+    "name": "レフリー袋（S）",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9",
+    "note": "S, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_S6",
+    "item_code": "S6",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_S7",
+    "item_code": "S7",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_S8",
+    "item_code": "S8",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_S9",
+    "item_code": "S9",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_S10",
+    "item_code": "S10",
+    "name": "レフリー袋（L）",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m15",
+    "note": "L, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_S11",
+    "item_code": "S11",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m15"
+  },
+  {
+    "id": "i_S12",
+    "item_code": "S12",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m15"
+  },
+  {
+    "id": "i_S13",
+    "item_code": "S13",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m15"
+  },
+  {
+    "id": "i_S14",
+    "item_code": "S14",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m15"
+  },
+  {
+    "id": "i_S15",
+    "item_code": "S15",
+    "name": "レフリー袋（XO）",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9",
+    "note": "XO, 半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "id": "i_S16",
+    "item_code": "S16",
+    "name": "レフリー半袖",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m35"
+  },
+  {
+    "id": "i_S17",
+    "item_code": "S17",
+    "name": "レフリー長袖",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m35"
+  },
+  {
+    "id": "i_S18",
+    "item_code": "S18",
+    "name": "レフリーパンツ",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m35"
+  },
+  {
+    "id": "i_S19",
+    "item_code": "S19",
+    "name": "レフリーソックス",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m35"
+  },
+  {
+    "id": "i_S20",
+    "item_code": "S20",
+    "name": "レフリーセット",
+    "category": "main_referee",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9",
+    "note": "カードケース他一式"
+  },
+  {
+    "id": "i_S21",
+    "item_code": "S21",
+    "name": "レフリーフラッグ",
+    "category": "assistant_referee",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_S22",
+    "item_code": "S22",
+    "name": "C キャプテンマーク 赤",
+    "category": "captain",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m27"
+  },
+  {
+    "id": "i_S23_C",
+    "item_code": "S23",
+    "name": "C キャプテンマーク オレンジ",
+    "category": "captain",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m27"
+  },
+  {
+    "id": "i_S23",
+    "item_code": "M5",
+    "name": "M5 試合球 シニア",
+    "category": "shared",
+    "owner_team_id": "t3",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007ugs0",
+    "item_code": "M1",
+    "name": "M1 TUN2025文京区民大会試合球1/2",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_17739964030071mtf",
+    "item_code": "M2",
+    "name": "M2 TUN2025文京区民大会試合球2/2",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007fzen",
+    "item_code": "U1",
+    "name": "U1 TUN MIKASA FT550D(BL)",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007ug9n",
+    "item_code": "U2",
+    "name": "U2 MNペレーダ5000(B/W)",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_17739964030073x3n",
+    "item_code": "U3",
+    "name": "U3 MN adidas AL RIHLA (OR)",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007h24g",
+    "item_code": "U4",
+    "name": "U4 MNフィナーレ 23-24",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
     "shared_flag": true,
     "current_holder_id": null
   },
   {
-    "id": "i4",
-    "item_code": "CAP-O-01",
-    "name": "キャプテンマーク オレンジ-1",
-    "color": "オレンジ",
-    "category": "小物",
-    "owner_team_id": "t1",
-    "shared_flag": false,
-    "current_holder_id": "m1"
-  },
-  {
-    "id": "i5",
-    "item_code": "CAP-O-02",
-    "name": "キャプテンマーク オレンジ-2",
-    "color": "オレンジ",
-    "category": "小物",
-    "owner_team_id": "t2",
-    "shared_flag": false,
-    "current_holder_id": "m2"
-  },
-  {
-    "id": "i6",
-    "item_code": "CAP-Y-01",
-    "name": "キャプテンマーク イエロー-1",
-    "color": "イエロー",
-    "category": "小物",
-    "owner_team_id": "t3",
-    "shared_flag": false,
-    "current_holder_id": "m3"
-  },
-  {
-    "id": "i7",
-    "item_code": "CAP-Y-02",
-    "name": "キャプテンマーク イエロー-2",
-    "color": "イエロー",
-    "category": "小物",
-    "owner_team_id": "t1",
-    "shared_flag": false,
-    "current_holder_id": "m4"
-  },
-  {
-    "id": "i8",
-    "item_code": "FLAG-01",
-    "name": "アシスタントレフリーフラッグ-1",
-    "category": "フラッグ",
-    "owner_team_id": "t1",
-    "shared_flag": true,
-    "current_holder_id": "m1"
-  },
-  {
-    "id": "i9",
-    "item_code": "FLAG-02",
-    "name": "アシスタントレフリーフラッグ-2",
-    "category": "フラッグ",
-    "owner_team_id": "t2",
-    "shared_flag": true,
-    "current_holder_id": "m2"
-  },
-  {
-    "id": "i10",
-    "item_code": "FLAG-03",
-    "name": "アシスタントレフリーフラッグ-3",
-    "category": "フラッグ",
-    "owner_team_id": "t3",
-    "shared_flag": true,
-    "current_holder_id": "m3"
-  },
-  {
-    "id": "i11",
-    "item_code": "REF-M-01",
-    "name": "レフェリー4点セット M-1",
-    "size": "M",
-    "category": "ウェア",
-    "owner_team_id": "t1",
-    "shared_flag": true,
-    "current_holder_id": "m4"
-  },
-  {
-    "id": "i12",
-    "item_code": "REF-M-02",
-    "name": "レフェリー4点セット M-2",
-    "size": "M",
-    "category": "ウェア",
-    "owner_team_id": "t2",
+    "id": "i_1773996403007j3km",
+    "item_code": "U5",
+    "name": "U5 TUN MIKASA FT550D(BL)",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
     "shared_flag": true,
     "current_holder_id": null
   },
   {
-    "id": "i13",
-    "item_code": "REF-L-01",
-    "name": "レフェリー4点セット L-1",
-    "size": "L",
-    "category": "ウェア",
-    "owner_team_id": "t3",
+    "id": "i_u6",
+    "item_code": "U6",
+    "name": "U6 ＭＮペレーダ5000(B/W)",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
     "shared_flag": true,
-    "current_holder_id": "m3"
+    "current_holder_id": null
   },
   {
-    "id": "i14",
-    "item_code": "REF-L-02",
-    "name": "レフェリー4点セット L-2",
-    "size": "L",
-    "category": "ウェア",
-    "owner_team_id": "t1",
+    "id": "i_u7",
+    "item_code": "U7",
+    "name": "U7 MN adidas AL RIHLA (OR)",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
     "shared_flag": true,
-    "current_holder_id": "m1"
+    "current_holder_id": null
   },
   {
-    "id": "i15",
-    "item_code": "REF-XO-01",
-    "name": "レフェリー4点セット XO-1",
-    "size": "XO",
-    "category": "ウェア",
-    "owner_team_id": "t2",
+    "id": "i_u8",
+    "item_code": "U8",
+    "name": "U8 MNフィナーレ23-24",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": null
+  },
+  {
+    "id": "i_u9",
+    "item_code": "U9",
+    "name": "U9 MNファイナルオーシャンズ",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": null
+  },
+  {
+    "id": "i_u10",
+    "item_code": "U10",
+    "name": "U10 MN",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": null
+  },
+  {
+    "id": "i_u11",
+    "item_code": "U11",
+    "name": "U11 MN",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": null
+  },
+  {
+    "id": "i_u12",
+    "item_code": "U12",
+    "name": "U12 MN",
+    "category": "up_ball",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": null
+  },
+  {
+    "id": "i_1773996403007r7z7",
+    "item_code": "F1",
+    "name": "F1 MNフットサル1/6",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_177399640300783uf",
+    "item_code": "F2",
+    "name": "F2 MNフットサル2/6",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007r4jk",
+    "item_code": "F3",
+    "name": "F3 MNフットサル3/6",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_17739964030078wo8",
+    "item_code": "F4",
+    "name": "F4 MNフットサル4/6",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_177399640300758u8",
+    "item_code": "F5",
+    "name": "F5 MNフットサル5/6",
+    "category": "shared",
+    "owner_team_id": "t_tun",
     "shared_flag": true,
     "current_holder_id": "m2"
   },
   {
-    "id": "i16",
-    "item_code": "REF-XO-02",
-    "name": "レフェリー4点セット XO-2",
-    "size": "XO",
-    "category": "ウェア",
-    "owner_team_id": "t3",
+    "id": "i_1773996403007iz6y",
+    "item_code": "F6",
+    "name": "F6 MNフットサル6/6",
+    "category": "shared",
+    "owner_team_id": "t_tun",
     "shared_flag": true,
-    "current_holder_id": "m3"
+    "current_holder_id": "m2"
+  },
+  {
+    "id": "i_1773996403007uscs",
+    "item_code": "OTH-1",
+    "name": "🎽ビブスfinta（水色）12枚",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007h74z",
+    "item_code": "OTH-2",
+    "name": "🎽ビブスfinta（紫）12枚",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m14"
+  },
+  {
+    "id": "i_17739964030076q3a",
+    "item_code": "OTH-3",
+    "name": "🎽ビブスfinta（ピンク）20枚",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007ltem",
+    "item_code": "OTH-4",
+    "name": "🎽ビブス（オレンジ）12枚",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007hbmo",
+    "item_code": "OTH-5",
+    "name": "🎽ビブス（きみどり）12枚",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_17739964030075sv6",
+    "item_code": "OTH-6",
+    "name": "🎽ビブス（ネイビー）12枚",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007va3h",
+    "item_code": "OTH-7",
+    "name": "TUN腕時計",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007md8i",
+    "item_code": "OTH-8",
+    "name": "TUN空気入れ（文京区協会配布）",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007xahp",
+    "item_code": "OTH-9",
+    "name": "MNキーパーグローブ（ナイキ）",
+    "category": "goalkeeper",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_177399640300737bm",
+    "item_code": "OTH-10",
+    "name": "キーパーグローブ（プーマ）",
+    "category": "goalkeeper",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007n0mv",
+    "item_code": "OTH-11",
+    "name": "レフリーフラッグ",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403007mdqt",
+    "item_code": "OTH-12",
+    "name": "電子ホイッスル",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_17739964030073hsr",
+    "item_code": "OTH-13",
+    "name": "ストップウオッチ",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_17739964030072fz7",
+    "item_code": "OTH-14",
+    "name": "電動空気入れ",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403008ejmt",
+    "item_code": "OTH-15",
+    "name": "マーカー",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_17739964030081tya",
+    "item_code": "OTH-16",
+    "name": "ボール入れ（ネット10個用）",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403008smbp",
+    "item_code": "OTH-17",
+    "name": "MNフットサル簡易ゴール1/2",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
+  },
+  {
+    "id": "i_1773996403008pkun",
+    "item_code": "OTH-18",
+    "name": "MNフットサル簡易ゴール2/2",
+    "category": "shared",
+    "owner_team_id": "t_tun",
+    "shared_flag": true,
+    "current_holder_id": "m9"
   }
 ]

@@ -23,10 +23,13 @@ export type Member = {
   uniform_number?: string;
   nearest_station?: string;
   has_car?: boolean;
+  has_black_pants?: boolean;
+  has_black_socks?: boolean;
 };
 
 export type Event = {
   id: string;
+  external_event_id?: string; // stable ID from BAND (UID)
   title: string;
   date: string; // YYYY-MM-DD
   start_at?: string; // HH:mm
@@ -38,6 +41,7 @@ export type Event = {
   main_referee_id?: string;
   sub_referee_id?: string;
   note?: string;
+  sync_status?: 'normal' | 'changed' | 'deleted_in_source';
 };
 
 export type EventParticipant = {
@@ -62,6 +66,7 @@ export type Item = {
   current_holder_type?: string;
   status_note?: string;
   note?: string;
+  last_handoff_at?: string;
 };
 
 export type Handoff = {
@@ -86,6 +91,7 @@ export type EventRequiredItem = {
   required_flag: boolean;
   assigned_member_id?: string;
   assignment_status: 'unassigned' | 'assigned' | 'ready';
+  is_personal_item?: boolean;
   note?: string;
 };
 

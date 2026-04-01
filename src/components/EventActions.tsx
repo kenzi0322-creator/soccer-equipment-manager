@@ -7,7 +7,10 @@ import { deleteEventAction } from '@/app/actions/event';
 export default function EventActions({ eventId }: { eventId: string }) {
   const handleDelete = async () => {
     if (confirm('この予定を削除しますか？\n※BANDから再度取り込むと復元されます。')) {
-      await deleteEventAction(eventId);
+      const res = await deleteEventAction(eventId);
+      if (res?.error) {
+        alert(res.error);
+      }
     }
   };
 

@@ -1,15 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { Event } from '@/types';
-import { MOCK_TEAMS, MOCK_VENUES, MOCK_MEMBERS } from '@/lib/data/mock';
+import { Event, Team, Venue, Member } from '@/types';
 
 export default function EventForm({ 
   initialData, 
-  action 
+  action,
+  teams,
+  venues,
+  members
 }: { 
   initialData?: Event, 
-  action: (formData: FormData) => Promise<{error?: string} | void> 
+  action: (formData: FormData) => Promise<{error?: string} | void>,
+  teams: Team[],
+  venues: Venue[],
+  members: Member[]
 }) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -86,22 +91,22 @@ export default function EventForm({
           <label className="block text-sm font-bold text-slate-700 mb-1">対象チーム *</label>
           <select 
             name="primary_team_id" 
-            defaultValue={initialData?.primary_team_id || MOCK_TEAMS[0].id}
+            defaultValue={initialData?.primary_team_id || (teams[0]?.id || '')}
             required
             className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
           >
-            {MOCK_TEAMS.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+            {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
         </div>
         <div>
           <label className="block text-sm font-bold text-slate-700 mb-1">会場 *</label>
           <select 
             name="venue_id" 
-            defaultValue={initialData?.venue_id || MOCK_VENUES[0].id}
+            defaultValue={initialData?.venue_id || (venues[0]?.id || '')}
             required
             className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
           >
-            {MOCK_VENUES.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
+            {venues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
           </select>
         </div>
       </div>
@@ -137,7 +142,7 @@ export default function EventForm({
               className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white"
             >
               <option value="">未設定</option>
-              {MOCK_MEMBERS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
           </div>
           <div>
@@ -148,7 +153,7 @@ export default function EventForm({
               className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white"
             >
               <option value="">未設定</option>
-              {MOCK_MEMBERS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
             </select>
           </div>
         </div>

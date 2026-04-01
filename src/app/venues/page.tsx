@@ -1,11 +1,8 @@
-'use client';
-
-import { useState } from 'react';
-import { MOCK_VENUES } from '@/lib/data/mock';
+import { getVenues } from '@/lib/data/db';
 import { MapPin, Plus, Edit3, Car, Navigation, AlertTriangle } from 'lucide-react';
 
-export default function VenuesList() {
-  const [venues] = useState(MOCK_VENUES);
+export default async function VenuesList() {
+  const venues = await getVenues();
 
   return (
     <div className="space-y-6 pb-6">

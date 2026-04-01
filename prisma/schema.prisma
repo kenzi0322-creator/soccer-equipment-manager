@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Team {
+  id       String    @id @default(cuid())
+  name     String
+  category String?
+  members  Member[]
+  items    Item[]
+  events   Event[]
+}
+
+model Venue {
+  id             String    @id @default(cuid())
+  name           String
+  address        String?
+  parking_note   String?
+  handoff_note   String?
+  meeting_note   String?
+  difficulty_note String?
+  events         Event[]
+}
+
+model Member {
+  id               String    @id @default(cuid())
+  name             String
+  role             String?
+  team_id          String
+  team             Team      @relation(fields: [team_id], references: [id])
+  note             String?
+  uniform_number   String?
+  nearest_station  String?
+  has_car          Boolean   @default(false)
+  has_black_pants  Boolean   @default(false)
+  has_black_socks  Boolean   @default(false)
+  
+  itemsAsHolder    Item[]    @relation("CurrentHolder")
+  requiredItems    EventRequiredItem[]
+  handoffsFrom     Handoff[] @relation("HandoffFrom")
+  handoffsTo       Handoff[] @relation("HandoffTo")
+  participants     EventParticipant[]
+}
+
+model Event {
+  id               String    @id // Use BAND UID or CUID
+  title            String
+  date             String    // YYYY-MM-DD
+  start_at         String?   // HH:mm
+  end_at           String?   // HH:mm
+  venue_id         String
+  venue            Venue     @relation(fields: [venue_id], references: [id])
+  primary_team_id  String
+  primary_team     Team      @relation(fields: [primary_team_id], references: [id])
+  is_joint_match   Boolean   @default(false)
+  referee_time     String?
+  main_referee_id  String?
+  sub_referee_id   String?
+  note             String?
+  
+  requiredItems    EventRequiredItem[]
+  participants     EventParticipant[]
+}
+
+model Item {
+  id               String    @id @default(cuid())
+  item_code        String    @unique
+  name             String
+  category         String?
+  size             String?
+  color            String?
+  owner_team_id    String
+  owner_team       Team      @relation(fields: [owner_team_id], references: [id])
+  shared_flag      Boolean   @default(false)
+  photo_url        String?
+  current_holder_id String?
+  current_holder   Member?   @relation("CurrentHolder", fields: [current_holder_id], references: [id])
+  current_holder_type String?
+  status_note      String?
+  note             String?
+  
+  requiredInEvents EventRequiredItem[]
+  handoffs         Handoff[]
+}
+
+model EventRequiredItem {
+  id                 String    @id @default(cuid())
+  event_id           String
+  event              Event     @relation(fields: [event_id], references: [id])
+  item_id            String
+  item               Item      @relation(fields: [item_id], references: [id])
+  required_flag      Boolean   @default(true)
+  assigned_member_id String?
+  assigned_member    Member?   @relation(fields: [assigned_member_id], references: [id])
+  assignment_status  String    @default("unassigned") // unassigned, assigned, ready
+  is_personal_item   Boolean   @default(false)
+  note               String?
+}
+
+model EventParticipant {
+  id                String    @id @default(cuid())
+  event_id          String
+  event              Event     @relation(fields: [event_id], references: [id])
+  member_id         String
+  member            Member    @relation(fields: [member_id], references: [id])
+  attendance_status String    @default("pending") // attending, absent, pending
+  updated_at        DateTime  @default(now())
+}
+
+model Handoff {
+  id                 String    @id @default(cuid())
+  item_id            String
+  item               Item      @relation(fields: [item_id], references: [id])
+  from_member_id     String
+  from_member       Member    @relation("HandoffFrom", fields: [from_member_id], references: [id])
+  to_member_id       String
+  to_member         Member    @relation("HandoffTo", fields: [to_member_id], references: [id])
+  source_event_id    String?
+  target_event_id    String?
+  venue_id           String?
+  handoff_start_at   DateTime?
+  handoff_end_at     DateTime?
+  receive_deadline_at DateTime?
+  status             String    @default("pending") // pending, scheduled, completed, returned, return_pending
+  note               String?
+}

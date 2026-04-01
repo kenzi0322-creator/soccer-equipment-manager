@@ -1,20 +1,19 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
-import { ArrowLeft, PackagePlus } from 'lucide-react';
+import { PackagePlus } from 'lucide-react';
 import EquipmentForm from '@/components/EquipmentForm';
 import { createItem } from '@/app/actions/item';
+import { getTeams } from '@/lib/data/db';
+import Link from 'next/link';
 
-export default function NewItemPage() {
-  const router = useRouter();
+export default async function NewItemPage() {
+  const teams = await getTeams();
 
   return (
     <div className="space-y-6 pb-6">
       {/* Header */}
       <div className="flex items-center mb-4">
-        <button onClick={() => router.back()} className="p-2 -ml-2 text-slate-500 hover:text-slate-800 rounded-full hover:bg-slate-100 transition-colors">
-          <ArrowLeft size={24} />
-        </button>
+        <Link href="/items" className="p-2 -ml-2 text-slate-500 hover:text-slate-800 rounded-full hover:bg-slate-100 transition-colors">
+          <span className="text-sm font-bold">&larr; 戻る</span>
+        </Link>
         <span className="font-medium text-slate-800 ml-2">新規備品の登録</span>
       </div>
 
@@ -24,7 +23,7 @@ export default function NewItemPage() {
         </div>
       </div>
 
-      <EquipmentForm action={createItem} submitLabel="登録する" />
+      <EquipmentForm action={createItem} submitLabel="登録する" teams={teams} />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { saveItem, updateItemInDb } from '@/lib/data/db';
+import { saveItem, updateItemInDb, getItem, getItems, saveItems, saveItemsBulk } from '@/lib/data/db';
 import { Item } from '@/types';
 
 function generateId() {
@@ -47,7 +47,6 @@ export async function updateItem(id: string, formData: FormData) {
 
   // We construct a partial object, the rest are kept by DB update logic if it were real.
   // BUT our db.ts `updateItemInDb` actually expects the full Item currently. Let's fetch the old one.
-  const { getItem } = await import('@/lib/data/db');
   const oldItem = await getItem(id);
   
   if (!oldItem) throw new Error('Item not found');
@@ -68,4 +67,64 @@ export async function updateItem(id: string, formData: FormData) {
   revalidatePath(`/items/${id}`);
   revalidatePath('/');
   redirect(`/items/${id}`);
+}
+
+export async function bulkImportItemsAction(parsedData: any[]) {
+  
+  const newItems: Item[] = parsedData.map(d => ({
+    id: generateId(),
+    item_code: d.item_code || '',
+    name: d.name || '名称未設定',
+    category: d.category || 'OTHER',
+    size: d.size || '',
+    color: d.color || '',
+    owner_team_id: d.owner_team_id || 't1', // default team
+    shared_flag: true, // managed as shared resource initially
+    current_holder_id: null,
+    note: d.description || d.note || '',
+  }));
+
+  await saveItemsBulk(newItems);
+  
+  revalidatePath('/');
+  revalidatePath('/items');
+  return { success: true, count: newItems.length };
+}
+
+export async function deleteItemAction(formData: FormData) {
+  const id = formData.get('id') as string;
+  
+  const items = await getItems();
+  const nextItems = items.filter(i => i.id !== id);
+  await saveItems(nextItems);
+  
+  revalidatePath('/items');
+  redirect('/');
+}
+
+export async function updateItemHolderAction(formData: FormData) {
+  const id = formData.get('id') as string;
+  const current_holder_id = formData.get('current_holder_id') as string;
+  const last_handoff_at = formData.get('last_handoff_at') as string;
+
+  if (!id) return { error: 'IDが不足しています' };
+
+  try {
+    const items = await getItems();
+    const index = items.findIndex(i => i.id === id);
+    if (index === -1) return { error: 'アイテムが見つかりません' };
+
+    items[index] = {
+      ...items[index],
+      current_holder_id: current_holder_id || null,
+      last_handoff_at: last_handoff_at || items[index].last_handoff_at
+    };
+
+    await saveItems(items);
+    revalidatePath('/');
+    return { success: true };
+  } catch (e: any) {
+    console.error('Update Holder Error:', e);
+    return { error: '更新に失敗しました' };
+  }
 }

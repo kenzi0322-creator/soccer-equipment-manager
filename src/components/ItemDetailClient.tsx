@@ -2,23 +2,41 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { MOCK_TEAMS, MOCK_MEMBERS, MOCK_EVENTS, MOCK_HANDOFFS, MOCK_VENUES } from '@/lib/data/mock';
 import { calculateItemStatus } from '@/lib/logic/status';
 import { ArrowLeft, Edit3, User, Calendar, MapPin, Tag, Flag, Package, Info, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import { Item, ItemStatusColor } from '@/types';
+import { Item, ItemStatusColor, Member, Team, Venue, Handoff, Event, EventRequiredItem, EventParticipant } from '@/types';
 import { clsx } from 'clsx';
+import { formatItemCode } from '@/lib/utils/format';
 
-export default function ItemDetailClient({ initialItem }: { initialItem: Item }) {
+export default function ItemDetailClient({ 
+  initialItem, 
+  members,
+  teams,
+  venues,
+  handoffs,
+  events,
+  eris,
+  participants
+}: { 
+  initialItem: Item, 
+  members: Member[],
+  teams: Team[],
+  venues: Venue[],
+  handoffs: Handoff[],
+  events: Event[],
+  eris: EventRequiredItem[],
+  participants: EventParticipant[]
+}) {
   const router = useRouter();
   
   // Note: we use initialItem directly. If we want realtime optimistic updates 
   // on notes, we could keep local state. For now, we just derive status.
   const item = initialItem;
   
-  const statusData = calculateItemStatus(item);
-  const team = MOCK_TEAMS.find(t => t.id === item.owner_team_id);
-  const holder = MOCK_MEMBERS.find(m => m.id === item.current_holder_id);
+  const statusData = calculateItemStatus(item, events, eris, participants, handoffs);
+  const team = teams.find(t => t.id === item.owner_team_id);
+  const holder = members.find(m => m.id === item.current_holder_id);
 
   const [isEditingNote, setIsEditingNote] = useState(false);
   const [noteText, setNoteText] = useState(item.note || '');
@@ -30,7 +48,7 @@ export default function ItemDetailClient({ initialItem }: { initialItem: Item })
     setIsEditingNote(false);
   };
 
-  const pastHandoffs = MOCK_HANDOFFS.filter(h => h.item_id === item.id && h.status === 'completed');
+  const pastHandoffs = handoffs.filter(h => h.item_id === item.id && h.status === 'completed');
 
   const getStatusStyles = (color: ItemStatusColor) => {
     switch(color) {
@@ -69,7 +87,7 @@ export default function ItemDetailClient({ initialItem }: { initialItem: Item })
 
         <div className="flex items-center gap-2 mb-2">
           <span className="text-xs text-slate-500 border border-slate-200 px-2 py-0.5 rounded-md bg-slate-50 font-mono">
-            {item.item_code}
+            {formatItemCode(item.item_code, true)}
           </span>
           {item.shared_flag && (
             <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md font-medium border border-purple-200">
@@ -114,7 +132,7 @@ export default function ItemDetailClient({ initialItem }: { initialItem: Item })
             <div>
               <span className="block text-xs text-slate-500 mb-0.5">現在保有者</span>
               <span className="font-bold text-slate-800 text-lg">
-                {holder ? holder.name : '未定・倉庫'}
+                {holder ? holder.name : '未設定'}
               </span>
             </div>
           </div>
@@ -129,7 +147,7 @@ export default function ItemDetailClient({ initialItem }: { initialItem: Item })
                   {statusData.nextEvent.venue_id && (
                     <span className="flex items-center gap-1">
                       <MapPin size={12}/> 
-                      {MOCK_VENUES.find(v => v.id === statusData.nextEvent!.venue_id)?.name}
+                      {venues.find(v => v.id === statusData.nextEvent!.venue_id)?.name}
                     </span>
                   )}
                 </div>
@@ -147,7 +165,7 @@ export default function ItemDetailClient({ initialItem }: { initialItem: Item })
                 <div>
                   <span className="text-[10px] font-bold text-orange-600 uppercase tracking-wider block mb-1">Action Required</span>
                   <div className="text-sm font-bold text-slate-800">
-                    {MOCK_MEMBERS.find(m => m.id === statusData.nextHandoff!.to_member_id)?.name} へパスする
+                    {members.find(m => m.id === statusData.nextHandoff!.to_member_id)?.name} へパスする
                   </div>
                   <div className="text-xs text-slate-600 mt-1">
                     期限: {new Date(statusData.nextHandoff.receive_deadline_at!).toLocaleDateString('ja-JP')}
@@ -210,9 +228,9 @@ export default function ItemDetailClient({ initialItem }: { initialItem: Item })
                     <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.25rem)] bg-white p-3 rounded-xl border border-slate-200 shadow-sm ml-4 md:ml-0 text-sm">
                       <div className="text-xs text-slate-400 mb-1">{new Date(h.handoff_end_at || h.receive_deadline_at || Date.now()).toLocaleDateString()}</div>
                       <div className="font-medium text-slate-700">
-                        {h.from_member_id ? MOCK_MEMBERS.find(m => m.id === h.from_member_id)?.name : '新規登録'} 
+                        {h.from_member_id ? members.find(m => m.id === h.from_member_id)?.name : '新規登録'} 
                         <span className="text-slate-400 mx-1">&rarr;</span> 
-                        {MOCK_MEMBERS.find(m => m.id === h.to_member_id)?.name}
+                        {members.find(m => m.id === h.to_member_id)?.name}
                       </div>
                     </div>
                   </div>

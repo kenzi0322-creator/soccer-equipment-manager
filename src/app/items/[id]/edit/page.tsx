@@ -2,13 +2,16 @@ import { notFound } from 'next/navigation';
 import { Edit3 } from 'lucide-react';
 import EquipmentForm from '@/components/EquipmentForm';
 import { updateItem } from '@/app/actions/item';
-import { getItem } from '@/lib/data/db';
+import { getItem, getTeams } from '@/lib/data/db';
 import Link from 'next/link';
 
 export default async function EditItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
-  const initialItem = await getItem(id);
+  const [initialItem, teams] = await Promise.all([
+    getItem(id),
+    getTeams()
+  ]);
   
   if (!initialItem) return notFound();
 
@@ -30,7 +33,7 @@ export default async function EditItemPage({ params }: { params: Promise<{ id: s
         </div>
       </div>
 
-      <EquipmentForm initialData={initialItem} action={updateItemWithId} submitLabel="変更を保存する" />
+      <EquipmentForm initialData={initialItem} action={updateItemWithId} submitLabel="変更を保存する" teams={teams} />
     </div>
   );
 }

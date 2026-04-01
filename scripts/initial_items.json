@@ -1,0 +1,902 @@
+[
+  {
+    "item_code": "B1",
+    "team": "文京一般",
+    "item_name": "GKユニ赤1番",
+    "role_type": "goalkeeper",
+    "size": "L",
+    "holder": "栗坂",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "B2",
+    "team": "文京一般",
+    "item_name": "GKユニ赤12番",
+    "role_type": "goalkeeper",
+    "size": "O",
+    "holder": "葭田野",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "B3",
+    "team": "文京一般",
+    "item_name": "GKユニ緑1番",
+    "role_type": "goalkeeper",
+    "size": "O",
+    "holder": "葭田野",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "B4",
+    "team": "文京一般",
+    "item_name": "GKユニ緑12番",
+    "role_type": "goalkeeper",
+    "size": "L",
+    "holder": "葭田野",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "B5",
+    "team": "文京一般",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "M",
+    "holder": "栗坂",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "B6",
+    "team": "文京一般",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B7",
+    "team": "文京一般",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B8",
+    "team": "文京一般",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B9",
+    "team": "文京一般",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B10",
+    "team": "文京一般",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "L",
+    "holder": "栗坂",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "B11",
+    "team": "文京一般",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B12",
+    "team": "文京一般",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B13",
+    "team": "文京一般",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B14",
+    "team": "文京一般",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B15",
+    "team": "文京一般",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "XO",
+    "holder": "栗坂",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "B16",
+    "team": "文京一般",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B17",
+    "team": "文京一般",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B18",
+    "team": "文京一般",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B19",
+    "team": "文京一般",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B20",
+    "team": "文京一般",
+    "item_name": "レフリーセット",
+    "role_type": "main_referee",
+    "size": "",
+    "holder": "葭田野",
+    "note": "カードケース・記録用紙・えんぴつ・警告/退場カード・ワッペンガード・リスペクトワッペンガード・ホイッスル・トスコイン"
+  },
+  {
+    "item_code": "B21",
+    "team": "文京一般",
+    "item_name": "レフリーフラッグ",
+    "role_type": "assistant_referee",
+    "size": "",
+    "holder": "葭田野",
+    "note": ""
+  },
+  {
+    "item_code": "B22",
+    "team": "文京一般",
+    "item_name": "キャプテンマーク C（赤・オレンジ）",
+    "role_type": "captain",
+    "size": "",
+    "holder": "栗坂",
+    "note": ""
+  },
+  {
+    "item_code": "B23",
+    "team": "文京一般",
+    "item_name": "2026年試合球 1個",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": "元分類: 選手"
+  },
+  {
+    "item_code": "T1",
+    "team": "都O40",
+    "item_name": "GKユニ赤1番",
+    "role_type": "goalkeeper",
+    "size": "L",
+    "holder": "島村",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "T2",
+    "team": "都O40",
+    "item_name": "GKユニ赤12番",
+    "role_type": "goalkeeper",
+    "size": "O",
+    "holder": "島村",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "T3",
+    "team": "都O40",
+    "item_name": "GKユニ緑1番",
+    "role_type": "goalkeeper",
+    "size": "O",
+    "holder": "島村",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "T4",
+    "team": "都O40",
+    "item_name": "GKユニ緑12番",
+    "role_type": "goalkeeper",
+    "size": "L",
+    "holder": "島村",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "T5",
+    "team": "都O40",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "M",
+    "holder": "島村",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "T6",
+    "team": "都O40",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T7",
+    "team": "都O40",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T8",
+    "team": "都O40",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T9",
+    "team": "都O40",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T10",
+    "team": "都O40",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "L",
+    "holder": "島村",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "T11",
+    "team": "都O40",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T12",
+    "team": "都O40",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T13",
+    "team": "都O40",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T14",
+    "team": "都O40",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T15",
+    "team": "都O40",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "XO",
+    "holder": "島村",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "T16",
+    "team": "都O40",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T17",
+    "team": "都O40",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T18",
+    "team": "都O40",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T19",
+    "team": "都O40",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T20",
+    "team": "都O40",
+    "item_name": "レフリーセット",
+    "role_type": "main_referee",
+    "size": "",
+    "holder": "島村",
+    "note": "カードケース・記録用紙・えんぴつ・警告/退場カード・ワッペンガード・リスペクトワッペンガード・ホイッスル・トスコイン"
+  },
+  {
+    "item_code": "T21",
+    "team": "都O40",
+    "item_name": "レフリーフラッグ",
+    "role_type": "assistant_referee",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T22",
+    "team": "都O40",
+    "item_name": "キャプテンマーク C（赤・オレンジ）",
+    "role_type": "captain",
+    "size": "",
+    "holder": "島村",
+    "note": ""
+  },
+  {
+    "item_code": "T23",
+    "team": "都O40",
+    "item_name": "2026年試合球 1個",
+    "role_type": "shared",
+    "size": "",
+    "holder": "斉藤",
+    "note": "元分類: 選手"
+  },
+  {
+    "item_code": "S1",
+    "team": "文京シニア",
+    "item_name": "GKユニ赤1番",
+    "role_type": "goalkeeper",
+    "size": "L",
+    "holder": "石居",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "S2",
+    "team": "文京シニア",
+    "item_name": "GKユニ赤12番",
+    "role_type": "goalkeeper",
+    "size": "O",
+    "holder": "石居",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "S3",
+    "team": "文京シニア",
+    "item_name": "GKユニ緑1番",
+    "role_type": "goalkeeper",
+    "size": "O",
+    "holder": "山田",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "S4",
+    "team": "文京シニア",
+    "item_name": "GKユニ緑12番",
+    "role_type": "goalkeeper",
+    "size": "L",
+    "holder": "田坂",
+    "note": "長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "S5",
+    "team": "文京シニア",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "S",
+    "holder": "石居",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "S6",
+    "team": "文京シニア",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "S7",
+    "team": "文京シニア",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "S8",
+    "team": "文京シニア",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "S9",
+    "team": "文京シニア",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "S10",
+    "team": "文京シニア",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "L",
+    "holder": "仲摩",
+    "note": "半袖・長袖・パンツ・ストッキング"
+  },
+  {
+    "item_code": "S11",
+    "team": "文京シニア",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "仲摩",
+    "note": ""
+  },
+  {
+    "item_code": "S12",
+    "team": "文京シニア",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "仲摩",
+    "note": ""
+  },
+  {
+    "item_code": "S13",
+    "team": "文京シニア",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "仲摩",
+    "note": ""
+  },
+  {
+    "item_code": "S14",
+    "team": "文京シニア",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "仲摩",
+    "note": ""
+  },
+  {
+    "item_code": "S15",
+    "team": "文京シニア",
+    "item_name": "レフリーユニセット",
+    "role_type": "shared",
+    "size": "XO",
+    "holder": "石居",
+    "note": "半袖・長袖・パンツ・ストッキング。PDF上は 3/8 平田、3/9 石居 と記載"
+  },
+  {
+    "item_code": "S16",
+    "team": "文京シニア",
+    "item_name": "レフリー半袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "平田",
+    "note": ""
+  },
+  {
+    "item_code": "S17",
+    "team": "文京シニア",
+    "item_name": "レフリー長袖",
+    "role_type": "shared",
+    "size": "",
+    "holder": "平田",
+    "note": ""
+  },
+  {
+    "item_code": "S18",
+    "team": "文京シニア",
+    "item_name": "レフリーパンツ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "平田",
+    "note": ""
+  },
+  {
+    "item_code": "S19",
+    "team": "文京シニア",
+    "item_name": "レフリーソックス",
+    "role_type": "shared",
+    "size": "",
+    "holder": "平田",
+    "note": ""
+  },
+  {
+    "item_code": "S20",
+    "team": "文京シニア",
+    "item_name": "レフリーセット",
+    "role_type": "main_referee",
+    "size": "",
+    "holder": "石居",
+    "note": "カードケース・記録用紙・えんぴつ・警告/退場カード・ワッペンガード・リスペクトワッペンガード・ホイッスル・トスコイン。PDF上は 3/8 平田、3/9 石居 と記載"
+  },
+  {
+    "item_code": "S21",
+    "team": "文京シニア",
+    "item_name": "レフリーフラッグ",
+    "role_type": "assistant_referee",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "S22",
+    "team": "文京シニア",
+    "item_name": "キャプテンマーク C（赤・オレンジ）",
+    "role_type": "captain",
+    "size": "",
+    "holder": "石川",
+    "note": ""
+  },
+  {
+    "item_code": "S23",
+    "team": "文京シニア",
+    "item_name": "2026年試合球 1個",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": "元分類: 選手"
+  },
+  {
+    "item_code": "BALL-1",
+    "team": "TUN共通",
+    "item_name": "TUN2025文京区民大会試合球1/2",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-2",
+    "team": "TUN共通",
+    "item_name": "TUN2025文京区民大会試合球2/2",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-3",
+    "team": "TUN共通",
+    "item_name": "TUN MIKASA FT550D(BL)",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-4",
+    "team": "TUN共通",
+    "item_name": "MNペレーダ5000(B/W)",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-5",
+    "team": "TUN共通",
+    "item_name": "MN adidas AL RIHLA (OR)",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-6",
+    "team": "TUN共通",
+    "item_name": "MNフィナーレ23-24",
+    "role_type": "shared",
+    "size": "",
+    "holder": "",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-7",
+    "team": "TUN共通",
+    "item_name": "MNファイナルオーシャンズ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-15",
+    "team": "TUN共通",
+    "item_name": "MNフットサル1/6",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-16",
+    "team": "TUN共通",
+    "item_name": "MNフットサル2/6",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-17",
+    "team": "TUN共通",
+    "item_name": "MNフットサル3/6",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-18",
+    "team": "TUN共通",
+    "item_name": "MNフットサル4/6",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-19",
+    "team": "TUN共通",
+    "item_name": "MNフットサル5/6",
+    "role_type": "shared",
+    "size": "",
+    "holder": "佐藤",
+    "note": ""
+  },
+  {
+    "item_code": "BALL-20",
+    "team": "TUN共通",
+    "item_name": "MNフットサル6/6",
+    "role_type": "shared",
+    "size": "",
+    "holder": "佐藤",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-1",
+    "team": "TUN共通",
+    "item_name": "ビブスfinta（水色）12枚",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-2",
+    "team": "TUN共通",
+    "item_name": "ビブスfinta（紫）12枚",
+    "role_type": "shared",
+    "size": "",
+    "holder": "長沼",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-3",
+    "team": "TUN共通",
+    "item_name": "ビブスfinta（ピンク）20枚",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-4",
+    "team": "TUN共通",
+    "item_name": "ビブス（オレンジ）12枚",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-5",
+    "team": "TUN共通",
+    "item_name": "ビブス（キミドリ）12枚",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-6",
+    "team": "TUN共通",
+    "item_name": "ビブス（ネイビー）12枚",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-7",
+    "team": "TUN共通",
+    "item_name": "TUN腕時計",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-8",
+    "team": "TUN共通",
+    "item_name": "TUN空気入れ（文京区協会配布）",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-9",
+    "team": "TUN共通",
+    "item_name": "MNキーパーグローブ（ナイキ）",
+    "role_type": "goalkeeper",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-10",
+    "team": "TUN共通",
+    "item_name": "キーパーグローブ（プーマ）",
+    "role_type": "goalkeeper",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-11",
+    "team": "TUN共通",
+    "item_name": "レフリーフラッグ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-12",
+    "team": "TUN共通",
+    "item_name": "電子ホイッスル",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-13",
+    "team": "TUN共通",
+    "item_name": "ストップウオッチ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-14",
+    "team": "TUN共通",
+    "item_name": "電動空気入れ",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-15",
+    "team": "TUN共通",
+    "item_name": "マーカー",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-16",
+    "team": "TUN共通",
+    "item_name": "ボール入れ（ネット10個用）",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-17",
+    "team": "TUN共通",
+    "item_name": "MNフットサル簡易ゴール1/2",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  },
+  {
+    "item_code": "OTH-18",
+    "team": "TUN共通",
+    "item_name": "MNフットサル簡易ゴール2/2",
+    "role_type": "shared",
+    "size": "",
+    "holder": "石居",
+    "note": ""
+  }
+]

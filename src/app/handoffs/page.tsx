@@ -1,12 +1,14 @@
-'use client';
-
-import { useState } from 'react';
-import { MOCK_HANDOFFS, MOCK_ITEMS, MOCK_MEMBERS, MOCK_EVENTS } from '@/lib/data/mock';
+import { getHandoffs, getItems, getMembers, getEvents } from '@/lib/data/db';
 import { ArrowLeftRight, Clock, CheckCircle, Package, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
-export default function HandoffsList() {
-  const [handoffs] = useState(MOCK_HANDOFFS);
+export default async function HandoffsList() {
+  const [handoffs, allItems, members, events] = await Promise.all([
+    getHandoffs(),
+    getItems(),
+    getMembers(),
+    getEvents()
+  ]);
 
   return (
     <div className="space-y-6 pb-6">
@@ -21,10 +23,10 @@ export default function HandoffsList() {
 
       <div className="space-y-4">
         {handoffs.length > 0 ? handoffs.map(handoff => {
-          const item = MOCK_ITEMS.find(i => i.id === handoff.item_id);
-          const fromUser = MOCK_MEMBERS.find(m => m.id === handoff.from_member_id);
-          const toUser = MOCK_MEMBERS.find(m => m.id === handoff.to_member_id);
-          const targetEvent = MOCK_EVENTS.find(e => e.id === handoff.target_event_id);
+          const item = allItems.find(i => i.id === handoff.item_id);
+          const fromUser = members.find(m => m.id === handoff.from_member_id);
+          const toUser = members.find(m => m.id === handoff.to_member_id);
+          const targetEvent = events.find(e => e.id === handoff.target_event_id);
 
           const isPending = handoff.status === 'pending' || handoff.status === 'scheduled';
           

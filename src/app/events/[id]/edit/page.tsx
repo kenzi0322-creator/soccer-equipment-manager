@@ -1,13 +1,20 @@
 import { notFound } from 'next/navigation';
-import { getEvent } from '@/lib/data/db';
+import { getEvent, getTeams, getVenues, getMembers } from '@/lib/data/db';
 import EventForm from '@/components/EventForm';
 import { updateEventAction } from '@/app/actions/event';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const event = await getEvent(id);
+  const { id: rawId } = await params;
+  const id = decodeURIComponent(rawId);
+  
+  const [event, teams, venues, members] = await Promise.all([
+    getEvent(id),
+    getTeams(),
+    getVenues(),
+    getMembers()
+  ]);
   
   if (!event) return notFound();
 
@@ -20,7 +27,13 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
         <h1 className="text-xl font-bold text-slate-800">試合の編集</h1>
       </div>
 
-      <EventForm initialData={event} action={updateEventAction} />
+      <EventForm 
+        initialData={event} 
+        action={updateEventAction} 
+        teams={teams}
+        venues={venues}
+        members={members}
+      />
     </div>
   );
 }
