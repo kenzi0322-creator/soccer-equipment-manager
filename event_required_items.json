@@ -215,5 +215,47 @@
     "assignment_status": "ready",
     "is_personal_item": false,
     "assigned_member_id": "m65"
+  },
+  {
+    "id": "eri_17750546823061l8zg",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_ref_half_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775054682306ha195",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_ref_long_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775054682306cj0t3",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_ref_pants_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_17750546823065s8bd",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_ref_socks_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_177505468230693of7",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_ref_flags_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775054682306gxytt",
+    "event_id": "4/99499416/963914127/19700101@band.us",
+    "item_id": "i_ref_gear_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
   }
 ]
