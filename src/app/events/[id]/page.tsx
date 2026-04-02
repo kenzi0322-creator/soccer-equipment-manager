@@ -263,7 +263,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                       <div className="flex justify-between items-center pt-2 border-t border-slate-100 mt-2">
                         <div className="text-xs">
                           <span className="text-slate-400">現在の保有:</span>
-                          <span className="font-medium ml-1">{ist.holderMember?.name || '不明・倉庫'}</span>
+                          <span className="font-medium ml-1">{ist.holderMember?.name || (ist.eri.is_personal_item ? ist.assignedMember?.name : '不明・倉庫')}</span>
                         </div>
                         <Link 
                           href={`/events/${rawId}/assign/${ist.eri.id}`}

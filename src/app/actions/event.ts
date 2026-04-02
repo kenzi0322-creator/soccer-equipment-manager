@@ -244,11 +244,14 @@ export async function updateEriAssignmentAction(formData: FormData) {
     
     if (index === -1) return { error: '対象の備品要求が見つかりません' };
 
+    const isPersonal = itemId === '__personal__';
+    
     eris[index] = {
       ...eris[index],
-      item_id: itemId,
+      item_id: isPersonal ? (eris[index].item_id || itemId) : itemId,
       assigned_member_id: memberId,
-      assignment_status: 'ready'
+      assignment_status: 'ready',
+      is_personal_item: isPersonal
     };
 
     await saveEventRequiredItems(eris);

@@ -96,6 +96,7 @@ export default function AssignmentForm({
               disabled={isPending}
             >
               <option value="" disabled>備品を選択してください</option>
+              <option value="__personal__">個人所有のものを持参 (共有在庫としては管理しません)</option>
               {filteredItems.map(i => (
                 <option key={i.id} value={i.id}>
                   {formatItemCode(i.item_code)} {i.name} {i.color ? `(${i.color})` : ''} {i.size ? `[${i.size}]` : ''}

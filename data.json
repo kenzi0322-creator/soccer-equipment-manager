@@ -281,7 +281,8 @@
     "category": "shared",
     "owner_team_id": "t2",
     "shared_flag": true,
-    "current_holder_id": "m1"
+    "current_holder_id": "m65",
+    "last_handoff_at": "2026-04-02"
   },
   {
     "id": "i_T7",
@@ -299,7 +300,8 @@
     "category": "shared",
     "owner_team_id": "t2",
     "shared_flag": true,
-    "current_holder_id": "m1"
+    "current_holder_id": "m65",
+    "last_handoff_at": "2026-04-02"
   },
   {
     "id": "i_T9",
@@ -420,7 +422,8 @@
     "category": "assistant_referee",
     "owner_team_id": "t2",
     "shared_flag": true,
-    "current_holder_id": "m1"
+    "current_holder_id": "m65",
+    "last_handoff_at": "2026-04-02"
   },
   {
     "id": "i_T22",
@@ -543,8 +546,9 @@
     "category": "shared",
     "owner_team_id": "t3",
     "shared_flag": true,
-    "current_holder_id": "m15",
-    "note": "L, 半袖・長袖・パンツ・ストッキング"
+    "current_holder_id": "m65",
+    "note": "L, 半袖・長袖・パンツ・ストッキング",
+    "last_handoff_at": "2026-04-02"
   },
   {
     "id": "i_S11",

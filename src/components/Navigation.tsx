@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { PackageSearch, CalendarDays, MapPin, Users } from 'lucide-react';
+import { PackageSearch, CalendarDays, Users } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export default function Navigation() {
@@ -13,7 +13,6 @@ export default function Navigation() {
     { name: '備品', href: '/', icon: PackageSearch },
     { name: '試合予定', href: '/events', icon: CalendarDays },
     { name: 'メンバー', href: '/members', icon: Users },
-    { name: '会場', href: '/venues', icon: MapPin },
   ];
 
   return (
