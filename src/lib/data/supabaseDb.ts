@@ -18,10 +18,17 @@ function mapItemFromSupabase(row: any): Item {
 }
 
 export async function getItemsSupabase(): Promise<Item[]> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  console.log('[Supabase] getItemsSupabase called. URL:', supabaseUrl?.substring(0, 40), 'Key prefix:', supabaseKey?.substring(0, 20));
+  if (!supabaseUrl) {
+    console.warn('[Supabase] URL not set, returning empty items');
+    return [];
+  }
   const supabase = await createClient();
   const { data, error } = await supabase.from('equipment_items').select('*, current_holder:members(legacy_id)');
   if (error) {
-    console.error('Error fetching items from Supabase:', error);
+    console.error('[Supabase] Error fetching items:', JSON.stringify(error));
     return [];
   }
   
