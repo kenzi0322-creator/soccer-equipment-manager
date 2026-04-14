@@ -1,12 +1,12 @@
-import { getMembers, getItems } from '@/lib/data/db';
+import { getMembersSupabase, getItemsSupabase } from '@/lib/data/supabaseDb';
 import Link from 'next/link';
 import { Users, Train } from 'lucide-react';
 import { clsx } from 'clsx';
 
 export default async function MembersPage() {
   const [members, items] = await Promise.all([
-    getMembers(),
-    getItems()
+    getMembersSupabase(),
+    getItemsSupabase()
   ]);
 
   // 番号順に並び替え
@@ -37,16 +37,16 @@ export default async function MembersPage() {
           const hasGkGreen = myItems.some(i => i.name.includes('GKユニ') && i.name.includes('緑'));
           const hasReferee = myItems.some(i => i.name.includes('レフリー'));
           const hasBibs = myItems.some(i => i.name.includes('ビブス'));
-          const ballCount = myItems.filter(i => i.name.includes('球') || i.name.includes('ボール') || i.item_code.startsWith('M') || i.item_code.startsWith('F') || i.item_code.startsWith('U')).length;
+          const ballCount = myItems.filter(i => i.name.includes('球') || i.name.includes('ボール') || (i.code || '').startsWith('M') || (i.code || '').startsWith('F') || (i.code || '').startsWith('U')).length;
           const hasOther = myItems.some(i => 
             !i.name.includes('GKユニ') && 
             !i.name.includes('レフリー') && 
             !i.name.includes('ビブス') && 
             !i.name.includes('球') && 
             !i.name.includes('ボール') &&
-            !i.item_code.startsWith('M') &&
-            !i.item_code.startsWith('F') &&
-            !i.item_code.startsWith('U')
+            !(i.code || '').startsWith('M') &&
+            !(i.code || '').startsWith('F') &&
+            !(i.code || '').startsWith('U')
           );
 
           return (

@@ -59,9 +59,9 @@ export default function ManualAddRequiredItem({
 
                availableItems.forEach(i => {
                  let group = '共通';
-                 if (i.item_code.startsWith('B')) group = '一般';
-                 else if (i.item_code.startsWith('T')) group = 'O40都';
-                 else if (i.item_code.startsWith('S')) group = 'シニア';
+                 if ((i.code || '').startsWith('B')) group = '一般';
+                 else if ((i.code || '').startsWith('T')) group = 'O40都';
+                 else if ((i.code || '').startsWith('S')) group = 'シニア';
                  groups[group].push(i);
                });
 

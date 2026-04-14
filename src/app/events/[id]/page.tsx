@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
-import { getEvents, getEventRequiredItems, getItems, getTeams, getVenues, getMembers, getEventParticipants, getHandoffs } from '@/lib/data/db';
+import { getTeams, getVenues, getEventParticipants, getHandoffs } from '@/lib/data/db';
+import { getEventsSupabase, getEventRequiredItemsSupabase, getItemsSupabase, getMembersSupabase } from '@/lib/data/supabaseDb';
+import { calculateRequirementStatus } from '@/lib/logic/status';
 import { Calendar, CheckCircle, RefreshCw, AlertCircle, ArrowLeft, Package } from 'lucide-react';
 import { clsx } from 'clsx';
 import Link from 'next/link';
@@ -17,12 +19,12 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
   
   try {
     const [events, allEris, allItems, teams, venues, members, participants, handoffs] = await Promise.all([
-      getEvents(),
-      getEventRequiredItems(),
-      getItems(),
+      getEventsSupabase(),
+      getEventRequiredItemsSupabase(),
+      getItemsSupabase(),
       getTeams(),
       getVenues(),
-      getMembers(),
+      getMembersSupabase(),
       getEventParticipants(),
       getHandoffs()
     ]);
@@ -51,63 +53,25 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
 
     // Calculate statuses for required items
     const itemStatuses = requiredItemLinks.map(eri => {
-      let item = allItems?.find(i => i.id === eri.item_id);
-      
-      // Virtual Template Handling: If item not found but it's a known template ID
-      if (!item) {
-        if (eri.item_id === 'i_gk_template') {
-          item = { id: 'i_gk_template', name: 'GKユニフォーム (種類選択)', category: 'goalkeeper', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_match_ball_template') {
-          item = { id: 'i_match_ball_template', name: '試合球 (種類選択)', category: 'shared', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_warmup_ball_template') {
-          item = { id: 'i_warmup_ball_template', name: 'アップ用ボール (種類選択)', category: 'shared', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_ref_half_template') {
-          item = { id: 'i_ref_half_template', name: 'レフリー半袖', category: 'shared', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_ref_long_template') {
-          item = { id: 'i_ref_long_template', name: 'レフリー長袖', category: 'shared', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_ref_pants_template') {
-          item = { id: 'i_ref_pants_template', name: 'レフリーパンツ', category: 'shared', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_ref_socks_template') {
-          item = { id: 'i_ref_socks_template', name: 'レフリーソックス', category: 'shared', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_ref_flags_template') {
-          item = { id: 'i_ref_flags_template', name: 'レフリーフラッグ', category: 'shared', shared_flag: true } as any;
-        } else if (eri.item_id === 'i_ref_gear_template') {
-          item = { id: 'i_ref_gear_template', name: 'レフリー機材（ホイッスル等）', category: 'shared', shared_flag: true } as any;
-        }
-      }
-
-      if (!item) return null;
+      let item = eri.item_id ? allItems?.find(i => i.id === eri.item_id) : undefined;
       
       const assignedMember = members?.find(m => m.id === eri.assigned_member_id);
-      const holderMember = members?.find(m => m.id === item.current_holder_id);
-      const participant = participants?.find(ep => ep.event_id === event.id && ep.member_id === (eri.assigned_member_id || item.current_holder_id));
+      const holderMember = item ? members?.find(m => m.id === item.current_holder_id) : undefined;
+      const participant = participants?.find(ep => ep.event_id === event.id && ep.member_id === (eri.assigned_member_id || item?.current_holder_id));
       const isAttending = participant?.attendance_status === 'attending';
 
-      const pendingHandoff = handoffs?.find(h => h.item_id === item.id && h.target_event_id === event.id && h.status !== 'completed');
+      const pendingHandoff = item ? handoffs?.find(h => h.item_id === item.id && h.target_event_id === event.id && h.status !== 'completed') : undefined;
 
-      let statusColor: 'blue' | 'yellow' | 'red' = 'red';
-      let statusLabel = '未定・問題あり';
+      const status = calculateRequirementStatus(eri, allItems || [], events || []);
+      const statusColor = status.color;
+      const statusLabel = status.label;
 
-      if (eri.is_personal_item) {
-        statusColor = 'blue';
-        statusLabel = '個人持参';
-      } else if (!eri.assigned_member_id) {
-        statusColor = 'red';
-        statusLabel = '持参者未設定';
-      } else if (item.current_holder_id === eri.assigned_member_id) {
-        statusColor = 'blue';
-        statusLabel = '準備OK';
-      } else {
-        // 現在の保有者が担当者ではない場合
-        statusColor = 'yellow';
-        statusLabel = pendingHandoff ? '受け渡し未完了' : '受け渡し待ち';
-      }
-
-      const isTemplate = item.id.includes('template');
-      const isBall = item.name.includes('球') || item.name.includes('ボール');
+      const isTemplate = !item;
+      const dbIsBall = eri.template_key ? eri.template_key.includes('ball') : false;
+      const isBall = dbIsBall || eri.display_name?.includes('球') || eri.display_name?.includes('ボール');
 
       return { eri, item, assignedMember, holderMember, statusColor, statusLabel, isAttending, pendingHandoff, isTemplate, isBall };
-    }).filter((s): s is NonNullable<typeof s> => s !== null);
+    });
 
     // Event overall status
     let overallColor: 'blue' | 'yellow' | 'red' = 'blue';
@@ -212,19 +176,28 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                 
                 <div className="flex justify-between items-start mb-2">
                   {ist.isTemplate ? (
-                    <div className="font-bold text-slate-800 flex items-center gap-1.5 flex-wrap">
-                      <Package size={16} className="text-blue-400" />
-                      <span>{ist.item.name}</span>
-                      <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded uppercase">実物未設定</span>
+                    <div className="font-bold text-slate-800 flex flex-col gap-0.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Package size={16} className="text-blue-400" />
+                        <span>{ist.eri.display_name}</span>
+                        <span className="text-[10px] bg-blue-100 text-blue-700 font-bold px-1.5 py-0.5 rounded uppercase">実物未設定</span>
+                      </div>
                     </div>
                   ) : (
-                    <Link href={`/items/${ist.item.id}`} className="font-bold text-slate-800 hover:underline flex items-center gap-1.5 flex-wrap">
-                      <Package size={16} className="text-slate-400" />
-                      <span>{ist.item.name}</span>
-                      {ist.eri.is_personal_item && (
-                        <span className="text-xs text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">私物</span>
+                    <div className="font-bold text-slate-800 flex flex-col gap-0.5">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Package size={16} className="text-slate-400" />
+                        <span>{ist.eri.display_name || ist.item?.name}</span>
+                        {ist.eri.is_personal_item && (
+                          <span className="text-xs text-blue-600 font-bold bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">私物</span>
+                        )}
+                      </div>
+                      {ist.item && (
+                        <Link href={`/items/${ist.item.id}`} className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1.5 ml-[22px]">
+                          <span>↳ 割り当て済み: {ist.item.name}</span>
+                        </Link>
                       )}
-                    </Link>
+                    </div>
                   )}
                   <div className="flex items-center gap-2">
                     <span className={clsx(
@@ -236,7 +209,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
                       {ist.statusLabel}
                     </span>
                     {ist.isTemplate && ist.isBall && (
-                      <QuantityIncrementButton eventId={event.id} itemId={ist.item.id} />
+                      <QuantityIncrementButton eventId={event.id} eriId={ist.eri.id} />
                     )}
                     <RemoveRequiredItemButton id={ist.eri.id} eventId={event.id} />
                   </div>

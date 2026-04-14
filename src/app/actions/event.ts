@@ -2,16 +2,11 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { getEvents, saveEvents, getEventRequiredItems, saveEventRequiredItems } from '@/lib/data/db';
+import { getEventSupabase, updateEventSupabase, deleteEventSupabase, getEventRequiredItemsSupabase, insertErisSupabase, deleteEriSupabase, updateEriSupabase } from '@/lib/data/supabaseDb';
 
 export async function deleteEventAction(id: string) {
   try {
-    const events = await getEvents();
-    const index = events.findIndex(e => e.id === id);
-    if (index !== -1) {
-      events.splice(index, 1);
-      await saveEvents(events);
-    }
+    await deleteEventSupabase(id);
     revalidatePath('/events');
     redirect('/events');
   } catch (e: any) {
@@ -23,14 +18,10 @@ export async function deleteEventAction(id: string) {
 export async function updateEventAction(formData: FormData) {
   const id = formData.get('id') as string;
   try {
-    const events = await getEvents();
-    const index = events.findIndex(e => e.id === id);
+    const existingEvent = await getEventSupabase(id);
+    if (!existingEvent) return { error: 'イベントが見つかりません' };
     
-    if (index === -1) return { error: 'イベントが見つかりません' };
-
-    const existingEvent = events[index];
-    
-    const updatedEvent = {
+    const updatedEvent: any = {
       ...existingEvent,
       title: formData.get('title') as string,
       date: formData.get('date') as string,
@@ -45,16 +36,15 @@ export async function updateEventAction(formData: FormData) {
       note: (formData.get('note') as string) || undefined,
     };
 
-    events[index] = updatedEvent;
-    await saveEvents(events);
+    await updateEventSupabase(updatedEvent);
     
     // Auto-Propose Logic: If referee is assigned
     const hasRefereeNow = !!updatedEvent.main_referee_id || !!updatedEvent.sub_referee_id || !!updatedEvent.referee_time;
 
     if (hasRefereeNow) {
-      const { getItems, getEventRequiredItems, saveEventRequiredItems } = await import('@/lib/data/db');
-      const items = await getItems();
-      const eris = await getEventRequiredItems();
+      const { getItemsSupabase } = await import('@/lib/data/supabaseDb');
+      const items = await getItemsSupabase();
+      const eris = await getEventRequiredItemsSupabase();
       
       const refItems = items.filter(i => 
         i.category === 'REFEREE' || 
@@ -71,7 +61,7 @@ export async function updateEventAction(formData: FormData) {
       );
 
       if (!hasAlreadyInRequired) {
-        let changedEri = false;
+        const toInsert: any[] = [];
         for (const rItem of refItems) {
           if (!eris.some(e => e.event_id === id && e.item_id === rItem.id)) {
             let assignedMemberId = updatedEvent.main_referee_id || updatedEvent.sub_referee_id;
@@ -80,7 +70,7 @@ export async function updateEventAction(formData: FormData) {
               assignedMemberId = updatedEvent.sub_referee_id;
             }
 
-            eris.push({
+            toInsert.push({
               id: 'eri_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
               event_id: id,
               item_id: rItem.id,
@@ -88,11 +78,10 @@ export async function updateEventAction(formData: FormData) {
               assignment_status: assignedMemberId ? 'ready' : 'unassigned',
               assigned_member_id: assignedMemberId
             });
-            changedEri = true;
           }
         }
-        if (changedEri) {
-          await saveEventRequiredItems(eris);
+        if (toInsert.length > 0) {
+          await insertErisSupabase(toInsert);
         }
       }
     }
@@ -116,21 +105,21 @@ export async function addRequiredItemAction(formData: FormData) {
   if (!event_id || !item_id) return { error: 'パラメータが不足しています' };
 
   try {
-    const eris = await getEventRequiredItems();
+    const eris = await getEventRequiredItemsSupabase();
     if (eris.some(e => e.event_id === event_id && e.item_id === item_id)) {
       return { message: '既に追加されています' };
     }
 
-    eris.push({
+    const newEri: any = {
       id: 'eri_' + Date.now().toString(),
       event_id,
       item_id,
       required_flag: true,
       assignment_status: force_assign_to ? 'ready' : 'unassigned',
-      assigned_member_id: force_assign_to,
+      assigned_member_id: force_assign_to || null,
       is_personal_item
-    });
-    await saveEventRequiredItems(eris);
+    };
+    await insertErisSupabase([newEri]);
     revalidatePath(`/events/${event_id}`);
     return { success: true };
   } catch (e: any) {
@@ -147,9 +136,7 @@ export async function removeRequiredItemAction(formData: FormData) {
   if (!id || !actual_event_id) return { error: 'パラメータが不足しています' };
 
   try {
-    const eris = await getEventRequiredItems();
-    const nextEris = eris.filter(e => e.id !== id);
-    await saveEventRequiredItems(nextEris);
+    await deleteEriSupabase(id);
     revalidatePath(`/events/${actual_event_id}`);
     return { success: true };
   } catch (e: any) {
@@ -160,28 +147,31 @@ export async function removeRequiredItemAction(formData: FormData) {
 
 export async function autoAddStandardEquipmentAction(eventId: string) {
   try {
-    const eris = await getEventRequiredItems();
-    const templateIds = ['i_gk_template', 'i_match_ball_template', 'i_warmup_ball_template'];
+    const eris = await getEventRequiredItemsSupabase();
+    const templates = [
+      { key: 'gk', name: 'GKユニ' },
+      { key: 'match_ball', name: '試合球' },
+      { key: 'warmup_ball', name: 'アップ用ボール' }
+    ];
     
-    let addedCount = 0;
-    for (const tid of templateIds) {
-      // Allow multiple balls if needed? For now just one of each if missing
-      if (!eris.some(e => e.event_id === eventId && e.item_id === tid)) {
-        eris.push({
+    const toInsert: any[] = [];
+    for (const t of templates) {
+      if (!eris.some(e => e.event_id === eventId && e.template_key === t.key)) {
+        toInsert.push({
           id: 'eri_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
           event_id: eventId,
-          item_id: tid,
+          template_key: t.key,
+          display_name: t.name,
           required_flag: true,
           assignment_status: 'unassigned'
         });
-        addedCount++;
       }
     }
 
-    if (addedCount > 0) {
-      await saveEventRequiredItems(eris);
+    if (toInsert.length > 0) {
+      await insertErisSupabase(toInsert);
       revalidatePath(`/events/${eventId}`);
-      return { success: true, addedCount };
+      return { success: true, addedCount: toInsert.length };
     }
     return { success: false, message: '既に全ての標準備品が追加されています' };
   } catch (e: any) {
@@ -192,34 +182,34 @@ export async function autoAddStandardEquipmentAction(eventId: string) {
 
 export async function addRefereeSetAction(eventId: string) {
   try {
-    const eris = await getEventRequiredItems();
+    const eris = await getEventRequiredItemsSupabase();
     const refereeTemplates = [
-      { id: 'i_ref_half_template', name: 'レフリー半袖' },
-      { id: 'i_ref_long_template', name: 'レフリー長袖' },
-      { id: 'i_ref_pants_template', name: 'レフリーパンツ' },
-      { id: 'i_ref_socks_template', name: 'レフリーソックス' },
-      { id: 'i_ref_flags_template', name: 'レフリーフラッグ' },
-      { id: 'i_ref_gear_template', name: 'レフリー機材（ホイッスル等）' }
+      { key: 'ref_half', name: 'レフリー半袖' },
+      { key: 'ref_long', name: 'レフリー長袖' },
+      { key: 'ref_pants', name: 'レフリーパンツ' },
+      { key: 'ref_socks', name: 'レフリーソックス' },
+      { key: 'ref_flags', name: 'レフリーフラッグ' },
+      { key: 'ref_bag', name: 'レフリー袋' }
     ];
     
-    let addedCount = 0;
+    const toInsert: any[] = [];
     for (const rt of refereeTemplates) {
-      if (!eris.some(e => e.event_id === eventId && e.item_id === rt.id)) {
-        eris.push({
+      if (!eris.some(e => e.event_id === eventId && e.template_key === rt.key)) {
+        toInsert.push({
           id: 'eri_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
           event_id: eventId,
-          item_id: rt.id,
+          template_key: rt.key,
+          display_name: rt.name,
           required_flag: true,
           assignment_status: 'unassigned'
         });
-        addedCount++;
       }
     }
 
-    if (addedCount > 0) {
-      await saveEventRequiredItems(eris);
+    if (toInsert.length > 0) {
+      await insertErisSupabase(toInsert);
       revalidatePath(`/events/${eventId}`);
-      return { success: true, addedCount };
+      return { success: true, addedCount: toInsert.length };
     }
     return { success: false, message: '既にレフリーセットが追加されています' };
   } catch (e: any) {
@@ -235,30 +225,96 @@ export async function updateEriAssignmentAction(formData: FormData) {
   const memberId = formData.get('member_id') as string;
 
   if (!eriId || !eventId || !itemId || !memberId) {
+    console.error('Validation failed: Missing parameters');
     return { error: 'パラメータが不足しています' };
   }
 
   try {
-    const eris = await getEventRequiredItems();
+    const eris = await getEventRequiredItemsSupabase();
     const index = eris.findIndex(e => e.id === eriId);
     
     if (index === -1) return { error: '対象の備品要求が見つかりません' };
 
     const isPersonal = itemId === '__personal__';
-    
-    eris[index] = {
-      ...eris[index],
-      item_id: isPersonal ? (eris[index].item_id || itemId) : itemId,
+    const finalItemId = isPersonal ? null : itemId;
+
+    await updateEriSupabase(eriId, {
+      item_id: finalItemId,
       assigned_member_id: memberId,
       assignment_status: 'ready',
       is_personal_item: isPersonal
-    };
+    });
 
-    await saveEventRequiredItems(eris);
+    // --- Bulk Referee Assignment Logic ---
+    if (formData.get('bulk_referee') === 'true') {
+      const currentEri = eris[index];
+      if (currentEri.template_key && currentEri.template_key.startsWith('ref_')) {
+        const { getItemsSupabase } = await import('@/lib/data/supabaseDb');
+        const items = await getItemsSupabase();
+        
+        let baseSize = '';
+        if (!isPersonal && finalItemId) {
+          const selectedItem = items.find(i => i.id === finalItemId);
+          if (selectedItem?.name) {
+            const match = selectedItem.name.match(/\((.*?)\)/);
+            if (match && match[1]) {
+              baseSize = match[1]; // e.g., "M", "L", "XO"
+            }
+          }
+        }
+
+        const otherRefEris = eris.filter(e => 
+          e.event_id === eventId && 
+          e.id !== eriId && 
+          e.template_key && 
+          e.template_key.startsWith('ref_')
+        );
+
+        for (const req of otherRefEris) {
+          let matchingItemId = null;
+          if (!isPersonal && baseSize) {
+            const keyMappings: Record<string, string> = {
+              'ref_half': '半袖',
+              'ref_long': '長袖',
+              'ref_pants': 'パンツ',
+              'ref_socks': 'ソックス',
+              'ref_flags': 'フラッグ',
+              'ref_bag': '袋'
+            };
+            const keyword = keyMappings[req.template_key as keyof typeof keyMappings];
+            
+            if (keyword) {
+               matchingItemId = items.find(i => {
+                 if (i.category !== 'shared') return false;
+                 if (!i.name.includes(keyword)) return false;
+                 // Flag doesn't typically have size constraints
+                 if (keyword !== 'フラッグ' && !i.name.includes(`(${baseSize})`)) return false;
+                 
+                 // Ensure the item isn't already assigned to some OTHER requirement (like a different match entirely or another ref)
+                 // For simplicity, we just check within this event
+                 const isAssigned = eris.some(e => e.event_id === eventId && e.item_id === i.id && e.id !== req.id && e.id !== eriId);
+                 return !isAssigned;
+               })?.id || null;
+            }
+          }
+
+          // Update the other referee requirements: 
+          // Always assign them to the same member. 
+          // Give them the corresponding matching item if found, else null (unassigned item, but member is assigned).
+          await updateEriSupabase(req.id, {
+            item_id: isPersonal ? null : matchingItemId,
+            assigned_member_id: memberId,
+            assignment_status: 'ready',
+            is_personal_item: isPersonal
+          });
+        }
+      }
+    }
     revalidatePath(`/events/${eventId}`);
+    revalidatePath(`/events/${eventId}/assign/${eriId}`);
     return { success: true };
   } catch (e: any) {
     console.error('Update Assignment Error:', e);
-    return { error: '割り当ての更新に失敗しました。' };
+    return { error: `割り当ての更新に失敗しました: ${e.message}` };
   }
 }

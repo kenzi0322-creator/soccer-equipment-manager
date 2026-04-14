@@ -10,21 +10,23 @@ import { formatItemCode } from '@/lib/utils/format';
 type AssignmentFormProps = {
   eventId: string;
   eriId: string;
-  currentItem: Item;
+  requirementName: string;
   members: Member[];
   filteredItems: Item[];
   initialMemberId?: string;
   initialItemId?: string;
+  isRefereeItem?: boolean;
 };
 
 export default function AssignmentForm({ 
   eventId, 
   eriId, 
-  currentItem, 
+  requirementName, 
   members, 
   filteredItems,
   initialMemberId,
-  initialItemId
+  initialItemId,
+  isRefereeItem
 }: AssignmentFormProps) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -37,6 +39,7 @@ export default function AssignmentForm({
         router.refresh();
       } else {
         alert(result.error || '更新に失敗しました');
+        console.error('Assignment Form Error:', result.error);
       }
     });
   };
@@ -53,7 +56,7 @@ export default function AssignmentForm({
         </div>
         <div>
           <span className="text-[10px] font-bold text-blue-500 uppercase tracking-widest">現在の指定内容</span>
-          <h2 className="font-bold text-slate-800 text-lg">{currentItem.name}</h2>
+          <h2 className="font-bold text-slate-800 text-lg">{requirementName}</h2>
           <p className="text-xs text-blue-600/70 font-medium italic mt-0.5">※以下の項目を実物に変更します</p>
         </div>
       </div>
@@ -99,11 +102,28 @@ export default function AssignmentForm({
               <option value="__personal__">個人所有のものを持参 (共有在庫としては管理しません)</option>
               {filteredItems.map(i => (
                 <option key={i.id} value={i.id}>
-                  {formatItemCode(i.item_code)} {i.name} {i.color ? `(${i.color})` : ''} {i.size ? `[${i.size}]` : ''}
+                  {formatItemCode(i.code || '')} {i.name} {i.color ? `(${i.color})` : ''} {i.size ? `[${i.size}]` : ''}
                 </option>
               ))}
             </select>
         </div>
+
+        {/* Bulk Referee Assignment Checkbox */}
+        {isRefereeItem && (
+          <div className="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl mt-4 cursor-pointer hover:bg-slate-100 transition-colors">
+            <input 
+              type="checkbox" 
+              name="bulk_referee" 
+              id="bulk_referee"
+              value="true"
+              defaultChecked={true}
+              className="mt-0.5 shrink-0 w-4 h-4 cursor-pointer"
+            />
+            <label htmlFor="bulk_referee" className="text-sm font-bold text-slate-700 cursor-pointer select-none">
+              他のレフリー用品もまとめて同じ人に割り当てる（自動で同サイズ品を選択）
+            </label>
+          </div>
+        )}
       </div>
 
       <button

@@ -2,11 +2,11 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { getMembers, saveMembers } from '@/lib/data/db';
+import { getMembersSupabase, updateMemberSupabase } from '@/lib/data/supabaseDb';
 
 export async function updateMemberAction(formData: FormData) {
   const id = formData.get('id') as string;
-  const members = await getMembers();
+  const members = await getMembersSupabase();
   const index = members.findIndex(m => m.id === id);
   
   if (index === -1) throw new Error('メンバーが見つかりません');
@@ -24,8 +24,7 @@ export async function updateMemberAction(formData: FormData) {
     note: formData.get('note') as string,
   };
 
-  members[index] = updatedMember;
-  await saveMembers(members);
+  await updateMemberSupabase(updatedMember);
   
   revalidatePath('/members');
   redirect('/members');

@@ -1,22 +1,25 @@
 'use server';
 
-import { getEventRequiredItems, saveEventRequiredItems } from '@/lib/data/db';
+import { getEventRequiredItemsSupabase, insertErisSupabase } from '@/lib/data/supabaseDb';
 import { revalidatePath } from 'next/cache';
 
-export async function incrementItemQuantityAction(eventId: string, itemId: string) {
+export async function incrementItemQuantityAction(eventId: string, eriId: string) {
   try {
-    const eris = await getEventRequiredItems();
+    const eris = await getEventRequiredItemsSupabase();
+    const sourceEri = eris.find(e => e.id === eriId);
+
+    if (!sourceEri) return { error: '元の必要備品が見つかりません。' };
     
-    // Add another instance of the same item to the event
-    eris.push({
+    // Add another instance of the exact same requirement
+    await insertErisSupabase([{
       id: 'eri_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
       event_id: eventId,
-      item_id: itemId,
+      template_key: sourceEri.template_key,
+      display_name: sourceEri.display_name,
       required_flag: true,
       assignment_status: 'unassigned'
-    });
+    }]);
 
-    await saveEventRequiredItems(eris);
     revalidatePath(`/events/${eventId}`);
     return { success: true };
   } catch (e: any) {

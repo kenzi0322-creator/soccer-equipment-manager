@@ -1,0 +1,264 @@
+import { createClient } from '@supabase/supabase-js'
+import * as fs from 'fs'
+import * as path from 'path'
+import * as dotenv from 'dotenv'
+
+// .env.local を読み込む
+dotenv.config({ path: path.join(process.cwd(), '.env.local') })
+
+// ── 設定 ──────────────────────────────────────────────────────────────────────
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
+const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+  console.error('❌ 環境変数が不足しています')
+  console.error('   NEXT_PUBLIC_SUPABASE_URL と SUPABASE_SERVICE_ROLE_KEY を .env.local に設定してください')
+  process.exit(1)
+}
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+  auth: { persistSession: false },
+})
+
+// JSON ファイルの場所: プロジェクトルート直下を想定
+// members.json / data.json / events.json / event_required_items.json がここにある前提
+const DATA_DIR = process.cwd()
+
+// ── 変換マスタ ────────────────────────────────────────────────────────────────
+const TEAM_CATEGORY_MAP: Record<string, string> = {
+  t1: 'general',   // 文京一般
+  t2: 'o40',    // O40都リーグ
+  t3: 'senior',    // 文京シニア
+  t_tun: 'shared',    // TUN共通
+}
+
+const TEMPLATE_KEY_MAP: Record<string, string> = {
+  i_gk_template: 'gk',
+  i_match_ball_template: 'match_ball',
+  i_warmup_ball_template: 'warmup_ball',
+}
+
+const TEMPLATE_IDS = new Set(Object.keys(TEMPLATE_KEY_MAP))
+
+// ── ヘルパー ──────────────────────────────────────────────────────────────────
+
+function readJson<T>(filename: string): T {
+  const filepath = path.join(DATA_DIR, filename)
+  if (!fs.existsSync(filepath)) {
+    throw new Error(`JSON ファイルが見つかりません: ${filepath}`)
+  }
+  return JSON.parse(fs.readFileSync(filepath, 'utf-8')) as T
+}
+
+/** 空文字・undefined を null に変換 */
+function nullable(val: string | undefined | null): string | null {
+  if (val === undefined || val === null || val.trim() === '') return null
+  return val
+}
+
+/** team_id → team_category 変換（未知の ID は警告して null）*/
+function toTeamCategory(teamId: string | undefined): string | null {
+  if (!teamId || teamId.trim() === '') return null
+  const cat = TEAM_CATEGORY_MAP[teamId]
+  if (!cat) {
+    console.warn(`  ⚠️  未知の team_id: "${teamId}" → null にします`)
+    return null
+  }
+  return cat
+}
+
+/** legacy_id → uuid のマップを取得 */
+async function fetchLegacyMap(table: string): Promise<Record<string, string>> {
+  const { data, error } = await supabase.from(table).select('id, legacy_id')
+  if (error) throw new Error(`${table} の legacy_id マップ取得失敗: ${error.message}`)
+  return Object.fromEntries((data ?? []).map((r: any) => [r.legacy_id, r.id]))
+}
+
+// ── 1. members ────────────────────────────────────────────────────────────────
+
+async function migrateMembers() {
+  console.log('\n📋 [1/4] members を移行中...')
+
+  const raw = readJson<any[]>('members.json')
+
+  const rows = raw.map(m => ({
+    legacy_id:       m.id,
+    display_name:    m.name,
+    jersey_number:   nullable(m.uniform_number),
+    team_category:   toTeamCategory(m.team_id),
+    role:            nullable(m.role),
+    nearest_station: nullable(m.nearest_station),
+    has_car:         m.has_car ?? false,
+    note:            nullable(m.note),
+  }))
+
+  const { error } = await supabase
+    .from('members')
+    .upsert(rows, { onConflict: 'legacy_id' })
+
+  if (error) throw new Error(`members upsert 失敗: ${error.message}`)
+  console.log(`  ✅ ${rows.length} 件 upsert 完了`)
+}
+
+// ── 2. equipment_items ────────────────────────────────────────────────────────
+async function migrateEquipmentItems() {
+  console.log('\n🎽 [2/4] equipment_items を移行中...')
+
+  const raw = readJson<any[]>('data.json')
+  const memberMap = await fetchLegacyMap('members')
+
+  let unresolvedHolders = 0
+
+  const rows = raw.map(item => {
+    const holderId = item.current_holder_id
+      ? (memberMap[item.current_holder_id] ?? null)
+      : null
+
+    if (item.current_holder_id && !memberMap[item.current_holder_id]) {
+      console.warn(`  ⚠️  current_holder_id 未解決: "${item.current_holder_id}" (item_code: ${item.item_code})`)
+      unresolvedHolders++
+    }
+
+return {
+  legacy_id: item.id,
+  code: item.item_code,
+  display_label: item.item_code,
+  name: item.name,
+  item_category: item.category,
+  team_category: toTeamCategory(item.owner_team_id),
+  owner_team_category: toTeamCategory(item.owner_team_id),
+  current_holder_member_id: holderId,
+  is_active: true,
+  note: nullable(item.note),
+    }
+  })
+
+  const { error } = await supabase
+    .from('equipment_items')
+    .upsert(rows, { onConflict: 'legacy_id' })
+
+  if (error) throw new Error(`equipment_items upsert 失敗: ${error.message}`)
+  console.log(`  ✅ ${rows.length} 件 upsert 完了${unresolvedHolders > 0 ? `（holder 未解決: ${unresolvedHolders} 件）` : ''}`)
+}
+
+// ── 3. events ─────────────────────────────────────────────────────────────────
+
+async function migrateEvents() {
+  console.log('\n📅 [3/4] events を移行中...')
+
+  const raw = readJson<any[]>('events.json')
+
+  const rows = raw.map(e => ({
+    legacy_id:             e.id,
+    title:                 e.title,
+    event_date:            e.date,
+    start_at:              nullable(e.start_at),
+    end_at:                nullable(e.end_at),
+    description:           nullable(e.note),
+    venue_legacy_id:       nullable(e.venue_id),
+    primary_team_category: toTeamCategory(e.primary_team_id),
+    is_joint_match:        e.is_joint_match ?? false,
+    sync_status:           nullable(e.sync_status),
+  }))
+
+  const { error } = await supabase
+    .from('events')
+    .upsert(rows, { onConflict: 'legacy_id' })
+
+  if (error) throw new Error(`events upsert 失敗: ${error.message}`)
+  console.log(`  ✅ ${rows.length} 件 upsert 完了`)
+}
+
+// ── 4. event_required_items ───────────────────────────────────────────────────
+
+async function migrateEventRequiredItems() {
+  console.log('\n📦 [4/4] event_required_items を移行中...')
+
+  const raw = readJson<any[]>('event_required_items.json')
+
+  // FK 解決用マップを並列取得
+  const [eventMap, itemMap, memberMap] = await Promise.all([
+    fetchLegacyMap('events'),
+    fetchLegacyMap('equipment_items'),
+    fetchLegacyMap('members'),
+  ])
+
+  let unresolvedEvents = 0
+  let unresolvedItems = 0
+  let templateCount = 0
+  let realCount = 0
+
+  const rows = raw.map(eri => {
+    const isTemplate = TEMPLATE_IDS.has(eri.item_id)
+    isTemplate ? templateCount++ : realCount++
+
+    // event_id の解決
+    const eventUuid = eventMap[eri.event_id] ?? null
+    if (!eventUuid) {
+      console.warn(`  ⚠️  event_id 未解決: "${eri.event_id}" (eri id: ${eri.id})`)
+      unresolvedEvents++
+    }
+
+    // item_id の解決（テンプレートは null のまま）
+    let itemUuid: string | null = null
+    if (!isTemplate) {
+      itemUuid = itemMap[eri.item_id] ?? null
+      if (!itemUuid) {
+        console.warn(`  ⚠️  item_id 未解決: "${eri.item_id}" (eri id: ${eri.id})`)
+        unresolvedItems++
+      }
+    }
+
+    // assigned_member_id の解決
+    const assigneeUuid = eri.assigned_member_id
+      ? (memberMap[eri.assigned_member_id] ?? null)
+      : null
+
+    return {
+      legacy_id:          eri.id,
+      event_id:           eventUuid,
+      item_id:            itemUuid,
+      source_type:        isTemplate ? 'template' : 'item',
+      template_key:       isTemplate ? TEMPLATE_KEY_MAP[eri.item_id] : null,
+      required_flag:      eri.required_flag ?? true,
+      assignment_status:  eri.assignment_status ?? 'unassigned',
+      assigned_member_id: assigneeUuid,
+    }
+  })
+
+  const { error } = await supabase
+    .from('event_required_items')
+    .upsert(rows, { onConflict: 'legacy_id' })
+
+  if (error) throw new Error(`event_required_items upsert 失敗: ${error.message}`)
+
+  console.log(`  ✅ ${rows.length} 件 upsert 完了`)
+  console.log(`     実備品参照: ${realCount} 件 / テンプレート参照: ${templateCount} 件`)
+  if (unresolvedEvents > 0) console.warn(`  ⚠️  event_id 未解決: ${unresolvedEvents} 件`)
+  if (unresolvedItems > 0)  console.warn(`  ⚠️  item_id 未解決: ${unresolvedItems} 件`)
+}
+
+// ── メイン ────────────────────────────────────────────────────────────────────
+
+async function main() {
+  console.log('🚀 Supabase 移行スクリプト開始')
+  console.log(`   URL:      ${SUPABASE_URL}`)
+  console.log(`   DATA_DIR: ${DATA_DIR}`)
+  console.log(`   実行順:   members → equipment_items → events → event_required_items`)
+
+  try {
+    await migrateMembers()
+    await migrateEquipmentItems()
+    await migrateEvents()
+    await migrateEventRequiredItems()
+
+    console.log('\n🎉 全テーブルの移行が完了しました！')
+    console.log('   Supabase Table Editor で件数を確認してください。')
+  } catch (err) {
+    console.error('\n❌ 移行中にエラーが発生しました:', err)
+    process.exit(1)
+  }
+}
+
+main()

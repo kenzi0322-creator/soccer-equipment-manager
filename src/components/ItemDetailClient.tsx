@@ -86,8 +86,8 @@ export default function ItemDetailClient({
         </div>
 
         <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs text-slate-500 border border-slate-200 px-2 py-0.5 rounded-md bg-slate-50 font-mono">
-            {formatItemCode(item.item_code, true)}
+          <span className="font-mono text-slate-500 tracking-wider">
+            {formatItemCode(item.code || '', true)}
           </span>
           {item.shared_flag && (
             <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md font-medium border border-purple-200">

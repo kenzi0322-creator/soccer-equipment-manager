@@ -249,5 +249,47 @@
     "item_id": "i_ref_gear_template",
     "required_flag": true,
     "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775133468103xkcn1",
+    "event_id": "4/99499416/953766210/19700101@band.us",
+    "item_id": "i_gk_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775133468103o7bqv",
+    "event_id": "4/99499416/953766210/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775133468103npll4",
+    "event_id": "4/99499416/953766210/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775134540308p5w7b",
+    "event_id": "4/99499416/970434017/19700101@band.us",
+    "item_id": "i_gk_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775134540308j6aoc",
+    "event_id": "4/99499416/970434017/19700101@band.us",
+    "item_id": "i_match_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
+  },
+  {
+    "id": "eri_1775134540308sgzfm",
+    "event_id": "4/99499416/970434017/19700101@band.us",
+    "item_id": "i_warmup_ball_template",
+    "required_flag": true,
+    "assignment_status": "unassigned"
   }
 ]

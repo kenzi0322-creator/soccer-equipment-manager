@@ -87,7 +87,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                     <div className="min-w-0 flex-1 pr-2">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-[10px] font-mono bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200 group-hover:bg-white group-hover:border-blue-200 transition-colors">
-                          {item.item_code}
+                          {item.code}
                         </span>
                         <span className="text-xs text-slate-400 truncate">
                           {item.category}

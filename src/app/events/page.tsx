@@ -1,16 +1,19 @@
-import { getEvents, getTeams, getVenues, getEventRequiredItems } from '@/lib/data/db';
-import { Calendar, MapPin, Users, Plus, ChevronRight, History, AlertTriangle, Trophy } from 'lucide-react';
+import { getTeams, getVenues } from '@/lib/data/db';
+import { getEventsSupabase, getEventRequiredItemsSupabase, getItemsSupabase } from '@/lib/data/supabaseDb';
+import { calculateRequirementStatus } from '@/lib/logic/status';
+import { Calendar, MapPin, Users, Plus, ChevronRight, History, AlertTriangle, Trophy, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import BandSyncForm from '@/components/BandSyncForm';
 import { clsx } from 'clsx';
 import { getEstimatedVenue } from '@/lib/venue-utils';
 
 export default async function EventsList() {
-  const [eventsRaw, teams, venues, eris] = await Promise.all([
-    getEvents(),
+  const [eventsRaw, teams, venues, eris, allItems] = await Promise.all([
+    getEventsSupabase(),
     getTeams(),
     getVenues(),
-    getEventRequiredItems()
+    getEventRequiredItemsSupabase(),
+    getItemsSupabase()
   ]);
   
   const thresholdDate = new Date();
@@ -63,6 +66,16 @@ export default async function EventsList() {
             };
             const category = getEventCategory(event.title);
             
+            // Equipment Status Summary for this event
+            const eventEris = eris.filter(eri => eri.event_id === event.id && eri.required_flag);
+            const eriStatuses = eventEris.map(eri => {
+              const status = calculateRequirementStatus(eri, allItems, eventsRaw);
+              return status.color;
+            });
+            const hasRed = eriStatuses.some(s => s === 'red');
+            const hasYellow = eriStatuses.some(s => s === 'yellow');
+            const allBlue = eriStatuses.length > 0 && eriStatuses.every(s => s === 'blue');
+
             let separator = null;
             if (!isPast && !renderedSeparator && idx > 0) {
               renderedSeparator = true;
@@ -135,7 +148,21 @@ export default async function EventsList() {
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center text-slate-400">
+                      <div className="flex items-center gap-1.5">
+                        {eventEris.length > 0 && (
+                          <div className="flex items-center gap-1 mr-1">
+                            {allBlue ? (
+                              <div className="flex items-center gap-1 bg-blue-50 text-blue-600 text-[9px] font-black px-1.5 py-0.5 rounded border border-blue-100">
+                                <CheckCircle size={10} /> 準備OK
+                              </div>
+                            ) : (
+                              <div className="flex gap-1">
+                                {hasRed && <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.5)]" title="持参者未設定あり" />}
+                                {hasYellow && <div className="w-2 h-2 rounded-full bg-yellow-400 shadow-[0_0_5px_rgba(250,204,21,0.5)]" title="受け渡し待ちあり" />}
+                              </div>
+                            )}
+                          </div>
+                        )}
                         <ChevronRight size={18} />
                       </div>
                     </div>

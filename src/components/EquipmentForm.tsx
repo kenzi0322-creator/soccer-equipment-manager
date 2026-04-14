@@ -43,9 +43,9 @@ export default function EquipmentForm({ initialData, action, submitLabel, teams 
             type="text" 
             name="item_code" 
             required 
-            defaultValue={initialData?.item_code}
-            placeholder="例: SS-C-01" 
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder:text-slate-400 text-sm"
+            defaultValue={initialData?.code}
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 placeholder-slate-400"
+            placeholder="例: T-01"
           />
         </div>
 

@@ -291,7 +291,8 @@
     "category": "shared",
     "owner_team_id": "t2",
     "shared_flag": true,
-    "current_holder_id": "m1"
+    "current_holder_id": "m65",
+    "last_handoff_at": "2026-04-02"
   },
   {
     "id": "i_T8",
@@ -310,7 +311,8 @@
     "category": "shared",
     "owner_team_id": "t2",
     "shared_flag": true,
-    "current_holder_id": "m1"
+    "current_holder_id": "m65",
+    "last_handoff_at": "2026-04-02"
   },
   {
     "id": "i_T10",

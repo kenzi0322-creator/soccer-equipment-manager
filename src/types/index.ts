@@ -54,7 +54,7 @@ export type EventParticipant = {
 
 export type Item = {
   id: string;
-  item_code: string;
+  code: string;
   name: string;
   category?: string;
   size?: string;
@@ -87,9 +87,11 @@ export type Handoff = {
 export type EventRequiredItem = {
   id: string;
   event_id: string;
-  item_id: string;
+  template_key?: string | null;
+  display_name?: string;
+  item_id?: string | null;
   required_flag: boolean;
-  assigned_member_id?: string;
+  assigned_member_id?: string | null;
   assignment_status: 'unassigned' | 'assigned' | 'ready';
   is_personal_item?: boolean;
   note?: string;

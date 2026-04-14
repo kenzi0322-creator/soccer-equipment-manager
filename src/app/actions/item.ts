@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { saveItem, updateItemInDb, getItem, getItems, saveItems, saveItemsBulk } from '@/lib/data/db';
+import { getItemSupabase, insertItemSupabase, updateItemSupabase, insertItemsBulkSupabase, deleteItemSupabase, updateItemHolderSupabase } from '@/lib/data/supabaseDb';
 import { Item } from '@/types';
 
 function generateId() {
@@ -20,7 +20,7 @@ export async function createItem(formData: FormData) {
 
   const newItem: Item = {
     id: generateId(),
-    item_code,
+    code: item_code,
     name,
     category,
     size,
@@ -30,7 +30,7 @@ export async function createItem(formData: FormData) {
     current_holder_id: null,
   };
 
-  await saveItem(newItem);
+  await insertItemSupabase(newItem);
 
   revalidatePath('/');
   redirect('/');
@@ -47,13 +47,13 @@ export async function updateItem(id: string, formData: FormData) {
 
   // We construct a partial object, the rest are kept by DB update logic if it were real.
   // BUT our db.ts `updateItemInDb` actually expects the full Item currently. Let's fetch the old one.
-  const oldItem = await getItem(id);
+  const oldItem = await getItemSupabase(id);
   
   if (!oldItem) throw new Error('Item not found');
 
   const updatedItem: Item = {
     ...oldItem,
-    item_code,
+    code: item_code,
     name,
     category,
     size,
@@ -62,7 +62,7 @@ export async function updateItem(id: string, formData: FormData) {
     shared_flag,
   };
 
-  await updateItemInDb(updatedItem);
+  await updateItemSupabase(updatedItem);
 
   revalidatePath(`/items/${id}`);
   revalidatePath('/');
@@ -73,7 +73,7 @@ export async function bulkImportItemsAction(parsedData: any[]) {
   
   const newItems: Item[] = parsedData.map(d => ({
     id: generateId(),
-    item_code: d.item_code || '',
+    code: d.item_code || '',
     name: d.name || '名称未設定',
     category: d.category || 'OTHER',
     size: d.size || '',
@@ -84,7 +84,7 @@ export async function bulkImportItemsAction(parsedData: any[]) {
     note: d.description || d.note || '',
   }));
 
-  await saveItemsBulk(newItems);
+  await insertItemsBulkSupabase(newItems);
   
   revalidatePath('/');
   revalidatePath('/items');
@@ -94,9 +94,7 @@ export async function bulkImportItemsAction(parsedData: any[]) {
 export async function deleteItemAction(formData: FormData) {
   const id = formData.get('id') as string;
   
-  const items = await getItems();
-  const nextItems = items.filter(i => i.id !== id);
-  await saveItems(nextItems);
+  await deleteItemSupabase(id);
   
   revalidatePath('/items');
   redirect('/');
@@ -110,17 +108,7 @@ export async function updateItemHolderAction(formData: FormData) {
   if (!id) return { error: 'IDが不足しています' };
 
   try {
-    const items = await getItems();
-    const index = items.findIndex(i => i.id === id);
-    if (index === -1) return { error: 'アイテムが見つかりません' };
-
-    items[index] = {
-      ...items[index],
-      current_holder_id: current_holder_id || null,
-      last_handoff_at: last_handoff_at || items[index].last_handoff_at
-    };
-
-    await saveItems(items);
+    await updateItemHolderSupabase(id, current_holder_id || null, last_handoff_at);
     revalidatePath('/');
     return { success: true };
   } catch (e: any) {

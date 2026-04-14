@@ -188,7 +188,7 @@ export default function BandSyncForm() {
           type="text" 
           name="band_url"
           placeholder="webcal://api.band.us/ical?token=..." 
-          className="flex-1 text-xs border border-green-200 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-green-500 bg-white shadow-inner placeholder:text-slate-300"
+          className="flex-1 text-xs text-slate-900 border border-green-200 rounded-xl px-3 py-2.5 outline-none focus:ring-2 focus:ring-green-500 bg-white shadow-inner placeholder:text-slate-300"
           required
           defaultValue="webcal://api.band.us/ical?token=aAAxADNiODgwZjdmZGU0ODU2MGE3MDhhNjZhNGNlMzQxNTA5M2Y2MjJhODI"
           disabled={loading}

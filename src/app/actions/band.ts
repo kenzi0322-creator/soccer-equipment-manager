@@ -1,7 +1,8 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { getEvents, saveEvents, getVenues, getTeams, getEventRequiredItems } from '@/lib/data/db';
+import { getVenues, getTeams } from '@/lib/data/db';
+import { getEventsSupabase, insertEventSupabase, updateEventSupabase, updateEventSyncStatusSupabase, getEventRequiredItemsSupabase } from '@/lib/data/supabaseDb';
 import { Event as AppEvent } from '@/types';
 
 function parseDateStr(dtStr: string) {
@@ -41,10 +42,10 @@ export async function getBandSyncPreview(formData: FormData) {
     const icalText = await res.text();
 
     const [existingEvents, allVenues, allTeams, eris] = await Promise.all([
-      getEvents(),
+      getEventsSupabase(),
       getVenues(),
       getTeams(),
-      getEventRequiredItems()
+      getEventRequiredItemsSupabase()
     ]);
     
     const eventsRaw = icalText.split('BEGIN:VEVENT');
@@ -143,40 +144,38 @@ export async function getBandSyncPreview(formData: FormData) {
 
 export async function commitBandSync(selections: { uid: string, type: string, action: 'apply' | 'skip' | 'cancel' }[], bandEvents: AppEvent[]) {
     try {
-        const existingEvents = await getEvents();
-        let newEvents = [...existingEvents];
+        const existingEvents = await getEventsSupabase();
         
         for (const sel of selections) {
             if (sel.action === 'skip') continue;
             
             if (sel.type === 'new' && sel.action === 'apply') {
                 const bEvent = bandEvents.find(e => e.id === sel.uid);
-                if (bEvent) newEvents.push(bEvent);
+                if (bEvent) await insertEventSupabase(bEvent);
             } else if (sel.type === 'changed' && sel.action === 'apply') {
                 const bEvent = bandEvents.find(e => e.id === sel.uid);
-                const idx = newEvents.findIndex(e => e.id === sel.uid || e.external_event_id === sel.uid);
-                if (bEvent && idx >= 0) {
-                    newEvents[idx] = {
-                        ...newEvents[idx],
+                const existing = existingEvents.find(e => e.id === sel.uid || e.external_event_id === sel.uid);
+                if (bEvent && existing) {
+                    await updateEventSupabase({
+                        ...existing,
                         title: bEvent.title,
                         date: bEvent.date,
                         start_at: bEvent.start_at,
                         end_at: bEvent.end_at,
-                        note: bEvent.note || newEvents[idx].note,
+                        note: bEvent.note || existing.note,
                         venue_id: bEvent.venue_id, // Note: The UI should warn if this overwrites user edits
                         sync_status: 'normal'
-                    };
+                    });
                 }
             } else if (sel.type === 'deleted_in_source' && sel.action === 'apply') {
                 // The user decided to mark it as cancelled/deleted in app
-                const idx = newEvents.findIndex(e => e.id === sel.uid || e.external_event_id === sel.uid);
-                if (idx >= 0) {
-                    newEvents[idx] = { ...newEvents[idx], sync_status: 'deleted_in_source' };
+                const existing = existingEvents.find(e => e.id === sel.uid || e.external_event_id === sel.uid);
+                if (existing) {
+                    await updateEventSyncStatusSupabase(existing.id, 'deleted_in_source');
                 }
             }
         }
         
-        await saveEvents(newEvents);
         revalidatePath('/events');
         return { success: true, message: '同期処理を完了しました' };
     } catch (err: any) {

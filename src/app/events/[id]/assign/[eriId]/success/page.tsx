@@ -1,4 +1,4 @@
-import { getEvents, getItems, getEventRequiredItems } from '@/lib/data/db';
+import { getEventsSupabase, getEventRequiredItemsSupabase, getItemsSupabase } from '@/lib/data/supabaseDb';
 import { CheckCircle, ArrowLeft, LayoutDashboard } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -8,9 +8,9 @@ export default async function AssignmentSuccessPage({ params }: { params: Promis
   const eventId = decodeURIComponent(rawId);
 
   const [events, allItems, eris] = await Promise.all([
-    getEvents(),
-    getItems(),
-    getEventRequiredItems()
+    getEventsSupabase(),
+    getItemsSupabase(),
+    getEventRequiredItemsSupabase()
   ]);
 
   const event = events.find(e => e.id === eventId);
@@ -20,7 +20,8 @@ export default async function AssignmentSuccessPage({ params }: { params: Promis
     notFound();
   }
 
-  const currentItem = allItems.find(i => i.id === eri.item_id);
+  const currentItem = eri.item_id ? allItems.find(i => i.id === eri.item_id) : undefined;
+  const displayLabel = currentItem?.name || eri.display_name || '備品';
 
   return (
     <div className="max-w-xl mx-auto min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
@@ -35,7 +36,7 @@ export default async function AssignmentSuccessPage({ params }: { params: Promis
           <h1 className="text-2xl font-black text-slate-800 tracking-tight">割り当て登録しました</h1>
           <p className="text-slate-500 text-sm font-medium">
             {event.title}<br/>
-            <span className="text-slate-900 font-bold">{currentItem?.name || '備品'}</span> の割り当てを完了しました
+            <span className="text-slate-900 font-bold">{displayLabel}</span> の割り当てを完了しました
           </p>
         </div>
 

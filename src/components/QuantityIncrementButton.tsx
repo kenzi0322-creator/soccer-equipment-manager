@@ -5,7 +5,7 @@ import { Plus, Loader2 } from 'lucide-react';
 import { incrementItemQuantityAction } from '@/app/actions/quantity';
 import { useRouter } from 'next/navigation';
 
-export default function QuantityIncrementButton({ eventId, itemId }: { eventId: string, itemId: string }) {
+export default function QuantityIncrementButton({ eventId, eriId }: { eventId: string, eriId: string }) {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -13,7 +13,7 @@ export default function QuantityIncrementButton({ eventId, itemId }: { eventId: 
     e.preventDefault();
     e.stopPropagation();
     startTransition(async () => {
-      const result = await incrementItemQuantityAction(eventId, itemId);
+      const result = await incrementItemQuantityAction(eventId, eriId);
       if (result.success) {
         router.refresh();
       } else if (result.error) {

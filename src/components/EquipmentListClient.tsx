@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { calculateItemStatus } from '@/lib/logic/status';
+import { calculateItemStatus, calculateRequirementStatus } from '@/lib/logic/status';
 import { Item, ItemStatusColor, Member, Team, Venue, Handoff, Event, EventRequiredItem, EventParticipant } from '@/types';
 import { MapPin, Calendar, User, Search, CheckCircle, RefreshCw, AlertCircle, Clock, Trash2, Edit3, Save, X, Shirt, Plus } from 'lucide-react';
 import { clsx } from 'clsx';
@@ -34,29 +34,120 @@ export default function EquipmentListClient({
   const router = useRouter();
 
   const itemsWithStatus = useMemo(() => {
-    return initialItems.map(item => {
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+
+    // 1. Get all relevant requirements for future events
+    const futureEvents = events.filter(e => e.date >= todayStr);
+    const futureEventIds = new Set(futureEvents.map(e => e.id));
+    const activeEris = eris.filter(eri => eri.required_flag && futureEventIds.has(eri.event_id));
+
+    // 2. Physical Inventory Items
+    // For physical items, we still want to show their "Next Action" status
+    const physical = initialItems.map(item => {
       const status = calculateItemStatus(item, events, eris, participants, handoffs);
       const team = teams.find(t => t.id === item.owner_team_id);
       const holder = members.find(m => m.id === item.current_holder_id);
-      return { ...item, statusData: status, team, holder };
+      return { ...item, statusData: status, team, holder, isPersonal: false };
     });
+
+    // 3. Virtual Items (Requirements not covered by the primary display of a physical item)
+    // We already show each physical item once with its "Next" event.
+    // However, if there are OTHER requirements (personal or place-holders) they need to be shown too.
+    // ALSO, if a physical item has MULTIPLE future requirements, they should ideally all be counted in summary.
+    
+    // To simplify:
+    // - Every physical item is shown once in the list (Match-related or Inventory).
+    // - Every requirement that IS NOT a physical item (template) or IS a personal item is shown as a virtual item.
+    
+    const virtual = activeEris
+      .filter(eri => {
+        // If it's personal carry, it's always virtual
+        if (eri.is_personal_item) return true;
+        // If it's a template (not a physical item), it's virtual
+        return !initialItems.some(i => i.id === eri.item_id);
+      })
+      .map(eri => {
+        const event = events.find(e => e.id === eri.event_id);
+        const member = members.find(m => m.id === eri.assigned_member_id);
+        const status = calculateRequirementStatus(eri, initialItems, events);
+        
+        let name = "必要備品";
+        let code = eri.is_personal_item ? "私物" : "REQ";
+        
+        if (eri.is_personal_item) {
+          const physicalMatch = eri.item_id ? initialItems.find(i => i.id === eri.item_id) : undefined;
+          if (physicalMatch) {
+            name = physicalMatch.name;
+            code = physicalMatch.code || '';
+          } else {
+            name = eri.display_name || '私物（必要備品）';
+          }
+        } else {
+          // Template placeholder
+          name = eri.display_name || '必要備品';
+        }
+
+        return {
+          id: `virtual_${eri.id}`,
+          name,
+          code: code,
+          statusData: {
+            ...status,
+            nextEvent: event,
+            nextEri: eri
+          },
+          team: null,
+          holder: member,
+          isPersonal: eri.is_personal_item,
+          owner_team_id: '',
+          shared_flag: false,
+          current_holder_id: member?.id || null,
+          last_handoff_at: undefined,
+          category: '',
+          size: '',
+          color: '',
+          photo_url: '',
+          current_holder_type: 'member',
+          status_note: '',
+          note: ''
+        } as any;
+      });
+
+    return [...physical, ...virtual];
   }, [initialItems, members, teams, events, eris, participants, handoffs]);
 
   const summary = useMemo(() => {
-    return {
-      red: itemsWithStatus.filter(i => i.statusData.color === 'red').length,
-      yellow: itemsWithStatus.filter(i => i.statusData.color === 'yellow').length,
-      blue: itemsWithStatus.filter(i => i.statusData.color === 'blue').length,
-      gray: itemsWithStatus.filter(i => i.statusData.color === 'gray').length,
-    };
-  }, [itemsWithStatus]);
+    // The summary should reflect all ACTIVE requirements for future events.
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const futureEvents = events.filter(e => e.date >= todayStr);
+    const futureEventIds = new Set(futureEvents.map(e => e.id));
+    const activeEris = eris.filter(eri => eri.required_flag && futureEventIds.has(eri.event_id));
+
+    const counts = { red: 0, yellow: 0, blue: 0, gray: 0 };
+    
+    activeEris.forEach(eri => {
+      const status = calculateRequirementStatus(eri, initialItems, events);
+      if (status.color === 'red') counts.red++;
+      else if (status.color === 'yellow') counts.yellow++;
+      else if (status.color === 'blue') counts.blue++;
+    });
+
+    // Gray is for physical items that have NO future requirements
+    const physicalWithRequirements = new Set(activeEris.map(eri => eri.item_id));
+    const unscheduledCount = initialItems.filter(item => !physicalWithRequirements.has(item.id)).length;
+    counts.gray = unscheduledCount;
+
+    return counts;
+  }, [initialItems, events, eris]);
 
 
   const filteredItems = useMemo(() => {
     let result = itemsWithStatus;
     
     if (search) {
-      result = result.filter(i => i.name.toLowerCase().includes(search.toLowerCase()) || i.item_code.toLowerCase().includes(search.toLowerCase()));
+      result = result.filter(i => i.name.toLowerCase().includes(search.toLowerCase()) || (i.code || '').toLowerCase().includes(search.toLowerCase()));
     }
     if (teamFilter !== 'all') {
       result = result.filter(i => i.team?.id === teamFilter);
@@ -67,13 +158,24 @@ export default function EquipmentListClient({
     
     const colorWeight: Record<ItemStatusColor, number> = { red: 1, yellow: 2, blue: 3, gray: 4 };
     result.sort((a, b) => {
-      const wA = colorWeight[a.statusData.color] || 5;
-      const wB = colorWeight[b.statusData.color] || 5;
+      const wA = colorWeight[a.statusData.color as ItemStatusColor] || 5;
+      const wB = colorWeight[b.statusData.color as ItemStatusColor] || 5;
       if (wA !== wB) return wA - wB;
       
       const dA = a.statusData.nextEvent ? new Date(a.statusData.nextEvent.date).getTime() : Infinity;
       const dB = b.statusData.nextEvent ? new Date(b.statusData.nextEvent.date).getTime() : Infinity;
-      return dA - dB;
+      if (dA !== dB) return dA - dB;
+      
+      // Fallback: sort by code (prefix then number)
+      const codeAStr = a.code || a.id || '';
+      const codeBStr = b.code || b.id || '';
+      const prefixA = codeAStr.replace(/[0-9]/g, '');
+      const prefixB = codeBStr.replace(/[0-9]/g, '');
+      if (prefixA !== prefixB) return prefixA.localeCompare(prefixB);
+      
+      const numA = parseInt(codeAStr.replace(/\D/g, '') || '0', 10);
+      const numB = parseInt(codeBStr.replace(/\D/g, '') || '0', 10);
+      return numA - numB;
     });
 
     return result;
@@ -126,11 +228,11 @@ export default function EquipmentListClient({
         
         if (isBall) {
           groups.balls.push(item);
-        } else if (item.item_code.startsWith('B')) {
+        } else if ((item.code || '').startsWith('B')) {
           groups.general.push(item);
-        } else if (item.item_code.startsWith('T')) {
+        } else if ((item.code || '').startsWith('T')) {
           groups.tokyo40.push(item);
-        } else if (item.item_code.startsWith('S')) {
+        } else if ((item.code || '').startsWith('S')) {
           groups.senior.push(item);
         } else {
           groups.others.push(item);
@@ -216,7 +318,6 @@ export default function EquipmentListClient({
               const status = item.statusData;
               const nextEvent = status.nextEvent;
               const recipient = members.find(m => m.id === status.nextEri?.assigned_member_id);
-              const isUrgent = status.color === 'red' || status.color === 'yellow';
 
               return (
                 <div key={item.id} className="bg-white rounded-xl shadow-sm border border-slate-200 relative overflow-hidden transition-all hover:border-blue-200 group">
@@ -245,14 +346,13 @@ export default function EquipmentListClient({
                         status.color === 'gray' && "bg-slate-50 text-slate-400 border-slate-100"
                       )}>
                         {getStatusIcon(status.color)}
-                        {status.color === 'yellow' ? '受け渡し前' : status.label}
+                        {item.isPersonal ? '私物対応' : (status.color === 'yellow' ? '受け渡し前' : status.label)}
                       </span>
                     </div>
 
                     {/* Event Info (Active items only) */}
                     {nextEvent && status.color !== 'gray' && (
                       <div className="my-2 p-2 bg-slate-50 rounded-lg border border-slate-100 space-y-1">
-                        {/* Match Day */}
                         <div className="flex items-center gap-1 text-[11px]">
                           <Calendar size={12} className="text-slate-400" />
                           <span className="text-slate-500">試合日:</span>
@@ -264,8 +364,6 @@ export default function EquipmentListClient({
                             })()}
                           </span>
                         </div>
-
-                        {/* Handoff Details (Deadline and Recipient - only for Red/Yellow/Blue if relevant) */}
                         <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1 border-t border-slate-200/50 mt-1">
                           <div className="flex items-center gap-1 text-[11px]">
                             <Clock size={12} className="text-slate-400" />
@@ -294,15 +392,14 @@ export default function EquipmentListClient({
                       <div className="flex items-center gap-3 text-[11px]">
                         <div className="flex items-center gap-1">
                           <User size={12} className="text-slate-400" />
-                          <span className="text-slate-500">保有:</span>
+                          <span className="text-slate-500">{item.isPersonal ? '持参者' : '保有'}:</span>
                           <span className={clsx("font-black text-slate-800", !item.holder && "text-rose-600 italic")}>
                             {item.holder?.name || '倉庫・不明'}
                           </span>
                         </div>
                         
-                        {/* Team Identification Panel */}
-                        {(() => {
-                          const code = item.item_code;
+                        {!item.isPersonal && (() => {
+                          const code = item.code || '';
                           let label = code;
                           let colorClass = "bg-slate-100 text-slate-600 border-slate-200";
                           
@@ -332,7 +429,7 @@ export default function EquipmentListClient({
                       </div>
 
                       <div className="flex items-center gap-1">
-                        {editingId !== item.id && (
+                        {editingId !== item.id && !item.isPersonal && (
                           <button 
                             onClick={() => setEditingId(item.id)}
                             className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-1 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-1 shadow-sm"
@@ -341,12 +438,14 @@ export default function EquipmentListClient({
                             変更
                           </button>
                         )}
-                        <form action={deleteItemAction} onSubmit={(e) => { if (!confirm(`「${item.name}」を本当に削除しますか？`)) e.preventDefault(); }}>
-                          <input type="hidden" name="id" value={item.id} />
-                          <button type="submit" className="text-slate-300 hover:text-rose-500 transition-colors p-1 rounded-md hover:bg-rose-50">
-                            <Trash2 size={14} />
-                          </button>
-                        </form>
+                        {!item.isPersonal && (
+                          <form action={deleteItemAction} onSubmit={(e) => { if (!confirm(`「${item.name}」を本当に削除しますか？`)) e.preventDefault(); }}>
+                            <input type="hidden" name="id" value={item.id} />
+                            <button type="submit" className="text-slate-300 hover:text-rose-500 transition-colors p-1 rounded-md hover:bg-rose-50">
+                              <Trash2 size={14} />
+                            </button>
+                          </form>
+                        )}
                       </div>
                     </div>
 
