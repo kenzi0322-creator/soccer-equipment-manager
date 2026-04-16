@@ -31,6 +31,7 @@ export default function EquipmentListClient({
   const [teamFilter, setTeamFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [bulkReferee, setBulkReferee] = useState(false);
   const router = useRouter();
 
   const itemsWithStatus = useMemo(() => {
@@ -456,12 +457,14 @@ export default function EquipmentListClient({
                           const result = await updateItemHolderAction(formData);
                           if (result.success) {
                             setEditingId(null);
+                            setBulkReferee(false);
                             router.refresh();
                           } else {
                             alert(result.error);
                           }
                         }} className="space-y-3">
                           <input type="hidden" name="id" value={item.id} />
+                          {bulkReferee && <input type="hidden" name="bulk_referee" value="true" />}
                           <div className="grid grid-cols-1 gap-2">
                             <label className="text-[10px] font-bold text-slate-400 uppercase">新しい保有者</label>
                             <select 
@@ -486,9 +489,22 @@ export default function EquipmentListClient({
                                 className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 outline-none w-full"
                               />
                             </div>
+                            {item.name.startsWith('レフリー') && (
+                              <label className="flex items-start gap-2 cursor-pointer mt-1">
+                                <input
+                                  type="checkbox"
+                                  checked={bulkReferee}
+                                  onChange={(e) => setBulkReferee(e.target.checked)}
+                                  className="mt-0.5 accent-blue-500"
+                                />
+                                <span className="text-[11px] text-slate-600 leading-tight">
+                                  関連するレフリー用品も<br />まとめて同じ人に変更する
+                                </span>
+                              </label>
+                            )}
                           </div>
                           <div className="flex gap-2 justify-end">
-                            <button type="button" onClick={() => setEditingId(null)} className="text-[10px] font-bold text-slate-500 px-3 py-1.5">
+                            <button type="button" onClick={() => { setEditingId(null); setBulkReferee(false); }} className="text-[10px] font-bold text-slate-500 px-3 py-1.5">
                               取消
                             </button>
                             <button type="submit" className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1.5 rounded-lg">

@@ -131,6 +131,22 @@ export async function updateItemHolderSupabase(id: string, current_holder_id: st
   if (error) throw new Error(error.message);
 }
 
+export async function updateItemHoldersBulkSupabase(legacyIds: string[], current_holder_id: string | null): Promise<void> {
+  const supabase = await createClient();
+
+  let current_holder_member_id = null;
+  if (current_holder_id) {
+    const { data: member } = await supabase.from('members').select('id').eq('legacy_id', current_holder_id).single();
+    if (member) current_holder_member_id = member.id;
+  }
+
+  const { error } = await supabase
+    .from('equipment_items')
+    .update({ current_holder_member_id })
+    .in('legacy_id', legacyIds);
+  if (error) throw new Error(error.message);
+}
+
 // ========================
 // Events Persistence
 // ========================

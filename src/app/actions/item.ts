@@ -2,7 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { getItemSupabase, insertItemSupabase, updateItemSupabase, insertItemsBulkSupabase, deleteItemSupabase, updateItemHolderSupabase } from '@/lib/data/supabaseDb';
+import { getItemsSupabase, getItemSupabase, insertItemSupabase, updateItemSupabase, insertItemsBulkSupabase, deleteItemSupabase, updateItemHolderSupabase, updateItemHoldersBulkSupabase } from '@/lib/data/supabaseDb';
+
 import { Item } from '@/types';
 
 function generateId() {
@@ -104,11 +105,51 @@ export async function updateItemHolderAction(formData: FormData) {
   const id = formData.get('id') as string;
   const current_holder_id = formData.get('current_holder_id') as string;
   const last_handoff_at = formData.get('last_handoff_at') as string;
+  const bulk_referee = formData.get('bulk_referee') === 'true';
 
   if (!id) return { error: 'IDが不足しています' };
 
   try {
-    await updateItemHolderSupabase(id, current_holder_id || null, last_handoff_at);
+    if (bulk_referee) {
+      // Fetch the selected item to extract size and code prefix
+      const targetItem = await getItemSupabase(id);
+      if (!targetItem) return { error: '備品が見つかりません' };
+
+      // Extract size tag like （M）、（L）、（XO） from name
+      const sizeMatch = targetItem.name.match(/（([^）]+)）/);
+      const sizeTag = sizeMatch ? `（${sizeMatch[1]}）` : null;
+
+      // Extract code prefix: S, T, O, B etc. (first letter(s) before the number)
+      const codePrefixMatch = targetItem.code.match(/^([A-Z]+)/);
+      const codePrefix = codePrefixMatch ? codePrefixMatch[1] : null;
+
+      // Fetch all items and find related referee items
+      const allItems = await getItemsSupabase();
+      const relatedIds = allItems
+        .filter(item => {
+          if (!item.name.startsWith('レフリー')) return false;
+          // Must share the same code prefix (same team/set group)
+          if (codePrefix) {
+            const itemPrefixMatch = item.code.match(/^([A-Z]+)/);
+            const itemPrefix = itemPrefixMatch ? itemPrefixMatch[1] : null;
+            if (itemPrefix !== codePrefix) return false;
+          }
+          // If original had a size, only match items with same size OR items without size (like レフリーフラッグ)
+          if (sizeTag) {
+            const hasSize = /（[^）]+）/.test(item.name);
+            if (hasSize && !item.name.includes(sizeTag)) return false;
+          }
+          return true;
+        })
+        .map(item => item.id);
+
+      if (relatedIds.length > 0) {
+        await updateItemHoldersBulkSupabase(relatedIds, current_holder_id || null);
+      }
+    } else {
+      await updateItemHolderSupabase(id, current_holder_id || null, last_handoff_at);
+    }
+
     revalidatePath('/');
     return { success: true };
   } catch (e: any) {
@@ -116,3 +157,4 @@ export async function updateItemHolderAction(formData: FormData) {
     return { error: '更新に失敗しました' };
   }
 }
+
