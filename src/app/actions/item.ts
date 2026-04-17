@@ -115,29 +115,39 @@ export async function updateItemHolderAction(formData: FormData) {
       const targetItem = await getItemSupabase(id);
       if (!targetItem) return { error: '備品が見つかりません' };
 
-      // Extract size tag like （M）、（L）、（XO） from name
-      const sizeMatch = targetItem.name.match(/（([^）]+)）/);
-      const sizeTag = sizeMatch ? `（${sizeMatch[1]}）` : null;
+      // Extract size from name - supports （M）bracket format AND M用/L用/XO用 suffix format
+      const extractSize = (name: string): string | null => {
+        const bracketMatch = name.match(/（([^）]+)）/);
+        if (bracketMatch) return bracketMatch[1];
+        const suffixMatch = name.match(/(XO|[A-Z])用/);
+        if (suffixMatch) return suffixMatch[1];
+        return null;
+      };
+      const targetSize = extractSize(targetItem.name);
 
-      // Extract code prefix: S, T, O, B etc. (first letter(s) before the number)
+      // Extract code prefix: S, T, B etc. (first letter(s) before the number)
       const codePrefixMatch = targetItem.code.match(/^([A-Z]+)/);
       const codePrefix = codePrefixMatch ? codePrefixMatch[1] : null;
+
+      // Referee-related item check: starts with レフリー OR contains ワッペンガード
+      const isRefereeRelated = (name: string) =>
+        name.startsWith('レフリー') || name.includes('ワッペンガード');
 
       // Fetch all items and find related referee items
       const allItems = await getItemsSupabase();
       const relatedIds = allItems
         .filter(item => {
-          if (!item.name.startsWith('レフリー')) return false;
+          if (!isRefereeRelated(item.name)) return false;
           // Must share the same code prefix (same team/set group)
           if (codePrefix) {
             const itemPrefixMatch = item.code.match(/^([A-Z]+)/);
             const itemPrefix = itemPrefixMatch ? itemPrefixMatch[1] : null;
             if (itemPrefix !== codePrefix) return false;
           }
-          // If original had a size, only match items with same size OR items without size (like レフリーフラッグ)
-          if (sizeTag) {
-            const hasSize = /（[^）]+）/.test(item.name);
-            if (hasSize && !item.name.includes(sizeTag)) return false;
+          // If original had a size, only match items with same size OR items without any size
+          if (targetSize) {
+            const itemSize = extractSize(item.name);
+            if (itemSize && itemSize !== targetSize) return false;
           }
           return true;
         })
