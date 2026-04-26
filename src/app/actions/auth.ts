@@ -4,7 +4,10 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 
 const AUTH_COOKIE_NAME = 'equipment-app-auth';
-const APP_PASSWORD = process.env.APP_PASSWORD || 'secret'; // fallback mainly prevents crash if not set, though shouldn't rely on it
+if (!process.env.APP_PASSWORD) {
+  throw new Error('[auth] APP_PASSWORD environment variable is not set. Set it in .env.local (development) or Vercel (production).');
+}
+const APP_PASSWORD = process.env.APP_PASSWORD;
 
 export async function login(formData: FormData) {
   const password = formData.get('password') as string;
