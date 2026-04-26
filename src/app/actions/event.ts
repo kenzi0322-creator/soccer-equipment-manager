@@ -2,7 +2,36 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { getEventSupabase, updateEventSupabase, deleteEventSupabase, getEventRequiredItemsSupabase, insertErisSupabase, deleteEriSupabase, updateEriSupabase } from '@/lib/data/supabaseDb';
+import { getEventSupabase, insertEventSupabase, updateEventSupabase, deleteEventSupabase, getEventRequiredItemsSupabase, insertErisSupabase, deleteEriSupabase, updateEriSupabase } from '@/lib/data/supabaseDb';
+import type { Event } from '@/types';
+
+export async function createEventAction(formData: FormData) {
+  const id = 'ev_' + Date.now().toString();
+  const newEvent: Event = {
+    id,
+    title: formData.get('title') as string,
+    date: formData.get('date') as string,
+    start_at: (formData.get('start_at') as string) || undefined,
+    end_at: (formData.get('end_at') as string) || undefined,
+    venue_id: (formData.get('venue_id') as string) || '',
+    primary_team_id: formData.get('primary_team_id') as string,
+    is_joint_match: formData.get('is_joint_match') === 'on',
+    referee_time: (formData.get('referee_time') as string) || undefined,
+    main_referee_id: (formData.get('main_referee_id') as string) || undefined,
+    sub_referee_id: (formData.get('sub_referee_id') as string) || undefined,
+    sub_referee_id_2: (formData.get('sub_referee_id_2') as string) || undefined,
+    note: (formData.get('note') as string) || undefined,
+  };
+
+  try {
+    await insertEventSupabase(newEvent);
+    revalidatePath('/events');
+  } catch (e: any) {
+    console.error('Create Event Error:', e);
+    return { error: '登録に失敗しました: ' + e.message };
+  }
+  redirect(`/events/${id}`);
+}
 
 export async function deleteEventAction(id: string) {
   try {
@@ -33,6 +62,7 @@ export async function updateEventAction(formData: FormData) {
       referee_time: (formData.get('referee_time') as string) || undefined,
       main_referee_id: (formData.get('main_referee_id') as string) || undefined,
       sub_referee_id: (formData.get('sub_referee_id') as string) || undefined,
+      sub_referee_id_2: (formData.get('sub_referee_id_2') as string) || undefined,
       note: (formData.get('note') as string) || undefined,
     };
 

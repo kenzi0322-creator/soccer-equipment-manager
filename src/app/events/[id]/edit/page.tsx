@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
-import { getEvent, getTeams, getVenues, getMembers } from '@/lib/data/db';
+import { getEventSupabase } from '@/lib/data/supabaseDb';
+import { getMembersSupabase } from '@/lib/data/supabaseDb';
+import { getTeams } from '@/lib/data/db';
 import EventForm from '@/components/EventForm';
 import { updateEventAction } from '@/app/actions/event';
 import { ArrowLeft } from 'lucide-react';
@@ -9,11 +11,10 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
   const { id: rawId } = await params;
   const id = decodeURIComponent(rawId);
   
-  const [event, teams, venues, members] = await Promise.all([
-    getEvent(id),
+  const [event, teams, members] = await Promise.all([
+    getEventSupabase(id),
     getTeams(),
-    getVenues(),
-    getMembers()
+    getMembersSupabase(),
   ]);
   
   if (!event) return notFound();
@@ -31,7 +32,6 @@ export default async function EditEventPage({ params }: { params: Promise<{ id: 
         initialData={event} 
         action={updateEventAction} 
         teams={teams}
-        venues={venues}
         members={members}
       />
     </div>

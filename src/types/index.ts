@@ -34,12 +34,13 @@ export type Event = {
   date: string; // YYYY-MM-DD
   start_at?: string; // HH:mm
   end_at?: string; // HH:mm
-  venue_id: string;
+  venue_id: string;   // used as free-text venue name
   primary_team_id: string;
   is_joint_match: boolean;
   referee_time?: string;
   main_referee_id?: string;
   sub_referee_id?: string;
+  sub_referee_id_2?: string; // 副審2人目
   note?: string;
   sync_status?: 'normal' | 'changed' | 'deleted_in_source';
 };

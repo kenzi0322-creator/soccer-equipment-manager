@@ -160,9 +160,13 @@ function mapEventFromSupabase(row: any): Event {
     start_at: row.start_at || undefined,
     end_at: row.end_at || undefined,
     note: row.note || undefined,
-    venue_id: row.venue_legacy_id || 'v1',
+    venue_id: row.venue_legacy_id || '',   // free-text venue name stored here
     primary_team_id: row.primary_team_category || 't1',
     is_joint_match: row.is_official || false,
+    referee_time: row.referee_time || undefined,
+    main_referee_id: row.main_referee_id || undefined,
+    sub_referee_id: row.sub_referee_id || undefined,
+    sub_referee_id_2: row.sub_referee_id_2 || undefined,
     sync_status: row.status === 'deleted_in_source' ? 'deleted_in_source' : 'normal'
   };
 }
@@ -176,9 +180,13 @@ function mapEventToSupabase(evt: Event): any {
     start_at: evt.start_at || null,
     end_at: evt.end_at || null,
     note: evt.note || null,
-    venue_legacy_id: evt.venue_id,
+    venue_legacy_id: evt.venue_id || null,  // free-text venue name stored here
     primary_team_category: evt.primary_team_id,
     is_official: evt.is_joint_match || false,
+    referee_time: evt.referee_time || null,
+    main_referee_id: evt.main_referee_id || null,
+    sub_referee_id: evt.sub_referee_id || null,
+    sub_referee_id_2: evt.sub_referee_id_2 || null,
     status: evt.sync_status === 'deleted_in_source' ? 'deleted_in_source' : 'active'
   };
 }

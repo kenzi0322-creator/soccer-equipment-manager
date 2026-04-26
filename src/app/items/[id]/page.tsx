@@ -1,19 +1,15 @@
 import { notFound } from 'next/navigation';
-import { getItem, getMembers, getTeams, getVenues, getHandoffs, getEvents, getEventRequiredItems, getEventParticipants } from '@/lib/data/db';
+import { getItemSupabase, getItemsSupabase, getEventsSupabase, getEventRequiredItemsSupabase, getMembersSupabase } from '@/lib/data/supabaseDb';
 import ItemDetailClient from '@/components/ItemDetailClient';
 
 export default async function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
-  const [item, members, teams, venues, handoffs, events, eris, participants] = await Promise.all([
-    getItem(id),
-    getMembers(),
-    getTeams(),
-    getVenues(),
-    getHandoffs(),
-    getEvents(),
-    getEventRequiredItems(),
-    getEventParticipants()
+  const [item, members, events, eris] = await Promise.all([
+    getItemSupabase(id),
+    getMembersSupabase(),
+    getEventsSupabase(),
+    getEventRequiredItemsSupabase(),
   ]);
   
   if (!item) return notFound();
@@ -22,12 +18,12 @@ export default async function ItemDetail({ params }: { params: Promise<{ id: str
     <ItemDetailClient 
       initialItem={item} 
       members={members} 
-      teams={teams}
-      venues={venues}
-      handoffs={handoffs}
+      teams={[]}
+      venues={[]}
+      handoffs={[]}
       events={events}
       eris={eris}
-      participants={participants}
+      participants={[]}
     />
   );
 }

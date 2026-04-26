@@ -99,14 +99,50 @@ export default function AssignmentForm({
               disabled={isPending}
             >
               <option value="" disabled>備品を選択してください</option>
-              <option value="__personal__">個人所有のものを持参 (共有在庫としては管理しません)</option>
-              {filteredItems.map(i => (
-                <option key={i.id} value={i.id}>
-                  {formatItemCode(i.code || '')} {i.name} {i.color ? `(${i.color})` : ''} {i.size ? `[${i.size}]` : ''}
-                </option>
-              ))}
+              <option value="__personal__">── 個人所有のものを持参（共有在庫として管理しない）</option>
+              {(() => {
+                const categoryOrder = [
+                  { key: 'shared',   label: '📦 合同共用備品（shared）' },
+                  { key: 'referee',  label: '🟡 レフリー用品（referee）' },
+                  { key: 'personal', label: '👤 個人管理備品（personal）' },
+                ];
+                const grouped: Record<string, typeof filteredItems> = {};
+                const others: typeof filteredItems = [];
+                for (const item of filteredItems) {
+                  const cat = (item.category || '').toLowerCase();
+                  if (cat === 'shared') { grouped['shared'] = [...(grouped['shared'] || []), item]; }
+                  else if (cat === 'referee' || item.name?.includes('レフリー') || item.name?.includes('ワッペン')) { grouped['referee'] = [...(grouped['referee'] || []), item]; }
+                  else if (cat === 'personal') { grouped['personal'] = [...(grouped['personal'] || []), item]; }
+                  else { others.push(item); }
+                }
+                return (
+                  <>
+                    {categoryOrder.map(({ key, label }) =>
+                      grouped[key]?.length ? (
+                        <optgroup key={key} label={label}>
+                          {grouped[key].map(i => (
+                            <option key={i.id} value={i.id}>
+                              {formatItemCode(i.code || '')} {i.name}
+                            </option>
+                          ))}
+                        </optgroup>
+                      ) : null
+                    )}
+                    {others.length > 0 && (
+                      <optgroup label="📋 その他">
+                        {others.map(i => (
+                          <option key={i.id} value={i.id}>
+                            {formatItemCode(i.code || '')} {i.name}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+                  </>
+                );
+              })()}
             </select>
         </div>
+
 
         {/* Bulk Referee Assignment Checkbox */}
         {isRefereeItem && (

@@ -1,5 +1,4 @@
-import { getEvents, getItems, getMembers } from '@/lib/data/db';
-import { getEventRequiredItemsSupabase } from '@/lib/data/supabaseDb';
+import { getItemsSupabase, getEventsSupabase, getMembersSupabase, getEventRequiredItemsSupabase } from '@/lib/data/supabaseDb';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -10,9 +9,9 @@ export default async function AssignmentPage({ params }: { params: Promise<{ id:
   const eventId = decodeURIComponent(rawId);
 
   const [events, allItems, members, eris] = await Promise.all([
-    getEvents(),
-    getItems(),
-    getMembers(),
+    getEventsSupabase(),
+    getItemsSupabase(),
+    getMembersSupabase(),
     getEventRequiredItemsSupabase()
   ]);
 
@@ -35,7 +34,7 @@ export default async function AssignmentPage({ params }: { params: Promise<{ id:
   const isGkTemplate = eri.template_key ? eri.template_key === 'gk' : false;
   
   const filteredItems = allItems.filter(i => {
-    if (i.id.includes('template')) return false; // Hide templates in the destination list
+    if (i.id.includes('template')) return false;
     if (isGkTemplate) return i.category === 'goalkeeper' || (i.name && i.name.includes('GK'));
     if (isBallTemplate) return i.name && (i.name.includes('球') || i.name.includes('ボール'));
     return true;

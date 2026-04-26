@@ -1,19 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Event, Team, Venue, Member } from '@/types';
+import { Event, Team, Member } from '@/types';
 
 export default function EventForm({ 
   initialData, 
   action,
   teams,
-  venues,
   members
 }: { 
   initialData?: Event, 
   action: (formData: FormData) => Promise<{error?: string} | void>,
   teams: Team[],
-  venues: Venue[],
   members: Member[]
 }) {
   const [loading, setLoading] = useState(false);
@@ -99,15 +97,14 @@ export default function EventForm({
           </select>
         </div>
         <div>
-          <label className="block text-sm font-bold text-slate-700 mb-1">会場 *</label>
-          <select 
-            name="venue_id" 
-            defaultValue={initialData?.venue_id || (venues[0]?.id || '')}
-            required
-            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
-          >
-            {venues.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
-          </select>
+          <label className="block text-sm font-bold text-slate-700 mb-1">会場</label>
+          <input 
+            type="text" 
+            name="venue_id"
+            defaultValue={initialData?.venue_id || ''}
+            placeholder="例：駒沢公園第一球場"
+            className="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none" 
+          />
         </div>
       </div>
 
@@ -124,7 +121,7 @@ export default function EventForm({
       {/* 審判情報セクション */}
       <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-3">
         <h3 className="text-sm font-bold text-slate-700">審判担当情報</h3>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">担当時間</label>
             <input 
@@ -142,18 +139,31 @@ export default function EventForm({
               className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white"
             >
               <option value="">未設定</option>
-              {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              {members.map(m => <option key={m.id} value={m.id}>{m.uniform_number ? `${m.uniform_number} ` : ''}{m.name}</option>)}
             </select>
           </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
           <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">副審</label>
+            <label className="block text-xs font-medium text-slate-500 mb-1">副審①</label>
             <select 
               name="sub_referee_id" 
               defaultValue={initialData?.sub_referee_id || ''}
               className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white"
             >
               <option value="">未設定</option>
-              {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+              {members.map(m => <option key={m.id} value={m.id}>{m.uniform_number ? `${m.uniform_number} ` : ''}{m.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1">副審②</label>
+            <select 
+              name="sub_referee_id_2" 
+              defaultValue={initialData?.sub_referee_id_2 || ''}
+              className="w-full border border-slate-200 rounded-lg px-2 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+            >
+              <option value="">未設定</option>
+              {members.map(m => <option key={m.id} value={m.id}>{m.uniform_number ? `${m.uniform_number} ` : ''}{m.name}</option>)}
             </select>
           </div>
         </div>
