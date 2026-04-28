@@ -1,21 +1,28 @@
 import { notFound } from 'next/navigation';
 import { getEventSupabase } from '@/lib/data/supabaseDb';
 import { getMembersSupabase } from '@/lib/data/supabaseDb';
-import { getTeams } from '@/lib/data/db';
+import type { Team } from '@/types';
 import EventForm from '@/components/EventForm';
 import { updateEventAction } from '@/app/actions/event';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
+const TEAMS: Team[] = [
+  { id: 't1', name: '文京一般', category: 'shared' },
+  { id: 't2', name: '都O40', category: 'shared' },
+  { id: 't3', name: '文京シニア', category: 'shared' },
+  { id: 't_tun', name: 'TUN共通', category: 'shared' },
+];
+
 export default async function EditEventPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
   const id = decodeURIComponent(rawId);
   
-  const [event, teams, members] = await Promise.all([
+  const [event, members] = await Promise.all([
     getEventSupabase(id),
-    getTeams(),
     getMembersSupabase(),
   ]);
+  const teams = TEAMS;
   
   if (!event) return notFound();
 

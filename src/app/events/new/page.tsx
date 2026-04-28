@@ -1,15 +1,22 @@
-import { getTeams } from '@/lib/data/db';
+import type { Team } from '@/types';
 import { getMembersSupabase } from '@/lib/data/supabaseDb';
 import EventForm from '@/components/EventForm';
 import { createEventAction } from '@/app/actions/event';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
+const TEAMS: Team[] = [
+  { id: 't1', name: '文京一般', category: 'shared' },
+  { id: 't2', name: '都O40', category: 'shared' },
+  { id: 't3', name: '文京シニア', category: 'shared' },
+  { id: 't_tun', name: 'TUN共通', category: 'shared' },
+];
+
 export default async function NewEventPage() {
-  const [teams, members] = await Promise.all([
-    getTeams(),
+  const [members] = await Promise.all([
     getMembersSupabase(),
   ]);
+  const teams = TEAMS;
 
   return (
     <div className="space-y-6 pb-6">
