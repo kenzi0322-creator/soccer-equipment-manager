@@ -277,41 +277,62 @@ export default function EquipmentListClient({
     return '📦';
   };
 
-  const renderSection = (id: string, title: string, items: typeof filteredItems, theme: 'active' | 'inventory', showIfEmpty: boolean = false, compact: boolean = false) => {
+  const renderSection = (id: string, title: string, items: typeof filteredItems, theme: 'active' | 'inventory', showIfEmpty: boolean = false, compact: boolean = false, noCollapse: boolean = false) => {
     if (items.length === 0 && !showIfEmpty) return null;
-    const isOpen = openSections[id];
+    const isOpen = noCollapse || openSections[id];
     
     return (
       <div key={id} className="space-y-3">
-        <button 
-          onClick={() => toggleSection(id)}
-          className={clsx(
-            "w-full flex items-center justify-between p-3 rounded-xl border transition-all shadow-sm",
+        {/* 折りたたみヘッダー（noCollapseの場合はボタンなしで静的表示） */}
+        {noCollapse ? (
+          <div className={clsx(
+            "w-full flex items-center p-3 rounded-xl border shadow-sm",
             theme === 'active' ? "bg-white border-slate-200" : "bg-slate-100/50 border-slate-200",
-            isOpen ? "mb-1" : "mb-0"
-          )}
-        >
-          <div className="flex items-center gap-2">
-            <span className={clsx(
-              "p-1 rounded-lg",
-              id === 'red' && "bg-rose-100 text-rose-600",
-              id === 'yellow' && "bg-amber-100 text-amber-600",
-              id === 'blue' && "bg-sky-100 text-sky-600",
-              theme === 'inventory' && "bg-slate-200 text-slate-500"
-            )}>
-              {id === 'red' && <AlertCircle size={14} />}
-              {id === 'yellow' && <RefreshCw size={14} />}
-              {id === 'blue' && <CheckCircle size={14} />}
-              {theme === 'inventory' && <Clock size={14} />}
-            </span>
-            <span className={clsx("font-black text-sm", theme === 'active' ? "text-slate-900" : "text-slate-700")}>
-              {title} <span className="ml-1 opacity-50 font-bold">({items.length})</span>
-            </span>
+            "mb-1"
+          )}>
+            <div className="flex items-center gap-2">
+              <span className={clsx(
+                "p-1 rounded-lg",
+                id === 'blue' && "bg-sky-100 text-sky-600",
+              )}>
+                <CheckCircle size={14} />
+              </span>
+              <span className="font-black text-sm text-slate-900">
+                {title} <span className="ml-1 opacity-50 font-bold">({items.length})</span>
+              </span>
+            </div>
           </div>
-          <div className={clsx("transition-transform duration-200", isOpen ? "rotate-180" : "")}>
-            <span className="text-slate-400">▼</span>
-          </div>
-        </button>
+        ) : (
+          <button 
+            onClick={() => toggleSection(id)}
+            className={clsx(
+              "w-full flex items-center justify-between p-3 rounded-xl border transition-all shadow-sm",
+              theme === 'active' ? "bg-white border-slate-200" : "bg-slate-100/50 border-slate-200",
+              isOpen ? "mb-1" : "mb-0"
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <span className={clsx(
+                "p-1 rounded-lg",
+                id === 'red' && "bg-rose-100 text-rose-600",
+                id === 'yellow' && "bg-amber-100 text-amber-600",
+                id === 'blue' && "bg-sky-100 text-sky-600",
+                theme === 'inventory' && "bg-slate-200 text-slate-500"
+              )}>
+                {id === 'red' && <AlertCircle size={14} />}
+                {id === 'yellow' && <RefreshCw size={14} />}
+                {id === 'blue' && <CheckCircle size={14} />}
+                {theme === 'inventory' && <Clock size={14} />}
+              </span>
+              <span className={clsx("font-black text-sm", theme === 'active' ? "text-slate-900" : "text-slate-700")}>
+                {title} <span className="ml-1 opacity-50 font-bold">({items.length})</span>
+              </span>
+            </div>
+            <div className={clsx("transition-transform duration-200", isOpen ? "rotate-180" : "")}>
+              <span className="text-slate-400">▼</span>
+            </div>
+          </button>
+        )}
 
         {isOpen && (
           <div className={clsx("animate-in fade-in slide-in-from-top-1 duration-200", compact ? "" : "space-y-3")}>
@@ -577,9 +598,9 @@ export default function EquipmentListClient({
         <section className="space-y-4">
           <h2 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] pl-1">今対応が必要な備品</h2>
           <div className="space-y-2">
-            {renderSection('red', '未確定', groupedItems.red, 'active')}
+            {renderSection('blue', '準備OK', groupedItems.blue, 'active', false, true, true)}
             {renderSection('yellow', '受け渡し前', groupedItems.yellow, 'active')}
-            {renderSection('blue', '準備OK', groupedItems.blue, 'active', false, true)}
+            {renderSection('red', '未確定', groupedItems.red, 'active')}
           </div>
         </section>
 
