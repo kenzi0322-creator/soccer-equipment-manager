@@ -253,35 +253,73 @@ const TEMPLATE_KEY_NAMES: Record<string, string> = {
   'ref_gear': 'レフリー機材',
 };
 
-function mapEriFromSupabase(row: any): EventRequiredItem {
+function mapEriFromSupabase(row: any, memberLegacyMap: Map<string, string>, itemLegacyMap: Map<string, string>, eventLegacyMap: Map<string, string>): EventRequiredItem {
   const templateKey = row.template_key || null;
   const dbDisplayName = row.display_name;
   const displayName = (dbDisplayName && dbDisplayName !== templateKey)
     ? dbDisplayName
     : (templateKey ? (TEMPLATE_KEY_NAMES[templateKey] || templateKey) : '必要備品');
+
+  // UUIDからlegacy_idへの変換（マップから引く）
+  const assigneeLegacyId = row.assignee_member_id
+    ? (memberLegacyMap.get(row.assignee_member_id) || null)
+    : null;
+  const itemLegacyId = row.selected_equipment_item_id
+    ? (itemLegacyMap.get(row.selected_equipment_item_id) || null)
+    : null;
+  const eventLegacyId = row.event_id
+    ? (eventLegacyMap.get(row.event_id) || row.event_id)
+    : '';
+
+  const isPersonalCarry = row.is_personal_carry || false;
+  const assignmentStatus = assigneeLegacyId ? 'ready' : 'unassigned';
+
   return {
     id: row.legacy_id || row.id,
-    event_id: row.event?.legacy_id || row.event_id || '',
+    event_id: eventLegacyId,
     template_key: templateKey,
     display_name: displayName,
-    item_id: row.item?.legacy_id || null,
+    item_id: itemLegacyId,
     required_flag: true,
-    assignment_status: row.assignee?.legacy_id ? 'ready' : 'unassigned',
-    assigned_member_id: row.assignee?.legacy_id || null,
-    is_personal_item: row.is_personal_carry || false
+    assignment_status: assignmentStatus,
+    assigned_member_id: assigneeLegacyId,
+    is_personal_item: isPersonalCarry
   };
 }
 
 export async function getEventRequiredItemsSupabase(): Promise<EventRequiredItem[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from('event_required_items')
-    .select('*, event:events(legacy_id), assignee:members(legacy_id), item:equipment_items(legacy_id)');
-  if (error) {
-    console.error('Error fetching eris from Supabase:', error);
+
+  // ERIと参照テーブルを並列取得
+  const [eriRes, membersRes, itemsRes, eventsRes] = await Promise.all([
+    supabase.from('event_required_items').select('*'),
+    supabase.from('members').select('id, legacy_id'),
+    supabase.from('equipment_items').select('id, legacy_id'),
+    supabase.from('events').select('id, legacy_id'),
+  ]);
+
+  if (eriRes.error) {
+    console.error('[Supabase] Error fetching ERIs:', JSON.stringify(eriRes.error));
     return [];
   }
-  return (data as any[]).map(mapEriFromSupabase);
+
+  // UUID → legacy_id のルックアップマップを作成
+  const memberLegacyMap = new Map<string, string>(
+    (membersRes.data || []).filter(m => m.legacy_id).map(m => [m.id, m.legacy_id])
+  );
+  const itemLegacyMap = new Map<string, string>(
+    (itemsRes.data || []).filter(i => i.legacy_id).map(i => [i.id, i.legacy_id])
+  );
+  const eventLegacyMap = new Map<string, string>(
+    (eventsRes.data || []).filter(e => e.legacy_id).map(e => [e.id, e.legacy_id])
+  );
+
+  return (eriRes.data as any[]).map(row =>
+    mapEriFromSupabase(row, memberLegacyMap, itemLegacyMap, eventLegacyMap)
+  );
 }
+
+
 
 export async function insertErisSupabase(eris: EventRequiredItem[]): Promise<void> {
   const supabase = await createClient();
