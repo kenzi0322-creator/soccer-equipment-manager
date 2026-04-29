@@ -277,7 +277,7 @@ export default function EquipmentListClient({
     return '📦';
   };
 
-  const renderSection = (id: string, title: string, items: typeof filteredItems, theme: 'active' | 'inventory', showIfEmpty: boolean = false) => {
+  const renderSection = (id: string, title: string, items: typeof filteredItems, theme: 'active' | 'inventory', showIfEmpty: boolean = false, compact: boolean = false) => {
     if (items.length === 0 && !showIfEmpty) return null;
     const isOpen = openSections[id];
     
@@ -314,210 +314,197 @@ export default function EquipmentListClient({
         </button>
 
         {isOpen && (
-          <div className="space-y-3 animate-in fade-in slide-in-from-top-1 duration-200">
-            {items.map(item => {
-              const status = item.statusData;
-              const nextEvent = status.nextEvent;
-              const recipient = members.find(m => m.id === status.nextEri?.assigned_member_id);
-
-              return (
-                <div key={item.id} className="bg-white rounded-xl shadow-sm border border-slate-200 relative overflow-hidden transition-all hover:border-blue-200 group">
-                  <div className={clsx(
-                    "absolute top-0 left-0 w-1 h-full",
-                    status.color === 'blue' && "bg-sky-500",
-                    status.color === 'yellow' && "bg-amber-400",
-                    status.color === 'red' && "bg-rose-500",
-                    status.color === 'gray' && "bg-slate-300"
-                  )} />
-                  
-                  <div className="p-3 pl-4">
-                    {/* Header: Name & Status */}
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                        <Link href={`/items/${item.id}`} className="font-black text-slate-900 text-[15px] hover:underline truncate flex items-center gap-1.5">
-                          <span className="shrink-0">{getItemIcon(item.name)}</span>
-                          {item.name}
-                        </Link>
-                      </div>
-                      <span className={clsx(
-                        "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center border shrink-0",
-                        status.color === 'blue' && "bg-sky-50 text-sky-600 border-sky-100",
-                        status.color === 'yellow' && "bg-amber-50 text-amber-700 border-amber-100",
-                        status.color === 'red' && "bg-rose-50 text-rose-600 border-rose-100",
-                        status.color === 'gray' && "bg-slate-50 text-slate-400 border-slate-100"
-                      )}>
-                        {getStatusIcon(status.color)}
-                        {item.isPersonal ? '私物対応' : (status.color === 'yellow' ? '受け渡し前' : status.label)}
+          <div className={clsx("animate-in fade-in slide-in-from-top-1 duration-200", compact ? "" : "space-y-3")}>
+            {compact ? (
+              // コンパクト1行表示（準備OK用）
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                {items.map((item, idx) => {
+                  const status = item.statusData;
+                  const nextEvent = status.nextEvent;
+                  const recipient = members.find(m => m.id === status.nextEri?.assigned_member_id);
+                  const dateStr = nextEvent ? (() => {
+                    const d = new Date(nextEvent.date);
+                    const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+                    return `${d.getMonth() + 1}/${d.getDate()}（${weekdays[d.getDay()]}）`;
+                  })() : '—';
+                  return (
+                    <div key={item.id} className={clsx(
+                      "flex items-center gap-2 px-3 py-2.5",
+                      idx !== 0 && "border-t border-slate-100"
+                    )}>
+                      {/* 左ライン */}
+                      <div className="w-1 h-5 rounded-full bg-sky-400 shrink-0" />
+                      {/* 試合日 */}
+                      <span className="text-[11px] font-bold text-slate-500 shrink-0 w-[72px]">{dateStr}</span>
+                      {/* 備品名 */}
+                      <span className="flex-1 text-[13px] font-black text-slate-800 truncate flex items-center gap-1">
+                        <span className="shrink-0 text-[11px]">{getItemIcon(item.name)}</span>
+                        {item.name}
                       </span>
+                      {/* 持参者 */}
+                      <span className="text-[12px] font-bold text-sky-700 shrink-0 max-w-[72px] truncate text-right">
+                        {item.isPersonal
+                          ? (recipient?.name || item.holder?.name || '—')
+                          : (recipient?.name || item.holder?.name || '—')
+                        }
+                      </span>
+                      <CheckCircle size={13} className="text-sky-400 shrink-0" />
                     </div>
+                  );
+                })}
+              </div>
+            ) : (
+              // 通常カード表示
+              <div className="space-y-3">
+              {items.map(item => {
+                const status = item.statusData;
+                const nextEvent = status.nextEvent;
+                const recipient = members.find(m => m.id === status.nextEri?.assigned_member_id);
 
-                    {/* Event Info (Active items only) */}
-                    {nextEvent && status.color !== 'gray' && (
-                      <div className="my-2 p-2 bg-slate-50 rounded-lg border border-slate-100 space-y-1">
-                        <div className="flex items-center gap-1 text-[11px]">
-                          <Calendar size={12} className="text-slate-400" />
-                          <span className="text-slate-500">試合日:</span>
-                          <span className="font-bold text-slate-800">
-                            {(() => {
-                              const d = new Date(nextEvent.date);
-                              const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-                              return `${d.getMonth() + 1}/${d.getDate()}（${weekdays[d.getDay()]}）`;
-                            })()}
-                          </span>
+                return (
+                  <div key={item.id} className="bg-white rounded-xl shadow-sm border border-slate-200 relative overflow-hidden transition-all hover:border-blue-200 group">
+                    <div className={clsx(
+                      "absolute top-0 left-0 w-1 h-full",
+                      status.color === 'blue' && "bg-sky-500",
+                      status.color === 'yellow' && "bg-amber-400",
+                      status.color === 'red' && "bg-rose-500",
+                      status.color === 'gray' && "bg-slate-300"
+                    )} />
+                    
+                    <div className="p-3 pl-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
+                          <Link href={`/items/${item.id}`} className="font-black text-slate-900 text-[15px] hover:underline truncate flex items-center gap-1.5">
+                            <span className="shrink-0">{getItemIcon(item.name)}</span>
+                            {item.name}
+                          </Link>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1 border-t border-slate-200/50 mt-1">
+                        <span className={clsx(
+                          "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center border shrink-0",
+                          status.color === 'blue' && "bg-sky-50 text-sky-600 border-sky-100",
+                          status.color === 'yellow' && "bg-amber-50 text-amber-700 border-amber-100",
+                          status.color === 'red' && "bg-rose-50 text-rose-600 border-rose-100",
+                          status.color === 'gray' && "bg-slate-50 text-slate-400 border-slate-100"
+                        )}>
+                          {getStatusIcon(status.color)}
+                          {item.isPersonal ? '私物対応' : (status.color === 'yellow' ? '受け渡し前' : status.label)}
+                        </span>
+                      </div>
+
+                      {nextEvent && status.color !== 'gray' && (
+                        <div className="my-2 p-2 bg-slate-50 rounded-lg border border-slate-100 space-y-1">
                           <div className="flex items-center gap-1 text-[11px]">
-                            <Clock size={12} className="text-slate-400" />
-                            <span className="text-slate-500">受渡期限:</span>
+                            <Calendar size={12} className="text-slate-400" />
+                            <span className="text-slate-500">試合日:</span>
                             <span className="font-bold text-slate-800">
                               {(() => {
                                 const d = new Date(nextEvent.date);
                                 const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
                                 return `${d.getMonth() + 1}/${d.getDate()}（${weekdays[d.getDay()]}）`;
-                              })()} {nextEvent.start_at || ''}
+                              })()}
                             </span>
                           </div>
-                          <div className="flex items-center gap-1 text-[11px]">
-                            <User size={12} className="text-slate-400" />
-                            <span className="text-slate-500">受取:</span>
-                            <span className={clsx("font-black", recipient ? "text-blue-700 underline decoration-blue-200" : "text-rose-600")}>
-                              {recipient?.name || '担当未決定'}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Bottom Row: Holder & TeamPanel */}
-                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100/60">
-                      <div className="flex items-center gap-3 text-[11px]">
-                        <div className="flex items-center gap-1">
-                          <User size={12} className="text-slate-400" />
-                          <span className="text-slate-500">{item.isPersonal ? '持参者' : '保有'}:</span>
-                          <span className={clsx("font-black text-slate-800", !item.holder && "text-rose-600 italic")}>
-                            {item.holder?.name || '倉庫・不明'}
-                          </span>
-                        </div>
-                        
-                        {!item.isPersonal && (() => {
-                          const code = item.code || '';
-                          let label = code;
-                          let colorClass = "bg-slate-100 text-slate-600 border-slate-200";
-                          
-                          if (code.startsWith('B')) {
-                            label = `一般${code.slice(1)}`;
-                            colorClass = "bg-[#d9f99d] text-[#365314] border-[#a3e635] shadow-[inset_0_1.5px_1px_rgba(255,255,255,0.5)]";
-                          } else if (code.startsWith('T')) {
-                            label = `O40都${code.slice(1)}`;
-                            colorClass = "bg-purple-200 text-purple-900 border-purple-300 shadow-[inset_0_1.5px_1px_rgba(255,255,255,0.4)]";
-                          } else if (code.startsWith('S')) {
-                            label = `50シニア${code.slice(1)}`;
-                            colorClass = "bg-amber-900 text-amber-50 border-amber-950 shadow-[inset_0_1.5px_1px_rgba(255,255,255,0.2)]";
-                          } else if (code.startsWith('OTH-')) {
-                            label = `共${code.split('-')[1]}`;
-                          } else if (code.startsWith('M')) {
-                            label = `球${code.slice(1)}`;
-                          } else if (code.startsWith('U')) {
-                            label = `UP${code.slice(1)}`;
-                          }
-
-                          return (
-                            <span className={clsx("px-2 py-0.5 rounded-md font-black text-[10px] border shadow-sm transition-transform active:scale-95", colorClass)}>
-                              {label}
-                            </span>
-                          );
-                        })()}
-                      </div>
-
-                      <div className="flex items-center gap-1">
-                        {editingId !== item.id && !item.isPersonal && (
-                          <button 
-                            onClick={() => setEditingId(item.id)}
-                            className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-1 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-1 shadow-sm"
-                          >
-                            <Edit3 size={10} />
-                            変更
-                          </button>
-                        )}
-                        {!item.isPersonal && (
-                          <form action={deleteItemAction} onSubmit={(e) => { if (!confirm(`「${item.name}」を本当に削除しますか？`)) e.preventDefault(); }}>
-                            <input type="hidden" name="id" value={item.id} />
-                            <button type="submit" className="text-slate-300 hover:text-rose-500 transition-colors p-1 rounded-md hover:bg-rose-50">
-                              <Trash2 size={14} />
-                            </button>
-                          </form>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Inline Editing Form */}
-                    {editingId === item.id && (
-                      <div className="mt-3 p-3 bg-blue-50/30 rounded-xl border border-blue-100">
-                        <form action={async (formData) => {
-                          const result = await updateItemHolderAction(formData);
-                          if (result.success) {
-                            setEditingId(null);
-                            setBulkReferee(false);
-                            router.refresh();
-                          } else {
-                            alert(result.error);
-                          }
-                        }} className="space-y-3">
-                          <input type="hidden" name="id" value={item.id} />
-                          {bulkReferee && <input type="hidden" name="bulk_referee" value="true" />}
-                          <div className="grid grid-cols-1 gap-2">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase">新しい保有者</label>
-                            <select 
-                              name="current_holder_id" 
-                              defaultValue={item.current_holder_id || ""}
-                              className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs font-bold text-slate-700 outline-none"
-                              required
-                            >
-                              <option value="">未設定</option>
-                              {[...members].sort((a,b) => (parseInt(a.uniform_number||'999') - parseInt(b.uniform_number||'999'))).map(m => (
-                                <option key={m.id} value={m.id}>
-                                  {m.uniform_number ? `${m.uniform_number} ` : ''}{m.name}
-                                </option>
-                              ))}
-                            </select>
-                            <div className="flex items-center gap-2">
-                              <label className="text-[10px] font-bold text-slate-400 shrink-0">受渡日:</label>
-                              <input 
-                                type="date" 
-                                name="last_handoff_at" 
-                                defaultValue={item.last_handoff_at || new Date().toISOString().split('T')[0]}
-                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 outline-none w-full"
-                              />
+                          <div className="flex flex-wrap gap-x-4 gap-y-1 pt-1 border-t border-slate-200/50 mt-1">
+                            <div className="flex items-center gap-1 text-[11px]">
+                              <Clock size={12} className="text-slate-400" />
+                              <span className="text-slate-500">受渡期限:</span>
+                              <span className="font-bold text-slate-800">
+                                {(() => {
+                                  const d = new Date(nextEvent.date);
+                                  const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+                                  return `${d.getMonth() + 1}/${d.getDate()}（${weekdays[d.getDay()]}）`;
+                                })()} {nextEvent.start_at || ''}
+                              </span>
                             </div>
-                            {item.name.startsWith('レフリー') && (
-                              <label className="flex items-start gap-2 cursor-pointer mt-1">
-                                <input
-                                  type="checkbox"
-                                  checked={bulkReferee}
-                                  onChange={(e) => setBulkReferee(e.target.checked)}
-                                  className="mt-0.5 accent-blue-500"
-                                />
-                                <span className="text-[11px] text-slate-600 leading-tight">
-                                  関連するレフリー用品も<br />まとめて同じ人に変更する
-                                </span>
-                              </label>
-                            )}
+                            <div className="flex items-center gap-1 text-[11px]">
+                              <User size={12} className="text-slate-400" />
+                              <span className="text-slate-500">受取:</span>
+                              <span className={clsx("font-black", recipient ? "text-blue-700 underline decoration-blue-200" : "text-rose-600")}>
+                                {recipient?.name || '担当未決定'}
+                              </span>
+                            </div>
                           </div>
-                          <div className="flex gap-2 justify-end">
-                            <button type="button" onClick={() => { setEditingId(null); setBulkReferee(false); }} className="text-[10px] font-bold text-slate-500 px-3 py-1.5">
-                              取消
-                            </button>
-                            <button type="submit" className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1.5 rounded-lg">
-                              保存
-                            </button>
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100/60">
+                        <div className="flex items-center gap-3 text-[11px]">
+                          <div className="flex items-center gap-1">
+                            <User size={12} className="text-slate-400" />
+                            <span className="text-slate-500">{item.isPersonal ? '持参者' : '保有'}:</span>
+                            <span className={clsx("font-black text-slate-800", !item.holder && "text-rose-600 italic")}>
+                              {item.holder?.name || '倉庫・不明'}
+                            </span>
                           </div>
-                        </form>
+                          {!item.isPersonal && (() => {
+                            const code = item.code || '';
+                            let label = code;
+                            let colorClass = "bg-slate-100 text-slate-600 border-slate-200";
+                            if (code.startsWith('B')) { label = `一般${code.slice(1)}`; colorClass = "bg-[#d9f99d] text-[#365314] border-[#a3e635]"; }
+                            else if (code.startsWith('T')) { label = `O40都${code.slice(1)}`; colorClass = "bg-purple-200 text-purple-900 border-purple-300"; }
+                            else if (code.startsWith('S')) { label = `50シニア${code.slice(1)}`; colorClass = "bg-amber-900 text-amber-50 border-amber-950"; }
+                            else if (code.startsWith('OTH-')) { label = `共${code.split('-')[1]}`; }
+                            else if (code.startsWith('M')) { label = `球${code.slice(1)}`; }
+                            else if (code.startsWith('U')) { label = `UP${code.slice(1)}`; }
+                            return label ? <span className={clsx("px-2 py-0.5 rounded-md font-black text-[10px] border shadow-sm", colorClass)}>{label}</span> : null;
+                          })()}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {editingId !== item.id && !item.isPersonal && (
+                            <button onClick={() => setEditingId(item.id)} className="text-[10px] font-bold text-slate-500 bg-white border border-slate-200 px-2.5 py-1 rounded-md hover:bg-slate-50 transition-colors flex items-center gap-1 shadow-sm">
+                              <Edit3 size={10} />変更
+                            </button>
+                          )}
+                          {!item.isPersonal && (
+                            <form action={deleteItemAction} onSubmit={(e) => { if (!confirm(`「${item.name}」を本当に削除しますか？`)) e.preventDefault(); }}>
+                              <input type="hidden" name="id" value={item.id} />
+                              <button type="submit" className="text-slate-300 hover:text-rose-500 transition-colors p-1 rounded-md hover:bg-rose-50"><Trash2 size={14} /></button>
+                            </form>
+                          )}
+                        </div>
                       </div>
-                    )}
+
+                      {editingId === item.id && (
+                        <div className="mt-3 p-3 bg-blue-50/30 rounded-xl border border-blue-100">
+                          <form action={async (formData) => {
+                            const result = await updateItemHolderAction(formData);
+                            if (result.success) { setEditingId(null); setBulkReferee(false); router.refresh(); }
+                            else { alert(result.error); }
+                          }} className="space-y-3">
+                            <input type="hidden" name="id" value={item.id} />
+                            {bulkReferee && <input type="hidden" name="bulk_referee" value="true" />}
+                            <div className="grid grid-cols-1 gap-2">
+                              <label className="text-[10px] font-bold text-slate-400 uppercase">新しい保有者</label>
+                              <select name="current_holder_id" defaultValue={item.current_holder_id || ""} className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs font-bold text-slate-700 outline-none" required>
+                                <option value="">未設定</option>
+                                {[...members].sort((a,b) => (parseInt(a.uniform_number||'999') - parseInt(b.uniform_number||'999'))).map(m => (
+                                  <option key={m.id} value={m.id}>{m.uniform_number ? `${m.uniform_number} ` : ''}{m.name}</option>
+                                ))}
+                              </select>
+                              <div className="flex items-center gap-2">
+                                <label className="text-[10px] font-bold text-slate-400 shrink-0">受渡日:</label>
+                                <input type="date" name="last_handoff_at" defaultValue={item.last_handoff_at || new Date().toISOString().split('T')[0]} className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 outline-none w-full" />
+                              </div>
+                              {item.name.startsWith('レフリー') && (
+                                <label className="flex items-start gap-2 cursor-pointer mt-1">
+                                  <input type="checkbox" checked={bulkReferee} onChange={(e) => setBulkReferee(e.target.checked)} className="mt-0.5 accent-blue-500" />
+                                  <span className="text-[11px] text-slate-600 leading-tight">関連するレフリー用品も<br />まとめて同じ人に変更する</span>
+                                </label>
+                              )}
+                            </div>
+                            <div className="flex gap-2 justify-end">
+                              <button type="button" onClick={() => { setEditingId(null); setBulkReferee(false); }} className="text-[10px] font-bold text-slate-500 px-3 py-1.5">取消</button>
+                              <button type="submit" className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1.5 rounded-lg">保存</button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -592,7 +579,7 @@ export default function EquipmentListClient({
           <div className="space-y-2">
             {renderSection('red', '未確定', groupedItems.red, 'active')}
             {renderSection('yellow', '受け渡し前', groupedItems.yellow, 'active')}
-            {renderSection('blue', '準備OK', groupedItems.blue, 'active')}
+            {renderSection('blue', '準備OK', groupedItems.blue, 'active', false, true)}
           </div>
         </section>
 
