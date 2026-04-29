@@ -74,7 +74,7 @@ export default function EquipmentListClient({
         const status = calculateRequirementStatus(eri, initialItems, events);
         
         let name = "必要備品";
-        let code = eri.is_personal_item ? "私物" : "REQ";
+        let code = eri.is_personal_item ? "私物" : "";
         
         if (eri.is_personal_item) {
           const physicalMatch = eri.item_id ? initialItems.find(i => i.id === eri.item_id) : undefined;
