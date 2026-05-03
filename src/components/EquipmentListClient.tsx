@@ -245,7 +245,7 @@ export default function EquipmentListClient({
           const groupItems = filteredItems.filter(i => isRefGear(i) && mkGroupKey('ref_gear', i, false) === groupKey);
           const worstColor = groupItems.reduce((worst, i) =>
             (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
-          , 'blue' as string);
+          , 'gray' as string);
           result.push({
             ...item,
             id: `ref_gear_${groupKey}`,
@@ -263,7 +263,7 @@ export default function EquipmentListClient({
           const groupItems = filteredItems.filter(i => isRefUni(i) && mkGroupKey('ref_uni', i, true) === groupKey);
           const worstColor = groupItems.reduce((worst, i) =>
             (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
-          , 'blue' as string);
+          , 'gray' as string);
           const repItem = groupItems.find(i => isRefBag(i)) || item;
           const size = extractSize(repItem.name);
           // サイズが取得できない場合（テンプレートERIでサイズ未確定の場合）はそのままの名前を使う
