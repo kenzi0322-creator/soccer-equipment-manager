@@ -22,14 +22,17 @@ export default function EventForm({
     setErrorMsg('');
     try {
       const res = await action(formData);
-      if (res?.error) setErrorMsg(res.error);
+      if (res?.error) {
+        setErrorMsg(res.error);
+        setLoading(false); // エラーの時だけボタンを再有効化
+      }
+      // 成功時はredirect()が発火→ページ遷移するのでloadingはtrueのまま（連打防止）
     } catch (e: any) {
       // Next.js の redirect() は特殊なエラーをthrowするため、再throwして正常にリダイレクトさせる
       if (e?.digest?.startsWith('NEXT_REDIRECT') || e?.message === 'NEXT_REDIRECT') {
-        throw e;
+        throw e; // loadingはtrueのまま → ページ遷移中に連打不可
       }
       setErrorMsg(e.message || '保存に失敗しました');
-    } finally {
       setLoading(false);
     }
   };
