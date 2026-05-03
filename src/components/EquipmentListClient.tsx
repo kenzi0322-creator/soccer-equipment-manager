@@ -220,15 +220,18 @@ export default function EquipmentListClient({
       const evId = color === 'gray' ? null : (item.statusData.nextEvent?.id || item.statusData.nextEri?.event_id || 'unknown');
       const size = useSize ? extractSize(item.name) : '';
       const sizeKey = size ? `_${size}` : '';
+      // gray/active 両方ともチームコードをキーに含める（チーム間の誤混入防止）
       return color === 'gray'
         ? `${prefix}${sizeKey}_${teamCode}_gray`
-        : `${prefix}${sizeKey}_${color}_${evId}`;
+        : `${prefix}${sizeKey}_${teamCode}_${color}_${evId}`;
     };
 
-    // サイズに対応する物理レフリー袋のIDを返す
-    const getRefBagLinkId = (size: string): string | null => {
+    // サイズ＋チームコードで正しいレフリー袋IDを返す（チーム間の誤リンク防止）
+    const getRefBagLinkId = (size: string, codePrefix: string): string | null => {
       const bag = initialItems.find(i =>
-        i.name.includes('レフリー袋') && (size ? i.name.includes(`（${size}）`) : true)
+        i.name.includes('レフリー袋') &&
+        (size ? i.name.includes(`（${size}）`) : true) &&
+        (codePrefix ? (i.code || '').startsWith(codePrefix) : true)
       );
       return bag?.id || null;
     };
@@ -266,11 +269,12 @@ export default function EquipmentListClient({
           , 'gray' as string);
           const repItem = groupItems.find(i => isRefBag(i)) || item;
           const size = extractSize(repItem.name);
-          // サイズが取得できない場合（テンプレートERIでサイズ未確定の場合）はそのままの名前を使う
+          // repItemのチームコードで同チームのレフリー袋に正しくリンク
+          const repTeamCode = (repItem.code || '').charAt(0);
           const uniName = size
             ? `レフリーユニセット（${size}）`
             : (repItem.name.includes('レフリーユニセット') ? repItem.name : 'レフリーユニセット（サイズ未確定）');
-          const linkId = size ? getRefBagLinkId(size) : null;
+          const linkId = size ? getRefBagLinkId(size, repTeamCode) : null;
           result.push({
             ...repItem,
             id: linkId || `ref_uni_${groupKey}`,
