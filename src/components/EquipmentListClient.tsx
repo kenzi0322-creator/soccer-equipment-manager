@@ -183,9 +183,11 @@ export default function EquipmentListClient({
     return result;
   }, [itemsWithStatus, search, teamFilter, statusFilter]);
 
-  // ===== レフリーユニセット グループ化（表示のみ・全セクション対応） =====
+  // ===== レフリーユニセット・道具セット グループ化（表示のみ・全セクション対応） =====
   const REF_UNI_NAMES = ['レフリー袋', 'レフリー半袖', 'レフリー長袖', 'レフリーパンツ', 'レフリーソックス'];
   const REF_UNI_KEYS = new Set(['ref_bag', 'ref_half', 'ref_long', 'ref_pants', 'ref_socks']);
+  // 道具セット：ワッペン類・笛・カード・機材など
+  const REF_GEAR_NAMES = ['ワッペンガード', 'リスペクトワッペン', 'ホイッスル', '笛', 'レフリー機材', 'トスコイン', '審判カード', 'レフリーカード'];
   const isRefUni = (item: any) => {
     const tk = item.statusData?.nextEri?.template_key || '';
     return REF_UNI_KEYS.has(tk) || REF_UNI_NAMES.some(n => item.name.includes(n));
@@ -196,7 +198,7 @@ export default function EquipmentListClient({
   };
   const isRefGear = (item: any) => {
     const tk = item.statusData?.nextEri?.template_key || '';
-    return tk === 'ref_gear' || item.name.includes('レフリー機材');
+    return tk === 'ref_gear' || REF_GEAR_NAMES.some(n => item.name.includes(n));
   };
 
   const displayItems = useMemo(() => {
@@ -204,11 +206,11 @@ export default function EquipmentListClient({
     const refBagLinkId = physicalRefBag?.id || null;
     const colorPri: Record<string, number> = { red: 0, yellow: 1, blue: 2, gray: 3 };
 
-    // グループキー: グレーは全体で1グループ、アクティブはイベントごと
-    const getGroupKey = (item: any) => {
-      if (item.statusData.color === 'gray') return 'ref_uni_gray';
+    // グループキー生成（prefix='ref_uni' or 'ref_gear'）
+    const mkGroupKey = (prefix: string, item: any) => {
+      if (item.statusData.color === 'gray') return `${prefix}_gray`;
       const evId = item.statusData.nextEvent?.id || item.statusData.nextEri?.event_id || 'unknown';
-      return `ref_uni_${item.statusData.color}_${evId}`;
+      return `${prefix}_${item.statusData.color}_${evId}`;
     };
 
     const seenGroups = new Set<string>();
@@ -216,12 +218,29 @@ export default function EquipmentListClient({
 
     for (const item of filteredItems) {
       if (isRefGear(item)) {
-        result.push({ ...item, name: 'レフリー道具セット（笛・カード・ワッペンなど）' } as any);
-      } else if (isRefUni(item)) {
-        const groupKey = getGroupKey(item);
+        // ── レフリー道具セット（ワッペンガード等を1グループに） ──
+        const groupKey = mkGroupKey('ref_gear', item);
         if (!seenGroups.has(groupKey)) {
           seenGroups.add(groupKey);
-          const groupItems = filteredItems.filter(i => isRefUni(i) && getGroupKey(i) === groupKey);
+          const groupItems = filteredItems.filter(i => isRefGear(i) && mkGroupKey('ref_gear', i) === groupKey);
+          const worstColor = groupItems.reduce((worst, i) =>
+            (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
+          , 'blue' as string);
+          result.push({
+            ...item,
+            id: `ref_gear_${groupKey}`, // リンクなし（ref_gear_で始まるID）
+            name: 'レフリー道具セット（笛・カード・ワッペンなど）',
+            isPersonal: true,
+            statusData: { ...item.statusData, color: worstColor as any },
+          } as any);
+        }
+        // 個別アイテムはスキップ
+      } else if (isRefUni(item)) {
+        // ── レフリーユニセット（袋+半袖+長袖+パンツ+ソックスを1グループに） ──
+        const groupKey = mkGroupKey('ref_uni', item);
+        if (!seenGroups.has(groupKey)) {
+          seenGroups.add(groupKey);
+          const groupItems = filteredItems.filter(i => isRefUni(i) && mkGroupKey('ref_uni', i) === groupKey);
           const worstColor = groupItems.reduce((worst, i) =>
             (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
           , 'blue' as string);
@@ -230,7 +249,7 @@ export default function EquipmentListClient({
             ...repItem,
             id: refBagLinkId || `ref_uni_${groupKey}`,
             name: 'レフリーユニセット（M）',
-            isPersonal: true, // 編集はイベント詳細から（セット全体のため）
+            isPersonal: true,
             statusData: { ...repItem.statusData, color: worstColor as any },
           } as any);
         }
@@ -505,7 +524,7 @@ export default function EquipmentListClient({
                     <div className="p-3 pl-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                          {(item.id.startsWith('virtual_') || item.id.startsWith('ref_uni_')) ? (
+                          {(item.id.startsWith('virtual_') || item.id.startsWith('ref_uni_') || item.id.startsWith('ref_gear_')) ? (
                             <span className="font-black text-slate-900 text-[15px] truncate flex items-center gap-1.5">
                               <span className="shrink-0">{getItemIcon(item.name)}</span>
                               {item.name}
