@@ -345,12 +345,12 @@ export default function EquipmentListClient({
     if (name.includes('ユニ') || name.includes('ビブス') || name.includes('キャプテンマーク')) {
       if (name.includes('赤')) return '🟥';
       if (name.includes('緑') || name.includes('きみどり')) return '🟩';
-      if (name.includes('紫')) return '🟪';
+      if (name.includes('紫')) return '🟦';
       if (name.includes('黄') || name.includes('イエロー')) return '🟨';
-      if (name.includes('水色')) return '🩵';
+      if (name.includes('水色')) return '🮩';
       if (name.includes('青') || name.includes('ネイビー')) return '🟦';
       if (name.includes('オレンジ')) return '🟧';
-      if (name.includes('ピンク')) return '🩷';
+      if (name.includes('ピンク')) return '🪷';
       if (name.includes('白')) return '⬜';
       if (name.includes('黒')) return '⬛';
     }
@@ -362,6 +362,19 @@ export default function EquipmentListClient({
     if (name.includes('ビブス')) return '🎽';
     if (name.includes('GKユニ')) return '👔';
     return '📦';
+  };
+
+  // アイテムのコードからチームバッジを返す
+  const getTeamBadge = (item: any): { label: string; classes: string } | null => {
+    const code = (item.code || '') as string;
+    const teamName = ((item as any).team?.name || '') as string;
+    if (code.startsWith('B') || teamName.includes('文京') || teamName.includes('一般'))
+      return { label: '一般', classes: 'bg-[#d9f99d] text-[#365314] border border-[#a3e635] text-[8px] font-black px-1 py-0.5 rounded' };
+    if (code.startsWith('T') || teamName.includes('O40') || teamName.includes('都') || teamName.includes('東京'))
+      return { label: 'O40', classes: 'bg-purple-100 text-purple-800 border border-purple-200 text-[8px] font-black px-1 py-0.5 rounded' };
+    if (code.startsWith('S') || teamName.includes('シニア') || teamName.includes('50'))
+      return { label: 'シニア', classes: 'bg-amber-100 text-amber-900 border border-amber-300 text-[8px] font-black px-1 py-0.5 rounded' };
+    return null;
   };
 
   const renderSection = (id: string, title: string, items: typeof filteredItems, theme: 'active' | 'inventory', showIfEmpty: boolean = false, compact: boolean = false, noCollapse: boolean = false) => {
@@ -443,7 +456,10 @@ export default function EquipmentListClient({
                       {/* 1行表示 */}
                       <div className="flex items-center gap-2 px-3 py-2.5">
                         <div className="w-1 h-5 rounded-full bg-sky-400 shrink-0" />
-                        <span className="text-[11px] font-bold text-slate-500 shrink-0 w-[72px]">{dateStr}</span>
+                        <div className="shrink-0 flex items-center gap-1 w-[88px]">
+                          <span className="text-[11px] font-bold text-slate-500">{dateStr}</span>
+                          {(() => { const b = getTeamBadge(item); return b ? <span className={b.classes}>{b.label}</span> : null; })()}
+                        </div>
                         <span className="flex-1 text-[13px] font-black text-slate-800 truncate flex items-center gap-1">
                           <span className="shrink-0 text-[11px]">{getItemIcon(item.name)}</span>
                           {item.name}
