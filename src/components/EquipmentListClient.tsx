@@ -458,7 +458,7 @@ export default function EquipmentListClient({
                     <div className="p-3 pl-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                          {item.isPersonal || item.id.startsWith('virtual_') ? (
+                          {item.id.startsWith('virtual_') ? (
                             <span className="font-black text-slate-900 text-[15px] truncate flex items-center gap-1.5">
                               <span className="shrink-0">{getItemIcon(item.name)}</span>
                               {item.name}
