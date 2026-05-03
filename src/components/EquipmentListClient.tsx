@@ -31,6 +31,7 @@ export default function EquipmentListClient({
   const [teamFilter, setTeamFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingCompactId, setEditingCompactId] = useState<string | null>(null);
   const [bulkReferee, setBulkReferee] = useState(false);
   const router = useRouter();
 
@@ -348,28 +349,90 @@ export default function EquipmentListClient({
                     const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
                     return `${d.getMonth() + 1}/${d.getDate()}（${weekdays[d.getDay()]}）`;
                   })() : '—';
+                  const isEditingThis = editingCompactId === item.id;
                   return (
                     <div key={item.id} className={clsx(
-                      "flex items-center gap-2 px-3 py-2.5",
                       idx !== 0 && "border-t border-slate-100"
                     )}>
-                      {/* 左ライン */}
-                      <div className="w-1 h-5 rounded-full bg-sky-400 shrink-0" />
-                      {/* 試合日 */}
-                      <span className="text-[11px] font-bold text-slate-500 shrink-0 w-[72px]">{dateStr}</span>
-                      {/* 備品名 */}
-                      <span className="flex-1 text-[13px] font-black text-slate-800 truncate flex items-center gap-1">
-                        <span className="shrink-0 text-[11px]">{getItemIcon(item.name)}</span>
-                        {item.name}
-                      </span>
-                      {/* 持参者 */}
-                      <span className="text-[12px] font-bold text-sky-700 shrink-0 max-w-[72px] truncate text-right">
-                        {item.isPersonal
-                          ? (recipient?.name || item.holder?.name || '—')
-                          : (recipient?.name || item.holder?.name || '—')
-                        }
-                      </span>
-                      <CheckCircle size={13} className="text-sky-400 shrink-0" />
+                      {/* 1行表示 */}
+                      <div className="flex items-center gap-2 px-3 py-2.5">
+                        <div className="w-1 h-5 rounded-full bg-sky-400 shrink-0" />
+                        <span className="text-[11px] font-bold text-slate-500 shrink-0 w-[72px]">{dateStr}</span>
+                        <span className="flex-1 text-[13px] font-black text-slate-800 truncate flex items-center gap-1">
+                          <span className="shrink-0 text-[11px]">{getItemIcon(item.name)}</span>
+                          {item.name}
+                        </span>
+                        <span className="text-[12px] font-bold text-sky-700 shrink-0 max-w-[60px] truncate text-right">
+                          {recipient?.name || item.holder?.name || '—'}
+                        </span>
+                        {isEditingThis ? (
+                          <button
+                            onClick={() => setEditingCompactId(null)}
+                            className="p-1 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors shrink-0"
+                          >
+                            <X size={14} />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setEditingCompactId(item.id)}
+                            className="p-1 text-slate-300 hover:text-blue-500 rounded-full hover:bg-blue-50 transition-colors shrink-0"
+                          >
+                            <Edit3 size={13} />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* インライン編集フォーム（展開時） */}
+                      {isEditingThis && !item.isPersonal && (
+                        <div className="mx-3 mb-3 p-3 bg-blue-50/40 rounded-xl border border-blue-100 animate-in fade-in slide-in-from-top-1 duration-150">
+                          <form action={async (formData) => {
+                            const result = await updateItemHolderAction(formData);
+                            if (result.success) {
+                              setEditingCompactId(null);
+                              router.refresh();
+                            } else {
+                              alert(result.error);
+                            }
+                          }} className="space-y-2">
+                            <input type="hidden" name="id" value={item.id} />
+                            <label className="text-[10px] font-bold text-slate-400 uppercase">新しい保有者</label>
+                            <select
+                              name="current_holder_id"
+                              defaultValue={item.current_holder_id || ""}
+                              className="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-xs font-bold text-slate-700 outline-none"
+                              required
+                            >
+                              <option value="">未設定</option>
+                              {[...members].sort((a,b) => (parseInt(a.uniform_number||'999') - parseInt(b.uniform_number||'999'))).map(m => (
+                                <option key={m.id} value={m.id}>
+                                  {m.uniform_number ? `${m.uniform_number} ` : ''}{m.name}
+                                </option>
+                              ))}
+                            </select>
+                            <div className="flex items-center gap-2">
+                              <label className="text-[10px] font-bold text-slate-400 shrink-0">受渡日:</label>
+                              <input
+                                type="date"
+                                name="last_handoff_at"
+                                defaultValue={item.last_handoff_at || new Date().toISOString().split('T')[0]}
+                                className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 outline-none flex-1"
+                              />
+                            </div>
+                            <div className="flex gap-2 justify-end pt-1">
+                              <button type="button" onClick={() => setEditingCompactId(null)} className="text-[10px] font-bold text-slate-500 px-3 py-1.5">取消</button>
+                              <button type="submit" className="text-[10px] font-bold text-white bg-slate-900 px-3 py-1.5 rounded-lg">保存</button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+                      {/* 個人持参の場合は試合詳細から変更できることを案内 */}
+                      {isEditingThis && item.isPersonal && (
+                        <div className="mx-3 mb-3 p-3 bg-blue-50/40 rounded-xl border border-blue-100 text-[11px] text-slate-500">
+                          個人持参の備品は<br />
+                          <span className="font-bold text-slate-700">試合詳細ページ → 割り当て「修正」</span><br />
+                          から変更できます。
+                        </div>
+                      )}
                     </div>
                   );
                 })}
