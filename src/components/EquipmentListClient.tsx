@@ -183,6 +183,65 @@ export default function EquipmentListClient({
     return result;
   }, [itemsWithStatus, search, teamFilter, statusFilter]);
 
+  // ===== レフリーユニセット グループ化（表示のみ・全セクション対応） =====
+  const REF_UNI_NAMES = ['レフリー袋', 'レフリー半袖', 'レフリー長袖', 'レフリーパンツ', 'レフリーソックス'];
+  const REF_UNI_KEYS = new Set(['ref_bag', 'ref_half', 'ref_long', 'ref_pants', 'ref_socks']);
+  const isRefUni = (item: any) => {
+    const tk = item.statusData?.nextEri?.template_key || '';
+    return REF_UNI_KEYS.has(tk) || REF_UNI_NAMES.some(n => item.name.includes(n));
+  };
+  const isRefBag = (item: any) => {
+    const tk = item.statusData?.nextEri?.template_key || '';
+    return tk === 'ref_bag' || item.name.includes('レフリー袋');
+  };
+  const isRefGear = (item: any) => {
+    const tk = item.statusData?.nextEri?.template_key || '';
+    return tk === 'ref_gear' || item.name.includes('レフリー機材');
+  };
+
+  const displayItems = useMemo(() => {
+    const physicalRefBag = initialItems.find(i => i.name.includes('レフリー袋'));
+    const refBagLinkId = physicalRefBag?.id || null;
+    const colorPri: Record<string, number> = { red: 0, yellow: 1, blue: 2, gray: 3 };
+
+    // グループキー: グレーは全体で1グループ、アクティブはイベントごと
+    const getGroupKey = (item: any) => {
+      if (item.statusData.color === 'gray') return 'ref_uni_gray';
+      const evId = item.statusData.nextEvent?.id || item.statusData.nextEri?.event_id || 'unknown';
+      return `ref_uni_${item.statusData.color}_${evId}`;
+    };
+
+    const seenGroups = new Set<string>();
+    const result: typeof filteredItems = [];
+
+    for (const item of filteredItems) {
+      if (isRefGear(item)) {
+        result.push({ ...item, name: 'レフリー道具セット（笛・カード・ワッペンなど）' } as any);
+      } else if (isRefUni(item)) {
+        const groupKey = getGroupKey(item);
+        if (!seenGroups.has(groupKey)) {
+          seenGroups.add(groupKey);
+          const groupItems = filteredItems.filter(i => isRefUni(i) && getGroupKey(i) === groupKey);
+          const worstColor = groupItems.reduce((worst, i) =>
+            (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
+          , 'blue' as string);
+          const repItem = groupItems.find(i => isRefBag(i)) || item;
+          result.push({
+            ...repItem,
+            id: refBagLinkId || `ref_uni_${groupKey}`,
+            name: 'レフリーユニセット（M）',
+            isPersonal: true, // 編集はイベント詳細から（セット全体のため）
+            statusData: { ...repItem.statusData, color: worstColor as any },
+          } as any);
+        }
+        // 個別アイテムはスキップ
+      } else {
+        result.push(item);
+      }
+    }
+    return result;
+  }, [filteredItems, initialItems]);
+
   // Section visibility states
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     red: true,
@@ -202,48 +261,34 @@ export default function EquipmentListClient({
   // Grouping Logic
   const groupedItems = useMemo(() => {
     const groups = {
-      // Active (Match-related)
-      red: [] as typeof filteredItems,
-      yellow: [] as typeof filteredItems,
-      blue: [] as typeof filteredItems,
-      // Inactive (Inventory)
-      general: [] as typeof filteredItems,
-      tokyo40: [] as typeof filteredItems,
-      senior: [] as typeof filteredItems,
-      balls: [] as typeof filteredItems,
-      others: [] as typeof filteredItems,
+      red: [] as typeof displayItems,
+      yellow: [] as typeof displayItems,
+      blue: [] as typeof displayItems,
+      general: [] as typeof displayItems,
+      tokyo40: [] as typeof displayItems,
+      senior: [] as typeof displayItems,
+      balls: [] as typeof displayItems,
+      others: [] as typeof displayItems,
     };
 
-    filteredItems.forEach(item => {
+    displayItems.forEach(item => {
       const color = item.statusData.color;
-      
       if (color !== 'gray') {
-        // Match-related
         if (color === 'red') groups.red.push(item);
         else if (color === 'yellow') groups.yellow.push(item);
         else if (color === 'blue') groups.blue.push(item);
       } else {
-        // Inventory (予定なし)
         const name = item.name;
-        // Check for balls first
         const isBall = (name.includes('試合球') || name.includes('ボール') || name.includes('フットサル') || name.toLowerCase().includes('ball') || /^U\d+/.test(name)) && !name.includes('ゴール');
-        
-        if (isBall) {
-          groups.balls.push(item);
-        } else if ((item.code || '').startsWith('B')) {
-          groups.general.push(item);
-        } else if ((item.code || '').startsWith('T')) {
-          groups.tokyo40.push(item);
-        } else if ((item.code || '').startsWith('S')) {
-          groups.senior.push(item);
-        } else {
-          groups.others.push(item);
-        }
+        if (isBall) groups.balls.push(item);
+        else if ((item.code || '').startsWith('B')) groups.general.push(item);
+        else if ((item.code || '').startsWith('T')) groups.tokyo40.push(item);
+        else if ((item.code || '').startsWith('S')) groups.senior.push(item);
+        else groups.others.push(item);
       }
     });
-
     return groups;
-  }, [filteredItems]);
+  }, [displayItems]);
 
   const getStatusIcon = (color: ItemStatusColor) => {
     switch(color) {
@@ -256,6 +301,8 @@ export default function EquipmentListClient({
   };
 
   const getItemIcon = (name: string) => {
+    if (name.includes('レフリーユニセット')) return '🎽';
+    if (name.includes('レフリー道具セット')) return '🎯';
     if (name.includes('ユニ') || name.includes('ビブス') || name.includes('キャプテンマーク')) {
       if (name.includes('赤')) return '🟥';
       if (name.includes('緑') || name.includes('きみどり')) return '🟩';
@@ -458,7 +505,7 @@ export default function EquipmentListClient({
                     <div className="p-3 pl-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                          {item.id.startsWith('virtual_') ? (
+                          {(item.id.startsWith('virtual_') || item.id.startsWith('ref_uni_')) ? (
                             <span className="font-black text-slate-900 text-[15px] truncate flex items-center gap-1.5">
                               <span className="shrink-0">{getItemIcon(item.name)}</span>
                               {item.name}

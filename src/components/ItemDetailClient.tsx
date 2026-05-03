@@ -193,6 +193,22 @@ export default function ItemDetailClient({
                 <button onClick={() => setIsEditingNote(true)} className="text-xs text-blue-600 font-medium">編集</button>
               )}
             </div>
+
+            {/* レフリー袋の場合はセット内容を表示 */}
+            {item.name.includes('レフリー袋') && (
+              <div className="mb-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                <div className="text-xs font-bold text-blue-700 mb-2 flex items-center gap-1">
+                  🎽 セット内容（レフリーユニセット）
+                </div>
+                <div className="text-sm text-slate-700 space-y-0.5">
+                  <div>・レフリー半袖</div>
+                  <div>・レフリー長袖</div>
+                  <div>・レフリーパンツ</div>
+                  <div>・レフリーソックス</div>
+                </div>
+                <div className="mt-2 text-xs text-blue-500">※ 冬夏問わず一式まとめて袋に入れて渡します</div>
+              </div>
+            )}
             
             {isEditingNote ? (
               <div className="mt-2">
