@@ -183,6 +183,56 @@ export default function EquipmentListClient({
     return result;
   }, [itemsWithStatus, search, teamFilter, statusFilter]);
 
+  // レフリーウェアが同じ試合日程の場合にグループ化（表示のみ・データは変更なし）
+  const REF_WEAR_KEYS = new Set(['ref_half', 'ref_long', 'ref_pants', 'ref_socks']);
+  const colorPriority: Record<string, number> = { red: 0, yellow: 1, blue: 2, gray: 3 };
+
+  const displayItems = useMemo(() => {
+    const seenGroups = new Set<string>();
+    const result: typeof filteredItems = [];
+
+    for (const item of filteredItems) {
+      const tk = item.statusData.nextEri?.template_key || '';
+      const eventId = item.statusData.nextEri?.event_id || 'none';
+
+      if (REF_WEAR_KEYS.has(tk)) {
+        const groupKey = `ref_wear_${eventId}`;
+        if (!seenGroups.has(groupKey)) {
+          seenGroups.add(groupKey);
+          // 同一イベントのウェアアイテムを集め、最悪ステータスを決定
+          const wearForEvent = filteredItems.filter(i =>
+            REF_WEAR_KEYS.has(i.statusData.nextEri?.template_key || '') &&
+            i.statusData.nextEri?.event_id === eventId
+          );
+          const worstColor = wearForEvent.reduce((worst, i) =>
+            (colorPriority[i.statusData.color] ?? 99) < (colorPriority[worst] ?? 99)
+              ? i.statusData.color : worst
+          , 'blue' as string);
+
+          result.push({
+            ...item,
+            id: groupKey,
+            name: 'レフリーウェア一式袋（L）',
+            code: '私物',
+            statusData: {
+              ...item.statusData,
+              color: worstColor as any,
+              nextEri: item.statusData.nextEri
+                ? { ...item.statusData.nextEri, template_key: 'ref_wear_group', display_name: 'レフリーウェア一式袋（L）' }
+                : undefined
+            }
+          } as any);
+        }
+        // 個別のウェアアイテムはスキップ（グループとして表示済み）
+      } else if (tk === 'ref_gear') {
+        result.push({ ...item, name: 'レフリースターターセット（笛・カード・トスコイン・ワッペン）' } as any);
+      } else {
+        result.push(item);
+      }
+    }
+    return result;
+  }, [filteredItems]);
+
   // Section visibility states
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     red: true,
@@ -202,19 +252,17 @@ export default function EquipmentListClient({
   // Grouping Logic
   const groupedItems = useMemo(() => {
     const groups = {
-      // Active (Match-related)
-      red: [] as typeof filteredItems,
-      yellow: [] as typeof filteredItems,
-      blue: [] as typeof filteredItems,
-      // Inactive (Inventory)
-      general: [] as typeof filteredItems,
-      tokyo40: [] as typeof filteredItems,
-      senior: [] as typeof filteredItems,
-      balls: [] as typeof filteredItems,
-      others: [] as typeof filteredItems,
+      red: [] as typeof displayItems,
+      yellow: [] as typeof displayItems,
+      blue: [] as typeof displayItems,
+      general: [] as typeof displayItems,
+      tokyo40: [] as typeof displayItems,
+      senior: [] as typeof displayItems,
+      balls: [] as typeof displayItems,
+      others: [] as typeof displayItems,
     };
 
-    filteredItems.forEach(item => {
+    displayItems.forEach(item => {
       const color = item.statusData.color;
       
       if (color !== 'gray') {
@@ -243,7 +291,7 @@ export default function EquipmentListClient({
     });
 
     return groups;
-  }, [filteredItems]);
+  }, [displayItems]);
 
   const getStatusIcon = (color: ItemStatusColor) => {
     switch(color) {
@@ -256,6 +304,8 @@ export default function EquipmentListClient({
   };
 
   const getItemIcon = (name: string) => {
+    if (name.includes('レフリーウェア')) return '👕';
+    if (name.includes('レフリースターター')) return '⚽️';
     if (name.includes('ユニ') || name.includes('ビブス') || name.includes('キャプテンマーク')) {
       if (name.includes('赤')) return '🟥';
       if (name.includes('緑') || name.includes('きみどり')) return '🟩';
