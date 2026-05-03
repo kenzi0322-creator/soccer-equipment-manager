@@ -265,12 +265,16 @@ export default function EquipmentListClient({
             (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
           , 'blue' as string);
           const repItem = groupItems.find(i => isRefBag(i)) || item;
-          const size = extractSize(repItem.name) || 'M';
-          const linkId = getRefBagLinkId(size);
+          const size = extractSize(repItem.name);
+          // サイズが取得できない場合（テンプレートERIでサイズ未確定の場合）はそのままの名前を使う
+          const uniName = size
+            ? `レフリーユニセット（${size}）`
+            : (repItem.name.includes('レフリーユニセット') ? repItem.name : 'レフリーユニセット（サイズ未確定）');
+          const linkId = size ? getRefBagLinkId(size) : null;
           result.push({
             ...repItem,
             id: linkId || `ref_uni_${groupKey}`,
-            name: `レフリーユニセット（${size}）`,
+            name: uniName,
             isPersonal: true,
             statusData: { ...repItem.statusData, color: worstColor as any },
           } as any);

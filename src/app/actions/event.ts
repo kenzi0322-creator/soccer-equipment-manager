@@ -212,38 +212,26 @@ export async function autoAddStandardEquipmentAction(eventId: string) {
 
 export async function addRefereeSetAction(eventId: string) {
   try {
-    const [eris, events, teams] = await Promise.all([
+    const [eris] = await Promise.all([
       getEventRequiredItemsSupabase(),
-      getEventsSupabase(),
-      getTeams(),
     ]);
-
-    // イベントのチームを特定してサイズを決定
-    const event = events.find(e => e.id === eventId);
-    const team = teams.find(t => t.id === event?.primary_team_id);
-    const isSenior = (team?.name || '').includes('シニア') || (team?.name || '').includes('50') || ((team as any)?.code || '').startsWith('S');
-    // 一般・O40: M,L,XO  /  シニア: S,L,XO
-    const uniSizes = isSenior ? ['S', 'L', 'XO'] : ['M', 'L', 'XO'];
 
     const eventEris = eris.filter(e => e.event_id === eventId);
     const toInsert: any[] = [];
 
-    // サイズ別レフリーユニセット
-    for (const size of uniSizes) {
-      const displayName = `レフリーユニセット（${size}）`;
-      if (!eventEris.some(e => e.display_name === displayName || e.template_key === `ref_bag_${size.toLowerCase()}`)) {
-        toInsert.push({
-          id: 'eri_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
-          event_id: eventId,
-          template_key: 'ref_bag',
-          display_name: displayName,
-          required_flag: true,
-          assignment_status: 'unassigned',
-        });
-      }
+    // ユニセット: サイズ未確定で1枚追加（割り当て時に物理アイテムを選んでサイズ確定）
+    if (!eventEris.some(e => e.template_key === 'ref_bag')) {
+      toInsert.push({
+        id: 'eri_' + Date.now().toString() + Math.random().toString(36).substr(2, 5),
+        event_id: eventId,
+        template_key: 'ref_bag',
+        display_name: 'レフリーユニセット（サイズ未確定）',
+        required_flag: true,
+        assignment_status: 'unassigned',
+      });
     }
 
-    // 道具セット・フラッグ（チーム共通・各1つ）
+    // 道具セット・フラッグ（各1つ）
     const commonItems = [
       { key: 'ref_gear',  name: 'レフリー道具セット（笛・カード・ワッペンなど）' },
       { key: 'ref_flags', name: 'レフリーフラッグ' },
