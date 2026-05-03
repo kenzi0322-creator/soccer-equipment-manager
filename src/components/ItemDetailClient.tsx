@@ -36,6 +36,13 @@ export default function ItemDetailClient({
   
   const statusData = calculateItemStatus(item, events, eris, participants, handoffs);
   const team = teams.find(t => t.id === item.owner_team_id);
+  // コードプレフィックスによるフォールバック（B→一般, T→O40, S→シニア）
+  const codePrefix = (item.code || '').charAt(0);
+  const teamName = team?.name
+    ?? (codePrefix === 'B' ? '文京一般'
+      : codePrefix === 'T' ? '都O40'
+      : codePrefix === 'S' ? '文京シニア'
+      : '不明');
   const holder = members.find(m => m.id === item.current_holder_id);
 
   const [isEditingNote, setIsEditingNote] = useState(false);
@@ -111,7 +118,7 @@ export default function ItemDetailClient({
             <div>
               <span className="block text-[11px] text-slate-500 mb-0.5">所属チーム</span>
               <span className="text-sm font-medium text-slate-800">
-                 {team ? team.name : '不明'}
+                 {teamName}
               </span>
             </div>
           </div>

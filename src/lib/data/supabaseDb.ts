@@ -6,12 +6,26 @@ import { Item, Event, EventRequiredItem, Member } from '@/types';
 // ========================
 
 function mapItemFromSupabase(row: any): Item {
+  // コードプレフィックスが最も信頼できるチーム判定方法
+  // B→文京一般(t1), T→都O40(t2), S→文京シニア(t3)
+  const codePrefix = (row.code || '').charAt(0);
+  const teamFromCode = codePrefix === 'B' ? 't1'
+                      : codePrefix === 'T' ? 't2'
+                      : codePrefix === 'S' ? 't3'
+                      : null;
+  // DBに保存されたチームIDが有効なら優先、なければコードから導出
+  const validTeamIds = new Set(['t1', 't2', 't3', 't_tun']);
+  const storedTeam = row.owner_team_category || null;
+  const owner_team_id = (storedTeam && validTeamIds.has(storedTeam))
+    ? storedTeam
+    : (teamFromCode || 't1');
+
   return {
     id: row.legacy_id || row.id,
     code: row.code || '',
     name: row.name || row.display_label || '',
     category: row.item_category || 'OTHER',
-    owner_team_id: row.owner_team_category || 't1',
+    owner_team_id,
     shared_flag: row.item_category === 'shared',
     current_holder_id: row.current_holder?.legacy_id || null,
   };
