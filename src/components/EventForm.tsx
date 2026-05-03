@@ -24,7 +24,11 @@ export default function EventForm({
       const res = await action(formData);
       if (res?.error) setErrorMsg(res.error);
     } catch (e: any) {
-      setErrorMsg(e.message);
+      // Next.js の redirect() は特殊なエラーをthrowするため、再throwして正常にリダイレクトさせる
+      if (e?.digest?.startsWith('NEXT_REDIRECT') || e?.message === 'NEXT_REDIRECT') {
+        throw e;
+      }
+      setErrorMsg(e.message || '保存に失敗しました');
     } finally {
       setLoading(false);
     }
