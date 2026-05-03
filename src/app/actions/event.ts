@@ -37,11 +37,11 @@ export async function deleteEventAction(id: string) {
   try {
     await deleteEventSupabase(id);
     revalidatePath('/events');
-    redirect('/events');
   } catch (e: any) {
     console.error('Delete Event Error:', e);
-    return { error: '削除に失敗しました。本番環境（Vercel）ではデータの保存にサーバー側の設定が必要です。' };
+    return { error: '削除に失敗しました: ' + e.message };
   }
+  redirect('/events'); // try/catch の外でredirectするとNEXT_REDIRECTが正常に伝播する
 }
 
 export async function updateEventAction(formData: FormData) {
