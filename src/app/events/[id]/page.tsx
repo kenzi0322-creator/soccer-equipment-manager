@@ -12,6 +12,7 @@ import AutoAddStandardEquipmentButton from '@/components/AutoAddStandardEquipmen
 import AddRefereeSetButton from '@/components/AddRefereeSetButton';
 import QuantityIncrementButton from '@/components/QuantityIncrementButton';
 import CollapsibleNote from '@/components/CollapsibleNote';
+import RenameRefGearButton from '@/components/RenameRefGearButton';
 
 export default async function EventDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id: rawId } = await params;
@@ -162,6 +163,7 @@ export default async function EventDetail({ params }: { params: Promise<{ id: st
           <div className="flex flex-col gap-3 mb-4">
             <AutoAddStandardEquipmentButton eventId={event.id} />
             <AddRefereeSetButton eventId={event.id} />
+            <RenameRefGearButton />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

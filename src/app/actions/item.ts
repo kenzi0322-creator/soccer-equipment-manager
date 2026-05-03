@@ -111,11 +111,9 @@ export async function updateItemHolderAction(formData: FormData) {
 
   try {
     if (bulk_referee) {
-      // Fetch the selected item to extract size and code prefix
       const targetItem = await getItemSupabase(id);
       if (!targetItem) return { error: '備品が見つかりません' };
 
-      // Extract size from name - supports （M）bracket format AND M用/L用/XO用 suffix format
       const extractSize = (name: string): string | null => {
         const bracketMatch = name.match(/（([^）]+)）/);
         if (bracketMatch) return bracketMatch[1];
@@ -125,26 +123,21 @@ export async function updateItemHolderAction(formData: FormData) {
       };
       const targetSize = extractSize(targetItem.name);
 
-      // Extract code prefix: S, T, B etc. (first letter(s) before the number)
       const codePrefixMatch = targetItem.code.match(/^([A-Z]+)/);
       const codePrefix = codePrefixMatch ? codePrefixMatch[1] : null;
 
-      // Referee-related item check: starts with レフリー OR contains ワッペンガード
       const isRefereeRelated = (name: string) =>
         name.startsWith('レフリー') || name.includes('ワッペンガード');
 
-      // Fetch all items and find related referee items
       const allItems = await getItemsSupabase();
       const relatedIds = allItems
         .filter(item => {
           if (!isRefereeRelated(item.name)) return false;
-          // Must share the same code prefix (same team/set group)
           if (codePrefix) {
             const itemPrefixMatch = item.code.match(/^([A-Z]+)/);
             const itemPrefix = itemPrefixMatch ? itemPrefixMatch[1] : null;
             if (itemPrefix !== codePrefix) return false;
           }
-          // If original had a size, only match items with same size OR items without any size
           if (targetSize) {
             const itemSize = extractSize(item.name);
             if (itemSize && itemSize !== targetSize) return false;
@@ -168,3 +161,24 @@ export async function updateItemHolderAction(formData: FormData) {
   }
 }
 
+// 「レフリーセット」という名前の物理アイテムを「レフリー道具セット（笛・カード・ワッペンなど）」に一括リネーム
+export async function renameRefGearItemsAction(): Promise<{ renamed: number; error?: string }> {
+  try {
+    const allItems = await getItemsSupabase();
+    const targets = allItems.filter(i => i.name === 'レフリーセット' || i.name.endsWith('レフリーセット'));
+    let renamed = 0;
+    for (const item of targets) {
+      await updateItemSupabase({
+        ...item,
+        name: 'レフリー道具セット（笛・カード・ワッペンなど）',
+      });
+      renamed++;
+    }
+    revalidatePath('/');
+    revalidatePath('/items');
+    return { renamed };
+  } catch (e: any) {
+    console.error('Rename RefGear Error:', e);
+    return { renamed: 0, error: e.message };
+  }
+}

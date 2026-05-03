@@ -54,7 +54,7 @@ export default function ManualAddRequiredItem({
                const REF_EXCLUDE = [
                  'レフリー袋', 'レフリー半袖', 'レフリー長袖', 'レフリーパンツ', 'レフリーソックス',
                  'ワッペンガード', 'リスペクトワッペン', 'ホイッスル', '審判カード', 'レフリー機材', 'トスコイン',
-                 'レフリーフラッグ',
+                 'レフリーフラッグ', 'レフリーセット', 'レフリー道具セット',
                ];
                const dropdownItems = availableItems.filter(i =>
                  !REF_EXCLUDE.some(n => i.name.includes(n))
