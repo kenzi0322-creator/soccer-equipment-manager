@@ -213,13 +213,11 @@ export async function autoAddStandardEquipmentAction(eventId: string) {
 export async function addRefereeSetAction(eventId: string) {
   try {
     const eris = await getEventRequiredItemsSupabase();
+    // 3グループ構成: ユニセット（袋+半袖+長袖+パンツ+ソックス代表）・道具セット・フラッグ
     const refereeTemplates = [
-      { key: 'ref_half', name: 'レフリー半袖' },
-      { key: 'ref_long', name: 'レフリー長袖' },
-      { key: 'ref_pants', name: 'レフリーパンツ' },
-      { key: 'ref_socks', name: 'レフリーソックス' },
+      { key: 'ref_bag',   name: 'レフリーユニセット（M）' },
+      { key: 'ref_gear',  name: 'レフリー道具セット（笛・カード・ワッペンなど）' },
       { key: 'ref_flags', name: 'レフリーフラッグ' },
-      { key: 'ref_bag', name: 'レフリー袋' }
     ];
     
     const toInsert: any[] = [];

@@ -50,14 +50,18 @@ export default function ManualAddRequiredItem({
           >
              <option value="">備品を選択...</option>
              {(() => {
-               const groups: Record<string, any[]> = {
-                 '一般': [],
-                 'O40都': [],
-                 'シニア': [],
-                 '共通': []
-               };
+               // レフリーセットボタンで管理するアイテムはドロップダウンから除外
+               const REF_EXCLUDE = [
+                 'レフリー袋', 'レフリー半袖', 'レフリー長袖', 'レフリーパンツ', 'レフリーソックス',
+                 'ワッペンガード', 'リスペクトワッペン', 'ホイッスル', '審判カード', 'レフリー機材', 'トスコイン',
+                 'レフリーフラッグ',
+               ];
+               const dropdownItems = availableItems.filter(i =>
+                 !REF_EXCLUDE.some(n => i.name.includes(n))
+               );
 
-               availableItems.forEach(i => {
+               const groups: Record<string, any[]> = { '一般': [], 'O40都': [], 'シニア': [], '共通': [] };
+               dropdownItems.forEach(i => {
                  let group = '共通';
                  if ((i.code || '').startsWith('B')) group = '一般';
                  else if ((i.code || '').startsWith('T')) group = 'O40都';
