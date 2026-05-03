@@ -202,15 +202,33 @@ export default function EquipmentListClient({
   };
 
   const displayItems = useMemo(() => {
-    const physicalRefBag = initialItems.find(i => i.name.includes('レフリー袋'));
-    const refBagLinkId = physicalRefBag?.id || null;
     const colorPri: Record<string, number> = { red: 0, yellow: 1, blue: 2, gray: 3 };
 
-    // グループキー生成（prefix='ref_uni' or 'ref_gear'）
-    const mkGroupKey = (prefix: string, item: any) => {
-      if (item.statusData.color === 'gray') return `${prefix}_gray`;
-      const evId = item.statusData.nextEvent?.id || item.statusData.nextEri?.event_id || 'unknown';
-      return `${prefix}_${item.statusData.color}_${evId}`;
+    // 名前からサイズを抽出：「レフリー袋（M）」→「M」
+    const extractSize = (name: string): string => {
+      const m = name.match(/[（(]([SMLXOsmlxo]+)[）)]/);
+      return m ? m[1].toUpperCase() : '';
+    };
+
+    // グループキー生成
+    // ref_uni: サイズ別にグループ分け（M/L/XO/S）
+    // ref_gear: サイズを無視して1グループ
+    const mkGroupKey = (prefix: string, item: any, useSize: boolean) => {
+      const color = item.statusData.color;
+      const evId = color === 'gray' ? null : (item.statusData.nextEvent?.id || item.statusData.nextEri?.event_id || 'unknown');
+      const size = useSize ? extractSize(item.name) : '';
+      const sizeKey = size ? `_${size}` : '';
+      return color === 'gray'
+        ? `${prefix}${sizeKey}_gray`
+        : `${prefix}${sizeKey}_${color}_${evId}`;
+    };
+
+    // サイズに対応する物理レフリー袋のIDを返す
+    const getRefBagLinkId = (size: string): string | null => {
+      const bag = initialItems.find(i =>
+        i.name.includes('レフリー袋') && (size ? i.name.includes(`（${size}）`) : true)
+      );
+      return bag?.id || null;
     };
 
     const seenGroups = new Set<string>();
@@ -218,17 +236,17 @@ export default function EquipmentListClient({
 
     for (const item of filteredItems) {
       if (isRefGear(item)) {
-        // ── レフリー道具セット（ワッペンガード等を1グループに） ──
-        const groupKey = mkGroupKey('ref_gear', item);
+        // ── レフリー道具セット（サイズ無視・1グループ） ──
+        const groupKey = mkGroupKey('ref_gear', item, false);
         if (!seenGroups.has(groupKey)) {
           seenGroups.add(groupKey);
-          const groupItems = filteredItems.filter(i => isRefGear(i) && mkGroupKey('ref_gear', i) === groupKey);
+          const groupItems = filteredItems.filter(i => isRefGear(i) && mkGroupKey('ref_gear', i, false) === groupKey);
           const worstColor = groupItems.reduce((worst, i) =>
             (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
           , 'blue' as string);
           result.push({
             ...item,
-            id: `ref_gear_${groupKey}`, // リンクなし（ref_gear_で始まるID）
+            id: `ref_gear_${groupKey}`,
             name: 'レフリー道具セット（笛・カード・ワッペンなど）',
             isPersonal: true,
             statusData: { ...item.statusData, color: worstColor as any },
@@ -236,19 +254,21 @@ export default function EquipmentListClient({
         }
         // 個別アイテムはスキップ
       } else if (isRefUni(item)) {
-        // ── レフリーユニセット（袋+半袖+長袖+パンツ+ソックスを1グループに） ──
-        const groupKey = mkGroupKey('ref_uni', item);
+        // ── レフリーユニセット（サイズ別にグループ化：M/L/XO/Sそれぞれ別） ──
+        const groupKey = mkGroupKey('ref_uni', item, true);
         if (!seenGroups.has(groupKey)) {
           seenGroups.add(groupKey);
-          const groupItems = filteredItems.filter(i => isRefUni(i) && mkGroupKey('ref_uni', i) === groupKey);
+          const groupItems = filteredItems.filter(i => isRefUni(i) && mkGroupKey('ref_uni', i, true) === groupKey);
           const worstColor = groupItems.reduce((worst, i) =>
             (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
           , 'blue' as string);
           const repItem = groupItems.find(i => isRefBag(i)) || item;
+          const size = extractSize(repItem.name) || 'M';
+          const linkId = getRefBagLinkId(size);
           result.push({
             ...repItem,
-            id: refBagLinkId || `ref_uni_${groupKey}`,
-            name: 'レフリーユニセット（M）',
+            id: linkId || `ref_uni_${groupKey}`,
+            name: `レフリーユニセット（${size}）`,
             isPersonal: true,
             statusData: { ...repItem.statusData, color: worstColor as any },
           } as any);
