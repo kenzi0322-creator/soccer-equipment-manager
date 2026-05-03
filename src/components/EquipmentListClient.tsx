@@ -186,8 +186,8 @@ export default function EquipmentListClient({
   // ===== レフリーユニセット・道具セット グループ化（表示のみ・全セクション対応） =====
   const REF_UNI_NAMES = ['レフリー袋', 'レフリー半袖', 'レフリー長袖', 'レフリーパンツ', 'レフリーソックス'];
   const REF_UNI_KEYS = new Set(['ref_bag', 'ref_half', 'ref_long', 'ref_pants', 'ref_socks']);
-  // 道具セット：ワッペン類・笛・カード・機材など
-  const REF_GEAR_NAMES = ['ワッペンガード', 'リスペクトワッペン', 'ホイッスル', '笛', 'レフリー機材', 'トスコイン', '審判カード', 'レフリーカード'];
+  // 道具セット：ワッペン類・笛・カード・機材・レフリーセットなど
+  const REF_GEAR_NAMES = ['ワッペンガード', 'リスペクトワッペン', 'ホイッスル', '笛', 'レフリー機材', 'トスコイン', '審判カード', 'レフリーカード', 'レフリーセット'];
   const isRefUni = (item: any) => {
     const tk = item.statusData?.nextEri?.template_key || '';
     return REF_UNI_KEYS.has(tk) || REF_UNI_NAMES.some(n => item.name.includes(n));
@@ -212,14 +212,16 @@ export default function EquipmentListClient({
 
     // グループキー生成
     // ref_uni: サイズ別にグループ分け（M/L/XO/S）
-    // ref_gear: サイズを無視して1グループ
+    // ref_gear: チーム別・1グループ（サイズ無視）
     const mkGroupKey = (prefix: string, item: any, useSize: boolean) => {
       const color = item.statusData.color;
+      // grayの場合: チームコード(B/T/S)でチームを区別
+      const teamCode = (item.code || '').charAt(0);
       const evId = color === 'gray' ? null : (item.statusData.nextEvent?.id || item.statusData.nextEri?.event_id || 'unknown');
       const size = useSize ? extractSize(item.name) : '';
       const sizeKey = size ? `_${size}` : '';
       return color === 'gray'
-        ? `${prefix}${sizeKey}_gray`
+        ? `${prefix}${sizeKey}_${teamCode}_gray`
         : `${prefix}${sizeKey}_${color}_${evId}`;
     };
 
