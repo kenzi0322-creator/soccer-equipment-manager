@@ -62,12 +62,22 @@ export async function getItemsSupabase(): Promise<Item[]> {
 
 export async function getItemSupabase(id: string): Promise<Item | undefined> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from('equipment_items').select('*, current_holder:members(legacy_id)').eq('legacy_id', id).single();
-  if (error || !data) {
-    console.error('Error fetching item from Supabase:', error);
-    return undefined;
-  }
-  return mapItemFromSupabase(data);
+  // まず legacy_id で検索
+  const { data } = await supabase
+    .from('equipment_items')
+    .select('*, current_holder:members(legacy_id)')
+    .eq('legacy_id', id)
+    .maybeSingle();
+  if (data) return mapItemFromSupabase(data);
+  // フォールバック: UUID で検索（legacy_id がない新規アイテム向け）
+  const { data: data2 } = await supabase
+    .from('equipment_items')
+    .select('*, current_holder:members(legacy_id)')
+    .eq('id', id)
+    .maybeSingle();
+  if (data2) return mapItemFromSupabase(data2);
+  console.error('[Supabase] Item not found for id:', id);
+  return undefined;
 }
 
 export async function insertItemSupabase(item: Item): Promise<void> {

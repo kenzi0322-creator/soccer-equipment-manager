@@ -458,10 +458,17 @@ export default function EquipmentListClient({
                     <div className="p-3 pl-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                          <Link href={`/items/${item.id}`} className="font-black text-slate-900 text-[15px] hover:underline truncate flex items-center gap-1.5">
-                            <span className="shrink-0">{getItemIcon(item.name)}</span>
-                            {item.name}
-                          </Link>
+                          {item.isPersonal || item.id.startsWith('virtual_') ? (
+                            <span className="font-black text-slate-900 text-[15px] truncate flex items-center gap-1.5">
+                              <span className="shrink-0">{getItemIcon(item.name)}</span>
+                              {item.name}
+                            </span>
+                          ) : (
+                            <Link href={`/items/${item.id}`} className="font-black text-slate-900 text-[15px] hover:underline truncate flex items-center gap-1.5">
+                              <span className="shrink-0">{getItemIcon(item.name)}</span>
+                              {item.name}
+                            </Link>
+                          )}
                         </div>
                         <span className={clsx(
                           "px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider flex items-center border shrink-0",
