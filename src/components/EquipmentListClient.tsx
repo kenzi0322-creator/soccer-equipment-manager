@@ -346,7 +346,10 @@ export default function EquipmentListClient({
   };
 
   const getItemIcon = (name: string) => {
-    if (name.includes('レフリーユニセット')) return '🎽';
+    if (name.includes('レフリーユニセット')) {
+      // レフリーユニフォームは黒なので🎽を黒くフィルタリング
+      return <span style={{ filter: 'grayscale(1) brightness(0)', display: 'inline-block' }}>🎽</span>;
+    }
     if (name.includes('レフリー道具セット')) return '🎯';
     if (name.includes('ユニ') || name.includes('ビブス') || name.includes('キャプテンマーク')) {
       if (name.includes('赤')) return '🟥';
