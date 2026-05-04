@@ -58,9 +58,27 @@ export default function ItemDetailClient({
   };
 
   const formatDateStr = (dateStr: string): string => {
-    const d = new Date(dateStr);
-    const wd = ['日','月','火','水','木','金','土'];
-    return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}（${wd[d.getDay()]}）`;
+    if (!dateStr) return '';
+    try {
+      // YYYY-MM-DD 形式などの日付文字列を安全にパース（タイムゾーンによる日付ズレを防ぐ）
+      if (dateStr.includes('T')) {
+        dateStr = dateStr.split('T')[0];
+      }
+      const parts = dateStr.split('-');
+      if (parts.length >= 3) {
+        const y = parts[0];
+        const m = parseInt(parts[1], 10);
+        const d = parseInt(parts[2], 10);
+        const wd = ['日','月','火','水','木','金','土'];
+        // JST基準で曜日を計算
+        const dateObj = new Date(`${dateStr}T00:00:00+09:00`);
+        const dayIdx = !isNaN(dateObj.getTime()) ? dateObj.getDay() : 0;
+        return `${y}/${m}/${d}（${wd[dayIdx]}）`;
+      }
+      return dateStr;
+    } catch {
+      return dateStr;
+    }
   };
 
   const getStatusStyles = (color: ItemStatusColor) => {
