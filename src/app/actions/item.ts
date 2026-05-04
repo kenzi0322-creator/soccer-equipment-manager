@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { getItemsSupabase, getItemSupabase, insertItemSupabase, updateItemSupabase, insertItemsBulkSupabase, deleteItemSupabase, updateItemHolderSupabase, updateItemHoldersBulkSupabase } from '@/lib/data/supabaseDb';
+import { getItemsSupabase, getItemSupabase, insertItemSupabase, updateItemSupabase, insertItemsBulkSupabase, deleteItemSupabase, updateItemHolderSupabase, updateItemHoldersBulkSupabase, uploadEquipmentImageSupabase } from '@/lib/data/supabaseDb';
 
 import { Item } from '@/types';
 
@@ -45,12 +45,20 @@ export async function updateItem(id: string, formData: FormData) {
   const color = formData.get('color') as string;
   const owner_team_id = formData.get('owner_team_id') as string;
   const shared_flag = formData.get('shared_flag') === 'on';
+  const imageFile = formData.get('image') as File | null;
 
-  // We construct a partial object, the rest are kept by DB update logic if it were real.
-  // BUT our db.ts `updateItemInDb` actually expects the full Item currently. Let's fetch the old one.
   const oldItem = await getItemSupabase(id);
-  
   if (!oldItem) throw new Error('Item not found');
+
+  let photo_url = oldItem.photo_url;
+  if (imageFile && imageFile instanceof File && imageFile.size > 0) {
+    try {
+      photo_url = await uploadEquipmentImageSupabase(imageFile, id);
+    } catch (e: any) {
+      console.error('画像アップロードエラー:', e.message);
+      // 画像アップロード失敗してもその他の変更は継続
+    }
+  }
 
   const updatedItem: Item = {
     ...oldItem,
@@ -61,6 +69,7 @@ export async function updateItem(id: string, formData: FormData) {
     color,
     owner_team_id,
     shared_flag,
+    photo_url,
   };
 
   await updateItemSupabase(updatedItem);

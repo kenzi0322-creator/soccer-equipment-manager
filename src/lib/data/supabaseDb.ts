@@ -28,6 +28,8 @@ function mapItemFromSupabase(row: any): Item {
     owner_team_id,
     shared_flag: row.item_category === 'shared',
     current_holder_id: row.current_holder?.legacy_id || null,
+    photo_url: row.photo_url || undefined,
+    last_handoff_at: row.last_handoff_at || undefined,
   };
 }
 
@@ -110,15 +112,32 @@ export async function insertItemSupabase(item: Item): Promise<void> {
 
 export async function updateItemSupabase(item: Item): Promise<void> {
   const supabase = await createClient();
-  const updateData = {
+  const updateData: any = {
     code: item.code,
     name: item.name,
     display_label: item.name,
     item_category: item.shared_flag ? 'shared' : 'personal',
-    owner_team_category: item.owner_team_id
+    owner_team_category: item.owner_team_id,
   };
+  if (item.photo_url !== undefined) {
+    updateData.photo_url = item.photo_url;
+  }
   const { error } = await supabase.from('equipment_items').update(updateData).eq('legacy_id', item.id);
   if (error) throw new Error(error.message);
+}
+
+export async function uploadEquipmentImageSupabase(file: File, itemId: string): Promise<string> {
+  const supabase = await createClient();
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = `${itemId}/${Date.now()}.${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+  const buffer = new Uint8Array(arrayBuffer);
+  const { error: upErr } = await supabase.storage
+    .from('equipment-images')
+    .upload(path, buffer, { upsert: true, contentType: file.type || 'image/jpeg' });
+  if (upErr) throw new Error(`画像アップロード失敗: ${upErr.message}`);
+  const { data } = supabase.storage.from('equipment-images').getPublicUrl(path);
+  return data.publicUrl;
 }
 
 export async function insertItemsBulkSupabase(items: Item[]): Promise<void> {

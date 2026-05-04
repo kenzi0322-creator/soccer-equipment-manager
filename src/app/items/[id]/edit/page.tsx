@@ -2,14 +2,15 @@ import { notFound } from 'next/navigation';
 import { Edit3 } from 'lucide-react';
 import EquipmentForm from '@/components/EquipmentForm';
 import { updateItem } from '@/app/actions/item';
-import { getItem, getTeams } from '@/lib/data/db';
+import { getTeams } from '@/lib/data/db';
+import { getItemSupabase } from '@/lib/data/supabaseDb';
 import Link from 'next/link';
 
 export default async function EditItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
   const [initialItem, teams] = await Promise.all([
-    getItem(id),
+    getItemSupabase(id),
     getTeams()
   ]);
   

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Camera, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Item, Team } from '@/types';
 
@@ -13,6 +13,16 @@ interface EquipmentFormProps {
 
 export default function EquipmentForm({ initialData, action, submitLabel, teams }: EquipmentFormProps) {
   const [isPending, setIsPending] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(initialData?.photo_url || null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setImagePreview(url);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     setIsPending(true);
@@ -23,6 +33,32 @@ export default function EquipmentForm({ initialData, action, submitLabel, teams 
     <form action={action} onSubmit={handleSubmit} className="space-y-4">
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
         
+        {/* Photo */}
+        <div className="mb-4">
+          <label className="block text-sm font-bold text-slate-700 mb-1.5">写真</label>
+          <div 
+            className="w-full aspect-video bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-slate-100 transition-colors overflow-hidden relative"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            {imagePreview ? (
+              <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+            ) : (
+              <div className="flex flex-col items-center text-slate-400">
+                <Camera size={32} className="mb-2" />
+                <span className="text-sm font-medium">タップして写真を追加</span>
+              </div>
+            )}
+          </div>
+          <input 
+            type="file" 
+            name="image" 
+            accept="image/*" 
+            className="hidden" 
+            ref={fileInputRef}
+            onChange={handleImageChange}
+          />
+        </div>
+
         {/* Name */}
         <div className="mb-4">
           <label className="block text-sm font-bold text-slate-700 mb-1.5">備品名 <span className="text-red-500 text-xs font-normal">必須</span></label>

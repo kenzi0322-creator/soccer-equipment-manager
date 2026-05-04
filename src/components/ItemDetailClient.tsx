@@ -89,7 +89,11 @@ export default function ItemDetailClient({
       {/* Photo & Basic Info */}
       <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200">
         <div className="aspect-video bg-slate-100 rounded-2xl mb-5 flex items-center justify-center border border-slate-200/60 relative overflow-hidden">
-          <Package size={48} className="text-slate-300" />
+          {item.photo_url ? (
+            <img src={item.photo_url} alt={item.name} className="w-full h-full object-cover" />
+          ) : (
+            <Package size={48} className="text-slate-300" />
+          )}
           <div className={clsx(
             "absolute top-0 right-0 px-4 py-1.5 rounded-bl-2xl font-bold text-sm",
             getStatusStyles(statusData.color)
