@@ -691,12 +691,7 @@ export default function EquipmentListClient({
                                 <label className="text-[10px] font-bold text-slate-400 shrink-0">受渡日:</label>
                                 <input type="date" name="last_handoff_at" defaultValue={item.last_handoff_at || new Date().toISOString().split('T')[0]} className="bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-700 outline-none w-full" />
                               </div>
-                              {item.name.startsWith('レフリー') && (
-                                <label className="flex items-start gap-2 cursor-pointer mt-1">
-                                  <input type="checkbox" checked={bulkReferee} onChange={(e) => setBulkReferee(e.target.checked)} className="mt-0.5 accent-blue-500" />
-                                  <span className="text-[11px] text-slate-600 leading-tight">関連するレフリー用品も<br />まとめて同じ人に変更する</span>
-                                </label>
-                              )}
+
                             </div>
                             <div className="flex gap-2 justify-end">
                               <button type="button" onClick={() => { setEditingId(null); setBulkReferee(false); }} className="text-[10px] font-bold text-slate-500 px-3 py-1.5">取消</button>
