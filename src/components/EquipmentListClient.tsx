@@ -253,7 +253,7 @@ export default function EquipmentListClient({
             ...item,
             id: `ref_gear_${groupKey}`,
             name: 'レフリー道具セット（笛・カード・ワッペンなど）',
-            isPersonal: true,
+            _isGrouped: true,
             statusData: { ...item.statusData, color: worstColor as any },
           } as any);
         }
@@ -279,7 +279,7 @@ export default function EquipmentListClient({
             ...repItem,
             id: linkId || `ref_uni_${groupKey}`,
             name: uniName,
-            isPersonal: true,
+            _isGrouped: true,
             statusData: { ...repItem.statusData, color: worstColor as any },
           } as any);
         }
@@ -498,7 +498,7 @@ export default function EquipmentListClient({
                       </div>
 
                       {/* インライン編集フォーム（展開時） */}
-                      {isEditingThis && !item.isPersonal && (
+                      {isEditingThis && !item.isPersonal && !(item as any)._isGrouped && (
                         <div className="mx-3 mb-3 p-3 bg-blue-50/40 rounded-xl border border-blue-100 animate-in fade-in slide-in-from-top-1 duration-150">
                           <form action={async (formData) => {
                             const result = await updateItemHolderAction(formData);
@@ -540,8 +540,8 @@ export default function EquipmentListClient({
                           </form>
                         </div>
                       )}
-                      {/* 個人持参の場合は試合詳細から変更できることを案内 */}
-                      {isEditingThis && item.isPersonal && (
+                      {/* 個人持参またはグループ備品の場合は試合詳細から変更できることを案内 */}
+                      {isEditingThis && (item.isPersonal || (item as any)._isGrouped) && (
                         <div className="mx-3 mb-3 p-3 bg-blue-50/40 rounded-xl border border-blue-100 text-[11px] text-slate-500">
                           個人持参の備品は<br />
                           <span className="font-bold text-slate-700">試合詳細ページ → 割り当て「修正」</span><br />
