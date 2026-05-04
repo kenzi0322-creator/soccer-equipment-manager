@@ -483,3 +483,57 @@ export async function updateMemberSupabase(member: Member): Promise<void> {
   const { error } = await supabase.from('members').update(mapMemberToSupabase(member)).eq('legacy_id', member.id);
   if (error) throw new Error(error.message);
 }
+
+// アイテムの使用履歴（ERIベース）を取得
+export async function getItemUsageHistorySupabase(itemId: string): Promise<Array<{
+  date: string;
+  title: string;
+  assigneeName: string | null;
+}>> {
+  const supabase = await createClient();
+
+  // legacy_id → UUID
+  const { data: itemRow } = await supabase
+    .from('equipment_items')
+    .select('id')
+    .eq('legacy_id', itemId)
+    .maybeSingle();
+  const itemUuid = itemRow?.id;
+  if (!itemUuid) return [];
+
+  // ERIを取得（物理アイテムが割り当てられたもの）
+  const { data: eris } = await supabase
+    .from('event_required_items')
+    .select('id, event_id, assignee_member_id')
+    .eq('selected_equipment_item_id', itemUuid);
+  if (!eris || eris.length === 0) return [];
+
+  const eventIds = [...new Set(eris.map(e => e.event_id).filter(Boolean))];
+  const memberIds = [...new Set(eris.map(e => e.assignee_member_id).filter(Boolean))];
+
+  const [eventsRes, membersRes] = await Promise.all([
+    supabase.from('events').select('id, legacy_id, title, date').in('id', eventIds),
+    memberIds.length > 0
+      ? supabase.from('members').select('id, name').in('id', memberIds)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const eventMap = new Map((eventsRes.data || []).map(e => [e.id, e]));
+  const memberMap = new Map(((membersRes as any).data || []).map((m: any) => [m.id, m]));
+
+  const today = new Date().toISOString().split('T')[0];
+
+  return eris
+    .map(eri => {
+      const ev = eventMap.get(eri.event_id);
+      if (!ev || !ev.date || ev.date > today) return null;
+      const member = memberMap.get(eri.assignee_member_id);
+      return {
+        date: ev.date as string,
+        title: (ev.title as string) || '試合',
+        assigneeName: (member as any)?.name || null,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => (b!.date > a!.date ? 1 : -1)) as Array<{ date: string; title: string; assigneeName: string | null }>;
+}

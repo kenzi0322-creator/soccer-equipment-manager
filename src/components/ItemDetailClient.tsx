@@ -17,7 +17,8 @@ export default function ItemDetailClient({
   handoffs,
   events,
   eris,
-  participants
+  participants,
+  usageHistory = [],
 }: { 
   initialItem: Item, 
   members: Member[],
@@ -26,7 +27,8 @@ export default function ItemDetailClient({
   handoffs: Handoff[],
   events: Event[],
   eris: EventRequiredItem[],
-  participants: EventParticipant[]
+  participants: EventParticipant[],
+  usageHistory?: Array<{ date: string; title: string; assigneeName: string | null }>,
 }) {
   const router = useRouter();
   
@@ -55,7 +57,11 @@ export default function ItemDetailClient({
     setIsEditingNote(false);
   };
 
-  const pastHandoffs = handoffs.filter(h => h.item_id === item.id && h.status === 'completed');
+  const formatDateStr = (dateStr: string): string => {
+    const d = new Date(dateStr);
+    const wd = ['日','月','火','水','木','金','土'];
+    return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}（${wd[d.getDay()]}）`;
+  };
 
   const getStatusStyles = (color: ItemStatusColor) => {
     switch(color) {
@@ -107,10 +113,14 @@ export default function ItemDetailClient({
 
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-start gap-2">
-            <Tag size={16} className="text-slate-400 mt-0.5" />
+            <Calendar size={16} className="text-slate-400 mt-0.5" />
             <div>
-              <span className="block text-[11px] text-slate-500 mb-0.5">カテゴリ / サイズ</span>
-              <span className="text-sm font-medium text-slate-800">{item.category} / {item.size || '-'}</span>
+              <span className="block text-[11px] text-slate-500 mb-0.5">最終受渡日</span>
+              <span className="text-sm font-medium text-slate-800">
+                {(item as any).last_handoff_at
+                  ? new Date((item as any).last_handoff_at).toLocaleDateString('ja-JP')
+                  : '—'}
+              </span>
             </div>
           </div>
           <div className="flex items-start gap-2">
@@ -240,27 +250,28 @@ export default function ItemDetailClient({
 
           <div className="p-4 bg-slate-50/50">
              <div className="flex items-center gap-1.5 text-slate-700 font-bold text-sm mb-3">
-                <RefreshCw size={16} /> 過去の移動履歴
+                <RefreshCw size={16} /> 過去の使用履歴
               </div>
-              <div className="space-y-4 relative before:absolute before:inset-0 before:ml-[9px] before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
-                {pastHandoffs.length > 0 ? pastHandoffs.map((h, i) => (
-                  <div key={h.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                    <div className="flex items-center justify-center w-5 h-5 rounded-full border border-white bg-slate-200 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                      <div className="w-1.5 h-1.5 bg-slate-400 rounded-full"></div>
-                    </div>
-                    <div className="w-[calc(100%-2.5rem)] md:w-[calc(50%-1.25rem)] bg-white p-3 rounded-xl border border-slate-200 shadow-sm ml-4 md:ml-0 text-sm">
-                      <div className="text-xs text-slate-400 mb-1">{new Date(h.handoff_end_at || h.receive_deadline_at || Date.now()).toLocaleDateString()}</div>
-                      <div className="font-medium text-slate-700">
-                        {h.from_member_id ? members.find(m => m.id === h.from_member_id)?.name : '新規登録'} 
-                        <span className="text-slate-400 mx-1">&rarr;</span> 
-                        {members.find(m => m.id === h.to_member_id)?.name}
+              {usageHistory.length > 0 ? (
+                <div className="space-y-2">
+                  {usageHistory.map((h, i) => (
+                    <div key={i} className="flex items-start gap-3 py-2 border-b border-slate-100 last:border-0">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-300 mt-2 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs text-slate-400 mb-0.5">{formatDateStr(h.date)}</div>
+                        <div className="text-sm font-medium text-slate-700 truncate">{h.title}</div>
+                        {h.assigneeName && (
+                          <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
+                            <User size={10} />{h.assigneeName}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
-                )) : (
-                  <div className="text-xs text-slate-400 italic pl-8">まだ移動履歴はありません</div>
-                )}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-xs text-slate-400 italic pl-2">まだ使用履歴はありません</div>
+              )}
           </div>
         </div>
       </div>

@@ -1,15 +1,16 @@
 import { notFound } from 'next/navigation';
-import { getItemSupabase, getItemsSupabase, getEventsSupabase, getEventRequiredItemsSupabase, getMembersSupabase } from '@/lib/data/supabaseDb';
+import { getItemSupabase, getEventsSupabase, getEventRequiredItemsSupabase, getMembersSupabase, getItemUsageHistorySupabase } from '@/lib/data/supabaseDb';
 import ItemDetailClient from '@/components/ItemDetailClient';
 
 export default async function ItemDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   
-  const [item, members, events, eris] = await Promise.all([
+  const [item, members, events, eris, usageHistory] = await Promise.all([
     getItemSupabase(id),
     getMembersSupabase(),
     getEventsSupabase(),
     getEventRequiredItemsSupabase(),
+    getItemUsageHistorySupabase(id),
   ]);
   
   if (!item) return notFound();
@@ -24,6 +25,7 @@ export default async function ItemDetail({ params }: { params: Promise<{ id: str
       events={events}
       eris={eris}
       participants={[]}
+      usageHistory={usageHistory}
     />
   );
 }
