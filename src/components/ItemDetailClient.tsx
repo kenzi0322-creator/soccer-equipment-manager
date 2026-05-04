@@ -120,7 +120,7 @@ export default function ItemDetailClient({
             <Calendar size={16} className="text-slate-400 mt-0.5" />
             <div>
               <span className="block text-[11px] text-slate-500 mb-0.5">最終受渡日</span>
-              <span className="text-sm font-medium text-slate-800">
+              <span suppressHydrationWarning className="text-sm font-medium text-slate-800">
                 {(item as any).last_handoff_at
                   ? new Date((item as any).last_handoff_at).toLocaleDateString('ja-JP')
                   : '—'}
@@ -188,7 +188,7 @@ export default function ItemDetailClient({
                   <div className="text-sm font-bold text-slate-800">
                     {members.find(m => m.id === statusData.nextHandoff!.to_member_id)?.name} へパスする
                   </div>
-                  <div className="text-xs text-slate-600 mt-1">
+                  <div suppressHydrationWarning className="text-xs text-slate-600 mt-1">
                     期限: {new Date(statusData.nextHandoff.receive_deadline_at!).toLocaleDateString('ja-JP')}
                   </div>
                 </div>
