@@ -143,12 +143,26 @@ export default function AssignmentForm({
                 }
 
                 const sortItems = (items: typeof filteredItems) => {
+                  const prefixOrder = ['一般', 'O40都', 'シニア', 'M', 'アップ', 'F', '共'];
+                  const getPrefixRank = (codeStr: string) => {
+                    for (let i = 0; i < prefixOrder.length; i++) {
+                      if (codeStr.startsWith(prefixOrder[i])) return i;
+                    }
+                    return 99;
+                  };
+
                   return items.sort((a, b) => {
                     const codeA = formatItemCode(a.code || '');
                     const codeB = formatItemCode(b.code || '');
+                    
+                    const rankA = getPrefixRank(codeA);
+                    const rankB = getPrefixRank(codeB);
+                    if (rankA !== rankB) return rankA - rankB;
+
                     const numA = parseInt(codeA.match(/\d+/)?.[0] || '0', 10);
                     const numB = parseInt(codeB.match(/\d+/)?.[0] || '0', 10);
                     if (numA !== numB) return numA - numB;
+                    
                     return codeA.localeCompare(codeB);
                   });
                 };
