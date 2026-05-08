@@ -124,18 +124,18 @@ export default function AssignmentForm({
                 });
 
                 for (const item of filteredItemsToDisplay) {
-                  const code = item.code || '';
+                  const formattedCode = formatItemCode(item.code || '');
                   const name = item.name || '';
                   
-                  if (code.startsWith('一般')) {
+                  if (formattedCode.startsWith('一般')) {
                     grouped['general'] = [...(grouped['general'] || []), item];
-                  } else if (code.startsWith('O40都')) {
+                  } else if (formattedCode.startsWith('O40都')) {
                     grouped['o40'] = [...(grouped['o40'] || []), item];
-                  } else if (code.startsWith('シニア')) {
+                  } else if (formattedCode.startsWith('シニア')) {
                     grouped['senior'] = [...(grouped['senior'] || []), item];
-                  } else if (code.startsWith('共')) {
+                  } else if (formattedCode.startsWith('共')) {
                     grouped['shared'] = [...(grouped['shared'] || []), item];
-                  } else if (code.match(/^(M|F|アップ)/) || name.includes('球') || name.includes('ボール')) {
+                  } else if (formattedCode.match(/^(M|F|アップ)/) || name.includes('球') || name.includes('ボール')) {
                     grouped['ball'] = [...(grouped['ball'] || []), item];
                   } else {
                     others.push(item);
@@ -144,10 +144,12 @@ export default function AssignmentForm({
 
                 const sortItems = (items: typeof filteredItems) => {
                   return items.sort((a, b) => {
-                    const numA = parseInt(a.code?.match(/\d+/)?.[0] || '0', 10);
-                    const numB = parseInt(b.code?.match(/\d+/)?.[0] || '0', 10);
+                    const codeA = formatItemCode(a.code || '');
+                    const codeB = formatItemCode(b.code || '');
+                    const numA = parseInt(codeA.match(/\d+/)?.[0] || '0', 10);
+                    const numB = parseInt(codeB.match(/\d+/)?.[0] || '0', 10);
                     if (numA !== numB) return numA - numB;
-                    return (a.code || '').localeCompare(b.code || '');
+                    return codeA.localeCompare(codeB);
                   });
                 };
 
