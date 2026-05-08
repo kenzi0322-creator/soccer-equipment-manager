@@ -102,12 +102,15 @@ export default function AssignmentForm({
               <option value="__personal__">── 個人所有のものを持参（共有在庫として管理しない）</option>
               {(() => {
                 const categoryOrder = [
-                  { key: 'shared',   label: '📦 合同共用備品（shared）' },
-                  { key: 'referee',  label: '🟡 レフリー用品（referee）' },
-                  { key: 'personal', label: '👤 個人管理備品（personal）' },
+                  { key: 'general', label: '一般' },
+                  { key: 'o40',     label: 'O40都' },
+                  { key: 'senior',  label: 'シニア' },
+                  { key: 'ball',    label: 'ボール' },
+                  { key: 'shared',  label: '共有' },
                 ];
                 const grouped: Record<string, typeof filteredItems> = {};
                 const others: typeof filteredItems = [];
+
                 const filteredItemsToDisplay = filteredItems.filter(item => {
                   if (['レフリー半袖', 'レフリー長袖', 'レフリーパンツ', 'レフリーソックス'].some(part => item.name?.includes(part))) {
                     return false;
@@ -121,18 +124,39 @@ export default function AssignmentForm({
                 });
 
                 for (const item of filteredItemsToDisplay) {
-                  const cat = (item.category || '').toLowerCase();
-                  if (cat === 'shared') { grouped['shared'] = [...(grouped['shared'] || []), item]; }
-                  else if (cat === 'referee' || item.name?.includes('レフリー') || item.name?.includes('ワッペン')) { grouped['referee'] = [...(grouped['referee'] || []), item]; }
-                  else if (cat === 'personal') { grouped['personal'] = [...(grouped['personal'] || []), item]; }
-                  else { others.push(item); }
+                  const code = item.code || '';
+                  const name = item.name || '';
+                  
+                  if (code.startsWith('一般')) {
+                    grouped['general'] = [...(grouped['general'] || []), item];
+                  } else if (code.startsWith('O40都')) {
+                    grouped['o40'] = [...(grouped['o40'] || []), item];
+                  } else if (code.startsWith('シニア')) {
+                    grouped['senior'] = [...(grouped['senior'] || []), item];
+                  } else if (code.startsWith('共')) {
+                    grouped['shared'] = [...(grouped['shared'] || []), item];
+                  } else if (code.match(/^(M|F|アップ)/) || name.includes('球') || name.includes('ボール')) {
+                    grouped['ball'] = [...(grouped['ball'] || []), item];
+                  } else {
+                    others.push(item);
+                  }
                 }
+
+                const sortItems = (items: typeof filteredItems) => {
+                  return items.sort((a, b) => {
+                    const numA = parseInt(a.code?.match(/\d+/)?.[0] || '0', 10);
+                    const numB = parseInt(b.code?.match(/\d+/)?.[0] || '0', 10);
+                    if (numA !== numB) return numA - numB;
+                    return (a.code || '').localeCompare(b.code || '');
+                  });
+                };
+
                 return (
                   <>
                     {categoryOrder.map(({ key, label }) =>
                       grouped[key]?.length ? (
                         <optgroup key={key} label={label}>
-                          {grouped[key].map(i => (
+                          {sortItems(grouped[key]).map(i => (
                             <option key={i.id} value={i.id}>
                               {formatItemCode(i.code || '')} {i.name}
                             </option>
@@ -141,8 +165,8 @@ export default function AssignmentForm({
                       ) : null
                     )}
                     {others.length > 0 && (
-                      <optgroup label="📋 その他">
-                        {others.map(i => (
+                      <optgroup label="その他">
+                        {sortItems(others).map(i => (
                           <option key={i.id} value={i.id}>
                             {formatItemCode(i.code || '')} {i.name}
                           </option>
