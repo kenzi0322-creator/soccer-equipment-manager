@@ -108,7 +108,19 @@ export default function AssignmentForm({
                 ];
                 const grouped: Record<string, typeof filteredItems> = {};
                 const others: typeof filteredItems = [];
-                for (const item of filteredItems) {
+                const filteredItemsToDisplay = filteredItems.filter(item => {
+                  if (['レフリー半袖', 'レフリー長袖', 'レフリーパンツ', 'レフリーソックス'].some(part => item.name?.includes(part))) {
+                    return false;
+                  }
+                  return true;
+                }).map(item => {
+                  if (item.name?.includes('レフリー袋')) {
+                    return { ...item, name: item.name.replace('レフリー袋', 'レフリーユニセット') };
+                  }
+                  return item;
+                });
+
+                for (const item of filteredItemsToDisplay) {
                   const cat = (item.category || '').toLowerCase();
                   if (cat === 'shared') { grouped['shared'] = [...(grouped['shared'] || []), item]; }
                   else if (cat === 'referee' || item.name?.includes('レフリー') || item.name?.includes('ワッペン')) { grouped['referee'] = [...(grouped['referee'] || []), item]; }
@@ -143,23 +155,6 @@ export default function AssignmentForm({
             </select>
         </div>
 
-
-        {/* Bulk Referee Assignment Checkbox */}
-        {isRefereeItem && (
-          <div className="flex items-start gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl mt-4 cursor-pointer hover:bg-slate-100 transition-colors">
-            <input 
-              type="checkbox" 
-              name="bulk_referee" 
-              id="bulk_referee"
-              value="true"
-              defaultChecked={true}
-              className="mt-0.5 shrink-0 w-4 h-4 cursor-pointer"
-            />
-            <label htmlFor="bulk_referee" className="text-sm font-bold text-slate-700 cursor-pointer select-none">
-              他のレフリー用品もまとめて同じ人に割り当てる（自動で同サイズ品を選択）
-            </label>
-          </div>
-        )}
       </div>
 
       <button
