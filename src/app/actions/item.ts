@@ -51,7 +51,7 @@ export async function updateItem(id: string, formData: FormData) {
   if (!oldItem) throw new Error('Item not found');
 
   let photo_url = oldItem.photo_url;
-  if (imageFile && imageFile instanceof File && imageFile.size > 0) {
+  if (imageFile && typeof imageFile === 'object' && imageFile.size > 0) {
     try {
       photo_url = await uploadEquipmentImageSupabase(imageFile, id);
     } catch (e: any) {

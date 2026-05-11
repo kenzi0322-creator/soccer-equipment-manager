@@ -30,7 +30,7 @@ export default function EquipmentForm({ initialData, action, submitLabel, teams 
   };
 
   return (
-    <form action={action} onSubmit={handleSubmit} className="space-y-4">
+    <form action={action} onSubmit={handleSubmit} className="space-y-4" encType="multipart/form-data">
       <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
         
         {/* Photo */}
