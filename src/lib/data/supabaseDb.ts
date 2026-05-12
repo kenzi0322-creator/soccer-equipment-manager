@@ -1,6 +1,9 @@
 import { createClient } from '@/lib/supabase/server';
 import { Item, Event, EventRequiredItem, Member } from '@/types';
 
+// Helper to check if a string is a valid UUID
+const isUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
 // ========================
 // Items (equipment_items) Persistence
 // ========================
@@ -122,7 +125,8 @@ export async function updateItemSupabase(item: Item): Promise<void> {
   if (item.photo_url !== undefined) {
     updateData.photo_url = item.photo_url;
   }
-  const { error } = await supabase.from('equipment_items').update(updateData).eq('legacy_id', item.id);
+  const idCol = isUuid(item.id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('equipment_items').update(updateData).eq(idCol, item.id);
   if (error) throw new Error(error.message);
 }
 
@@ -156,7 +160,8 @@ export async function insertItemsBulkSupabase(items: Item[]): Promise<void> {
 
 export async function deleteItemSupabase(id: string): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.from('equipment_items').delete().eq('legacy_id', id);
+  const idCol = isUuid(id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('equipment_items').delete().eq(idCol, id);
   if (error) throw new Error(error.message);
 }
 
@@ -170,7 +175,8 @@ export async function updateItemHolderSupabase(id: string, current_holder_id: st
   }
   
   const updateData: any = { current_holder_member_id };
-  const { error } = await supabase.from('equipment_items').update(updateData).eq('legacy_id', id);
+  const idCol = isUuid(id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('equipment_items').update(updateData).eq(idCol, id);
   if (error) throw new Error(error.message);
 }
 
@@ -262,20 +268,23 @@ export async function insertEventSupabase(event: Event): Promise<void> {
 
 export async function updateEventSupabase(event: Event): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.from('events').update(mapEventToSupabase(event)).eq('legacy_id', event.id);
+  const idCol = isUuid(event.id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('events').update(mapEventToSupabase(event)).eq(idCol, event.id);
   if (error) throw new Error(error.message);
 }
 
 export async function deleteEventSupabase(id: string): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.from('events').delete().eq('legacy_id', id);
+  const idCol = isUuid(id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('events').delete().eq(idCol, id);
   if (error) throw new Error(error.message);
 }
 
 export async function updateEventSyncStatusSupabase(id: string, sync_status: string): Promise<void> {
   const supabase = await createClient();
   const statusStr = sync_status === 'deleted_in_source' ? 'deleted_in_source' : 'active';
-  const { error } = await supabase.from('events').update({ status: statusStr }).eq('legacy_id', id);
+  const idCol = isUuid(id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('events').update({ status: statusStr }).eq(idCol, id);
   if (error) throw new Error(error.message);
 }
 
@@ -449,13 +458,15 @@ export async function updateEriSupabase(id: string, updates: Partial<EventRequir
     dbUpdates.is_personal_carry = updates.is_personal_item;
   }
 
-  const { error } = await supabase.from('event_required_items').update(dbUpdates).eq('legacy_id', id);
+  const idCol = isUuid(id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('event_required_items').update(dbUpdates).eq(idCol, id);
   if (error) throw new Error(error.message);
 }
 
 export async function deleteEriSupabase(id: string): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.from('event_required_items').delete().eq('legacy_id', id);
+  const idCol = isUuid(id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('event_required_items').delete().eq(idCol, id);
   if (error) throw new Error(error.message);
 }
 
@@ -499,7 +510,8 @@ export async function getMembersSupabase(): Promise<Member[]> {
 
 export async function updateMemberSupabase(member: Member): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.from('members').update(mapMemberToSupabase(member)).eq('legacy_id', member.id);
+  const idCol = isUuid(member.id) ? 'id' : 'legacy_id';
+  const { error } = await supabase.from('members').update(mapMemberToSupabase(member)).eq(idCol, member.id);
   if (error) throw new Error(error.message);
 }
 
