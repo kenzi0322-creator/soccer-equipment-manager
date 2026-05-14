@@ -473,8 +473,12 @@ export default function EquipmentListClient({
                           <span className="text-[11px] font-bold text-slate-500">{dateStr}</span>
                           {(() => { const b = getTeamBadge(item); return b ? <span className={b.classes}>{b.label}</span> : null; })()}
                         </div>
-                        <span className="flex-1 text-[13px] font-black text-slate-800 truncate flex items-center gap-1">
-                          <span className="shrink-0 text-[11px]">{getItemIcon(item.name)}</span>
+                        <span className="flex-1 text-[13px] font-black text-slate-800 truncate flex items-center gap-1.5">
+                          {item.photo_url ? (
+                            <img src={item.photo_url} alt="" className="w-5 h-5 object-cover rounded shadow-sm border border-slate-200 shrink-0" />
+                          ) : (
+                            <span className="shrink-0 text-[11px]">{getItemIcon(item.name)}</span>
+                          )}
                           {item.name}
                         </span>
                         <span className="text-[12px] font-bold text-sky-700 shrink-0 max-w-[60px] truncate text-right">
@@ -574,13 +578,21 @@ export default function EquipmentListClient({
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
                           {(item.id.startsWith('virtual_') || item.id.startsWith('ref_uni_') || item.id.startsWith('ref_gear_')) ? (
-                            <span className="font-black text-slate-900 text-[15px] truncate flex items-center gap-1.5">
-                              <span className="shrink-0">{getItemIcon(item.name)}</span>
+                            <span className="font-black text-slate-900 text-[15px] truncate flex items-center gap-2">
+                              {item.photo_url ? (
+                                <img src={item.photo_url} alt="" className="w-7 h-7 object-cover rounded shadow-sm border border-slate-200 shrink-0" />
+                              ) : (
+                                <span className="shrink-0">{getItemIcon(item.name)}</span>
+                              )}
                               {item.name}
                             </span>
                           ) : (
-                            <Link href={`/items/${item.id}`} className="font-black text-slate-900 text-[15px] hover:underline truncate flex items-center gap-1.5">
-                              <span className="shrink-0">{getItemIcon(item.name)}</span>
+                            <Link href={`/items/${item.id}`} className="font-black text-slate-900 text-[15px] hover:underline truncate flex items-center gap-2">
+                              {item.photo_url ? (
+                                <img src={item.photo_url} alt="" className="w-7 h-7 object-cover rounded shadow-sm border border-slate-200 shrink-0" />
+                              ) : (
+                                <span className="shrink-0">{getItemIcon(item.name)}</span>
+                              )}
                               {item.name}
                             </Link>
                           )}
