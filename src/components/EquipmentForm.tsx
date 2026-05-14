@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Camera, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Item, Team } from '@/types';
+import { createClient } from '@/lib/supabase/client';
 
 interface EquipmentFormProps {
   initialData?: Item;
@@ -16,6 +17,8 @@ export default function EquipmentForm({ initialData, action, submitLabel, teams 
   const [imagePreview, setImagePreview] = useState<string | null>(initialData?.photo_url || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const supabase = createClient();
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -24,9 +27,46 @@ export default function EquipmentForm({ initialData, action, submitLabel, teams 
     }
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     setIsPending(true);
-    // Let the form default submission behavior (action prop) take over
+
+    const formData = new FormData(e.currentTarget);
+    const file = fileInputRef.current?.files?.[0];
+
+    if (file) {
+      try {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const itemId = initialData?.id || `new_${Date.now()}`;
+        const path = `${itemId}/${Date.now()}.${ext}`;
+
+        const { error: upErr } = await supabase.storage
+          .from('equipment-images')
+          .upload(path, file, { upsert: true });
+
+        if (upErr) throw upErr;
+
+        const { data } = supabase.storage.from('equipment-images').getPublicUrl(path);
+        formData.set('photo_url', data.publicUrl);
+        formData.delete('image'); // 巨大なファイル本体をVercelに送らないように削除
+      } catch (err: any) {
+        alert('画像のアップロードに失敗しました: ' + err.message);
+        setIsPending(false);
+        return;
+      }
+    } else {
+      if (initialData?.photo_url) {
+        formData.set('photo_url', initialData.photo_url);
+      }
+      formData.delete('image');
+    }
+
+    try {
+      await action(formData);
+    } catch (err: any) {
+      alert('保存に失敗しました');
+      setIsPending(false);
+    }
   };
 
   return (

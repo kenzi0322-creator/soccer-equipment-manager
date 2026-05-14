@@ -19,6 +19,8 @@ export async function createItem(formData: FormData) {
   const owner_team_id = formData.get('owner_team_id') as string;
   const shared_flag = formData.get('shared_flag') === 'on';
 
+  const photo_url = formData.get('photo_url') as string | null;
+
   const newItem: Item = {
     id: generateId(),
     code: item_code,
@@ -29,6 +31,7 @@ export async function createItem(formData: FormData) {
     owner_team_id,
     shared_flag,
     current_holder_id: null,
+    photo_url: photo_url || undefined,
   };
 
   await insertItemSupabase(newItem);
@@ -50,15 +53,7 @@ export async function updateItem(id: string, formData: FormData) {
   const oldItem = await getItemSupabase(id);
   if (!oldItem) throw new Error('Item not found');
 
-  let photo_url = oldItem.photo_url;
-  if (imageFile && typeof imageFile === 'object' && imageFile.size > 0) {
-    try {
-      photo_url = await uploadEquipmentImageSupabase(imageFile, id);
-    } catch (e: any) {
-      console.error('画像アップロードエラー:', e.message);
-      // 画像アップロード失敗してもその他の変更は継続
-    }
-  }
+  const clientPhotoUrl = formData.get('photo_url') as string | null;
 
   const updatedItem: Item = {
     ...oldItem,
@@ -69,7 +64,7 @@ export async function updateItem(id: string, formData: FormData) {
     color,
     owner_team_id,
     shared_flag,
-    photo_url,
+    photo_url: clientPhotoUrl || oldItem.photo_url,
   };
 
   await updateItemSupabase(updatedItem);
