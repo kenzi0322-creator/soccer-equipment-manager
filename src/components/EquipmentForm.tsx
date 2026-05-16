@@ -64,7 +64,10 @@ export default function EquipmentForm({ initialData, action, submitLabel, teams 
     try {
       await action(formData);
     } catch (err: any) {
-      alert('保存に失敗しました');
+      if (err.message === 'NEXT_REDIRECT' || (err.digest && err.digest.startsWith('NEXT_REDIRECT'))) {
+        throw err; // Next.jsにリダイレクト処理を任せる
+      }
+      alert('保存に失敗しました: ' + (err.message || ''));
       setIsPending(false);
     }
   };
