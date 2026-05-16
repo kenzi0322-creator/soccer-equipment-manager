@@ -1,12 +1,12 @@
 import { notFound } from 'next/navigation';
-import { getMembers } from '@/lib/data/db';
+import { getMembersSupabase } from '@/lib/data/supabaseDb';
 import { updateMemberAction } from '@/app/actions/member';
 import { ArrowLeft, User, MapPin, Car, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function EditMemberPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const members = await getMembers();
+  const members = await getMembersSupabase();
   const member = members.find(m => m.id === id);
   
   if (!member) return notFound();

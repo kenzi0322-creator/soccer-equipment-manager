@@ -1,17 +1,17 @@
 import { notFound } from 'next/navigation';
-import { getMembers, getItems } from '@/lib/data/db';
+import { getMembersSupabase, getItemsSupabase } from '@/lib/data/supabaseDb';
 import { ArrowLeft, User, MapPin, Car, BookOpen, Package, Edit3, Train } from 'lucide-react';
 import Link from 'next/link';
 import { clsx } from 'clsx';
 
 export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const members = await getMembers();
+  const members = await getMembersSupabase();
   const member = members.find(m => m.id === id);
   
   if (!member) return notFound();
 
-  const allItems = await getItems();
+  const allItems = await getItemsSupabase();
   const rawHeldItems = allItems.filter(item => item.current_holder_id === id);
 
   // グループ化ロジック
