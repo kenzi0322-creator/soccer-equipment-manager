@@ -12,7 +12,57 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
   if (!member) return notFound();
 
   const allItems = await getItems();
-  const heldItems = allItems.filter(item => item.current_holder_id === id);
+  const rawHeldItems = allItems.filter(item => item.current_holder_id === id);
+
+  // グループ化ロジック
+  const isRefUni = (item: any) => {
+    const n = item.name;
+    return n.includes('レフリー') && (n.includes('半袖') || n.includes('長袖') || n.includes('パンツ') || n.includes('ソックス') || n.includes('レフリー袋') || n.includes('ユニセット'));
+  };
+
+  const isRefGear = (item: any) => {
+    const n = item.name;
+    return (n.includes('電子ホイッスル') || n.includes('ワッペンガード') || n.includes('カードセット') || n.includes('審判時計') || n.includes('レフリーセット')) && !isRefUni(item);
+  };
+
+  const extractSize = (name: string): string | null => {
+    const bracketMatch = name.match(/（([^）]+)）/);
+    if (bracketMatch) return bracketMatch[1];
+    const suffixMatch = name.match(/(XO|[A-Z])用/);
+    if (suffixMatch) return suffixMatch[1];
+    return null;
+  };
+
+  const displayItems = [];
+  const uniGroups = new Map();
+  const gearGroups = new Map();
+
+  for (const item of rawHeldItems) {
+    if (isRefGear(item)) {
+      const codePrefix = (item.code || '').charAt(0) || 'ALL';
+      if (!gearGroups.has(codePrefix)) gearGroups.set(codePrefix, []);
+      gearGroups.get(codePrefix).push(item);
+    } else if (isRefUni(item)) {
+      const size = extractSize(item.name) || '不明';
+      const codePrefix = (item.code || '').charAt(0) || 'ALL';
+      const key = `${codePrefix}_${size}`;
+      if (!uniGroups.has(key)) uniGroups.set(key, []);
+      uniGroups.get(key).push(item);
+    } else {
+      displayItems.push(item);
+    }
+  }
+
+  for (const group of gearGroups.values()) {
+    const repItem = group.find((i: any) => i.name.includes('レフリーセット')) || group[0];
+    displayItems.push({ ...repItem, name: 'レフリー道具セット（笛・カード・ワッペンなど）' });
+  }
+
+  for (const group of uniGroups.values()) {
+    const repItem = group.find((i: any) => i.name.includes('レフリー袋')) || group[0];
+    const size = extractSize(repItem.name);
+    displayItems.push({ ...repItem, name: size ? `レフリーユニセット（${size}）` : 'レフリーユニセット' });
+  }
 
   return (
     <div className="space-y-6 pb-6 mt-2">
@@ -79,9 +129,9 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
         </h3>
         
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-          {heldItems.length > 0 ? (
+          {displayItems.length > 0 ? (
             <div className="divide-y divide-slate-100">
-              {heldItems.map(item => (
+              {displayItems.map(item => (
                 <Link key={item.id} href={`/items/${item.id}`} className="block p-4 hover:bg-slate-50 transition-colors group">
                   <div className="flex justify-between items-start">
                     <div className="min-w-0 flex-1 pr-2">
