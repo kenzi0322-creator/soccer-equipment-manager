@@ -1,13 +1,14 @@
-import { getHandoffs, getItems, getMembers, getEvents } from '@/lib/data/db';
+import { getHandoffs } from '@/lib/data/db';
+import { getItemsSupabase, getMembersSupabase, getEventsSupabase } from '@/lib/data/supabaseDb';
 import { ArrowLeftRight, Clock, CheckCircle, Package, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function HandoffsList() {
   const [handoffs, allItems, members, events] = await Promise.all([
     getHandoffs(),
-    getItems(),
-    getMembers(),
-    getEvents()
+    getItemsSupabase(),
+    getMembersSupabase(),
+    getEventsSupabase()
   ]);
 
   return (

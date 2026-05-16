@@ -1,4 +1,5 @@
-import { getEvents, getTeams, getVenues } from '@/lib/data/db';
+import { getTeams, getVenues } from '@/lib/data/db';
+import { getEventsSupabase } from '@/lib/data/supabaseDb';
 import { Calendar, MapPin, Users, ChevronRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { clsx } from 'clsx';
@@ -6,7 +7,7 @@ import { getEstimatedVenue } from '@/lib/venue-utils';
 
 export default async function ArchiveEventsList() {
   const [eventsRaw, teams, venues] = await Promise.all([
-    getEvents(),
+    getEventsSupabase(),
     getTeams(),
     getVenues()
   ]);
