@@ -20,8 +20,8 @@ export async function incrementItemQuantityAction(eventId: string, eriId: string
       assignment_status: 'unassigned'
     }]);
 
-    revalidatePath(`/events/${eventId}`);
-    return { success: true };
+    revalidatePath('/', 'layout');
+return { success: true };
   } catch (e: any) {
     console.error('Increment Quantity Error:', e);
     return { error: '数量の追加に失敗しました。' };

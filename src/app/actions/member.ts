@@ -26,6 +26,6 @@ export async function updateMemberAction(formData: FormData) {
 
   await updateMemberSupabase(updatedMember);
   
-  revalidatePath('/members');
-  redirect('/members');
+  revalidatePath('/', 'layout');
+redirect('/members');
 }

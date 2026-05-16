@@ -25,8 +25,8 @@ export async function createEventAction(formData: FormData) {
 
   try {
     await insertEventSupabase(newEvent);
-    revalidatePath('/events');
-  } catch (e: any) {
+    revalidatePath('/', 'layout');
+} catch (e: any) {
     console.error('Create Event Error:', e);
     return { error: '登録に失敗しました: ' + e.message };
   }
@@ -36,8 +36,8 @@ export async function createEventAction(formData: FormData) {
 export async function deleteEventAction(id: string) {
   try {
     await deleteEventSupabase(id);
-    revalidatePath('/events');
-  } catch (e: any) {
+    revalidatePath('/', 'layout');
+} catch (e: any) {
     console.error('Delete Event Error:', e);
     return { error: '削除に失敗しました: ' + e.message };
   }
@@ -116,9 +116,8 @@ export async function updateEventAction(formData: FormData) {
       }
     }
 
-    revalidatePath('/events');
-    revalidatePath(`/events/${id}`);
-    // revalidatePath and redirect work fine if successful
+    revalidatePath('/', 'layout');
+// revalidatePath and redirect work fine if successful
   } catch (e: any) {
     console.error('Update Event Error:', e);
     return { error: '更新に失敗しました。本番環境（Vercel）ではデータの保存にサーバー側の設定が必要です。' };
@@ -150,8 +149,8 @@ export async function addRequiredItemAction(formData: FormData) {
       is_personal_item
     };
     await insertErisSupabase([newEri]);
-    revalidatePath(`/events/${event_id}`);
-    return { success: true };
+    revalidatePath('/', 'layout');
+return { success: true };
   } catch (e: any) {
     console.error('Add Required Item Error:', e);
     return { error: '追加に失敗しました。本番環境（Vercel）ではデータの保存にサーバー側の設定が必要です。' };
@@ -167,8 +166,8 @@ export async function removeRequiredItemAction(formData: FormData) {
 
   try {
     await deleteEriSupabase(id);
-    revalidatePath(`/events/${actual_event_id}`);
-    return { success: true };
+    revalidatePath('/', 'layout');
+return { success: true };
   } catch (e: any) {
     console.error('Remove Required Item Error:', e);
     return { error: '削除に失敗しました。本番環境（Vercel）ではデータの保存にサーバー側の設定が必要です。' };
@@ -200,8 +199,8 @@ export async function autoAddStandardEquipmentAction(eventId: string) {
 
     if (toInsert.length > 0) {
       await insertErisSupabase(toInsert);
-      revalidatePath(`/events/${eventId}`);
-      return { success: true, addedCount: toInsert.length };
+      revalidatePath('/', 'layout');
+return { success: true, addedCount: toInsert.length };
     }
     return { success: false, message: '既に全ての標準備品が追加されています' };
   } catch (e: any) {
@@ -251,8 +250,8 @@ export async function addRefereeSetAction(eventId: string) {
 
     if (toInsert.length > 0) {
       await insertErisSupabase(toInsert);
-      revalidatePath(`/events/${eventId}`);
-      return { success: true, addedCount: toInsert.length };
+      revalidatePath('/', 'layout');
+return { success: true, addedCount: toInsert.length };
     }
     return { success: false, message: '既にレフリーセットが追加されています' };
   } catch (e: any) {
@@ -353,9 +352,8 @@ export async function updateEriAssignmentAction(formData: FormData) {
         }
       }
     }
-    revalidatePath(`/events/${eventId}`);
-    revalidatePath(`/events/${eventId}/assign/${eriId}`);
-    return { success: true };
+    revalidatePath('/', 'layout');
+return { success: true };
   } catch (e: any) {
     console.error('Update Assignment Error:', e);
     return { error: `割り当ての更新に失敗しました: ${e.message}` };

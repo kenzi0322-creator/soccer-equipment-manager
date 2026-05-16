@@ -36,8 +36,8 @@ export async function createItem(formData: FormData) {
 
   await insertItemSupabase(newItem);
 
-  revalidatePath('/');
-  redirect('/');
+  revalidatePath('/', 'layout');
+redirect('/');
 }
 
 export async function updateItem(id: string, formData: FormData) {
@@ -69,9 +69,8 @@ export async function updateItem(id: string, formData: FormData) {
 
   await updateItemSupabase(updatedItem);
 
-  revalidatePath(`/items/${id}`);
-  revalidatePath('/');
-  redirect(`/items/${id}`);
+  revalidatePath('/', 'layout');
+redirect(`/items/${id}`);
 }
 
 export async function bulkImportItemsAction(parsedData: any[]) {
@@ -91,9 +90,8 @@ export async function bulkImportItemsAction(parsedData: any[]) {
 
   await insertItemsBulkSupabase(newItems);
   
-  revalidatePath('/');
-  revalidatePath('/items');
-  return { success: true, count: newItems.length };
+  revalidatePath('/', 'layout');
+return { success: true, count: newItems.length };
 }
 
 export async function deleteItemAction(formData: FormData) {
@@ -101,8 +99,8 @@ export async function deleteItemAction(formData: FormData) {
   
   await deleteItemSupabase(id);
   
-  revalidatePath('/items');
-  redirect('/');
+  revalidatePath('/', 'layout');
+redirect('/');
 }
 
 export async function updateItemHolderAction(formData: FormData) {
@@ -157,8 +155,8 @@ export async function updateItemHolderAction(formData: FormData) {
       await updateItemHolderSupabase(id, current_holder_id || null, last_handoff_at);
     }
 
-    revalidatePath('/');
-    return { success: true };
+    revalidatePath('/', 'layout');
+return { success: true };
   } catch (e: any) {
     console.error('Update Holder Error:', e);
     return { error: '更新に失敗しました' };
@@ -178,9 +176,8 @@ export async function renameRefGearItemsAction(): Promise<{ renamed: number; err
       });
       renamed++;
     }
-    revalidatePath('/');
-    revalidatePath('/items');
-    return { renamed };
+    revalidatePath('/', 'layout');
+return { renamed };
   } catch (e: any) {
     console.error('Rename RefGear Error:', e);
     return { renamed: 0, error: e.message };
