@@ -249,9 +249,9 @@ export default function EquipmentListClient({
           const worstColor = groupItems.reduce((worst, i) =>
             (colorPri[i.statusData.color] ?? 99) < (colorPri[worst] ?? 99) ? i.statusData.color : worst
           , 'gray' as string);
+          const repItem = groupItems[0] || item;
           result.push({
-            ...item,
-            id: `ref_gear_${groupKey}`,
+            ...repItem,
             name: 'レフリー道具セット（笛・カード・ワッペンなど）',
             _isGrouped: true,
             statusData: { ...item.statusData, color: worstColor as any },
@@ -277,7 +277,7 @@ export default function EquipmentListClient({
           const linkId = size ? getRefBagLinkId(size, repTeamCode) : null;
           result.push({
             ...repItem,
-            id: linkId || `ref_uni_${groupKey}`,
+            id: linkId || repItem.id,
             name: uniName,
             _isGrouped: true,
             statusData: { ...repItem.statusData, color: worstColor as any },
@@ -577,7 +577,7 @@ export default function EquipmentListClient({
                     <div className="p-3 pl-4">
                       <div className="flex justify-between items-start mb-2">
                         <div className="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                          {(item.id.startsWith('virtual_') || item.id.startsWith('ref_uni_') || item.id.startsWith('ref_gear_')) ? (
+                          {item.id.startsWith('virtual_') ? (
                             <span className="font-black text-slate-900 text-[15px] truncate flex items-center gap-2">
                               {item.photo_url ? (
                                 <img src={item.photo_url} alt="" className="w-7 h-7 object-cover rounded shadow-sm border border-slate-200 shrink-0" />
